@@ -1,5 +1,6 @@
 // Configuração das camadas do WebGIS Paranapiacaba
 // Cada camada contém: id, label, file, group, type, color, weight, fillOpacity, minZoom, visible, popupFields, description, available
+// Todas as camadas são definidas como available: true por padrão para que o app tente buscá-las localmente
 
 export const LAYERS = [
   // GRUPO "Território"
@@ -16,7 +17,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Perímetro oficial do Sítio UNESCO de Paranapiacaba, conforme delimitação do IPHAN.",
-    available: false
+    available: true
   },
   {
     id: "limite_vila",
@@ -31,7 +32,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Perímetro do núcleo histórico da Vila ferroviária, fundada em 1867 pela São Paulo Railway.",
-    available: false
+    available: true
   },
   {
     id: "ucs",
@@ -46,7 +47,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Unidades de Conservação: PESM Núcleo Itutinga-Pilões, REBio Alto da Serra e Parque Natural Municipal.",
-    available: false
+    available: true
   },
 
   // GRUPO "Patrimônio"
@@ -63,7 +64,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Bens tombados nas instâncias federal (IPHAN), estadual (CONDEPHAAT) e municipal (COMDEPHAAPASA).",
-    available: false
+    available: true
   },
   {
     id: "edificacoes_vila",
@@ -78,7 +79,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Edificações inventariadas da Vila ferroviária de Paranapiacaba.",
-    available: false
+    available: true
   },
   {
     id: "pac_lotes",
@@ -93,7 +94,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Lotes beneficiados pelas obras do PAC Cidades Históricas (Restauro e Conservação).",
-    available: false
+    available: true
   },
 
   // GRUPO "Meio Ambiente"
@@ -109,7 +110,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Rede de drenagem com nascentes e canais principais, incluindo divisor Cubatão/Tietê.",
-    available: false
+    available: true
   },
   {
     id: "nascentes",
@@ -122,7 +123,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Pontos de surgência de água mapeados, fundamentais para a bacia hidrográfica local.",
-    available: false
+    available: true
   },
   {
     id: "app_buffers",
@@ -137,7 +138,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Áreas de Preservação Permanente (APPs) geradas com buffer de 30 metros ao redor dos corpos hídricos.",
-    available: false
+    available: true
   },
   {
     id: "declividade",
@@ -152,7 +153,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Classes de declividade do terreno expressas em porcentagem, auxiliando na análise de relevo.",
-    available: false
+    available: true
   },
 
   // GRUPO "Turismo e Trilhas"
@@ -168,7 +169,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "45 trilhas mapeadas via GPS Wikiloc (~763 km total), categorizadas por região, tipo e dificuldade.",
-    available: false
+    available: true
   },
   {
     id: "atrativos",
@@ -181,7 +182,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "331 atrativos naturais classificados: 145 cachoeiras, 64 poços, 60 mirantes, 42 pedras, 7 nascentes, 9 ruínas e 4 grutas.",
-    available: false
+    available: true
   },
   {
     id: "circuitos",
@@ -195,7 +196,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Circuitos de caminhada e turismo auto-guiados ou com monitoria na região.",
-    available: false
+    available: true
   },
 
   // GRUPO "Infraestrutura"
@@ -211,7 +212,7 @@ export const LAYERS = [
     visible: true,
     popupFields: [],
     description: "Leito ferroviário histórico da São Paulo Railway (1867), atual CPTM Linha 10-Turquesa.",
-    available: false
+    available: true
   },
   {
     id: "funicular",
@@ -225,7 +226,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Leito inclinado do antigo Funicular da Serra do Mar (Serra Velha de 1867 e Serra Nova de 1901).",
-    available: false
+    available: true
   },
 
   // GRUPO "Socioeconomia"
@@ -242,7 +243,7 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Setores censitários do Censo IBGE 2022 recortados para o distrito de Paranapiacaba.",
-    available: false
+    available: true
   },
   {
     id: "densidade",
@@ -256,8 +257,8 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: [],
-    description: "Densidade demográfica obtida por setor censitário no distrito de ParanapiacabaDistrit.",
-    available: false
+    description: "Densidade demográfica obtida por setor censitário no distrito de Paranapiacaba.",
+    available: true
   }
 ];
 

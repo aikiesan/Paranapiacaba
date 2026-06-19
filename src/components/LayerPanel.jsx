@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { LAYERS, GROUPS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
 import { PALETTE } from '../config/styleGuide';
@@ -13,9 +13,9 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
   const isZoomRestricted = currentZoom < layer.minZoom;
 
   return (
-    <div className="flex flex-col border-b border-slate-800/30 last:border-b-0 py-1.5 px-2">
+    <div className="flex flex-col border-b border-slate-200/60 last:border-b-0 py-1.5 px-2">
       <div className={`group/layer flex items-center justify-between transition-opacity ${
-        isZoomRestricted ? 'opacity-55' : 'opacity-100'
+        isZoomRestricted ? 'opacity-50' : 'opacity-100'
       }`}>
         <div className="flex items-center space-x-2.5 flex-1 min-w-0">
           {/* Spinner de Loading */}
@@ -28,19 +28,19 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
               type="checkbox"
               checked={isActive}
               onChange={() => onToggle(layer.id)}
-              className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-700 bg-slate-800 focus:ring-offset-slate-900 cursor-pointer"
+              className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer"
             />
           )}
 
           {/* Bullet colorido */}
           <span 
-            className="w-3 h-3 rounded-sm flex-shrink-0 border border-slate-900/30"
+            className="w-3 h-3 rounded-sm flex-shrink-0 border border-slate-900/10"
             style={{ backgroundColor: layer.color || '#ccc' }}
           />
 
           <span 
             onClick={() => onToggle(layer.id)}
-            className="text-xs font-medium text-slate-300 group-hover/layer:text-slate-100 transition-colors truncate cursor-pointer select-none"
+            className="text-xs font-semibold text-slate-600 group-hover/layer:text-slate-900 transition-colors truncate cursor-pointer select-none"
             title={layer.label}
           >
             {layer.label}
@@ -48,7 +48,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
 
           {/* Badge de Contagem de Features */}
           {featureCount !== null && (
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400">
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50">
               {featureCount}
             </span>
           )}
@@ -60,8 +60,8 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
           {layer.description && (
             <button
               onClick={() => setShowDescription(!showDescription)}
-              className={`p-0.5 rounded text-slate-500 hover:text-slate-200 transition-colors ${
-                showDescription ? 'text-slate-200 bg-slate-800' : ''
+              className={`p-0.5 rounded text-slate-400 hover:text-slate-700 transition-colors ${
+                showDescription ? 'text-slate-800 bg-slate-100' : ''
               }`}
               title="Informações da camada"
             >
@@ -74,10 +74,10 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
           {/* Erro de Arquivo */}
           {error && (
             <div className="relative flex items-center group/err">
-              <svg className="w-4 h-4 text-rose-500 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-rose-600 cursor-help animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <div className="absolute right-0 bottom-6 hidden group-hover/err:block bg-rose-950 text-rose-200 text-[10px] font-bold px-2 py-1 rounded-md border border-rose-800 shadow-xl whitespace-nowrap z-[1050]">
+              <div className="absolute right-0 bottom-6 hidden group-hover/err:block bg-slate-900 text-slate-100 text-[10px] font-bold px-2 py-1 rounded-md border border-slate-750 shadow-xl whitespace-nowrap z-[1050]">
                 Arquivo não encontrado
               </div>
             </div>
@@ -86,10 +86,10 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
           {/* Restrição de Zoom */}
           {isZoomRestricted && !error && (
             <div className="relative flex items-center group/tooltip">
-              <svg className="w-3.5 h-3.5 text-amber-500/80 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 text-amber-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <div className="absolute right-0 bottom-6 hidden group-hover/tooltip:block bg-slate-950 text-slate-200 text-[10px] font-semibold px-2 py-1 rounded-md border border-slate-800 shadow-xl whitespace-nowrap z-[1050]">
+              <div className="absolute right-0 bottom-6 hidden group-hover/tooltip:block bg-slate-900 text-slate-100 text-[10px] font-semibold px-2 py-1 rounded-md border border-slate-750 shadow-xl whitespace-nowrap z-[1050]">
                 Visível a partir do zoom {layer.minZoom} (Zoom atual: {currentZoom})
               </div>
             </div>
@@ -99,7 +99,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
 
       {/* Descrição Inline */}
       {showDescription && layer.description && (
-        <div className="mt-1.5 p-2 rounded bg-slate-950/60 border border-slate-800 text-[10px] text-slate-400 leading-relaxed animate-fade-in">
+        <div className="mt-1.5 p-2 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-500 leading-relaxed animate-fade-in">
           {layer.description}
         </div>
       )}
@@ -156,7 +156,7 @@ export function LayerPanel({
       {!isPanelOpen && (
         <button
           onClick={() => setIsPanelOpen(true)}
-          className="absolute top-4 left-4 bg-slate-900 hover:bg-slate-800 border border-slate-700/60 text-slate-200 p-2.5 rounded-lg shadow-2xl hover:text-white transition-all z-[1002] flex items-center justify-center"
+          className="absolute top-4 left-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 p-2.5 rounded-lg shadow-xl hover:text-slate-900 transition-all z-[1002] flex items-center justify-center"
           title="Expandir painel de camadas"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,18 +167,18 @@ export function LayerPanel({
 
       {/* Painel Principal */}
       <div
-        className={`bg-slate-900 border-r border-slate-800 flex flex-col h-full overflow-hidden transition-all duration-300 shadow-2xl relative z-[1001] ${
+        className={`bg-white border-r border-slate-200 flex flex-col h-full overflow-hidden transition-all duration-300 shadow-xl relative z-[1001] ${
           isPanelOpen ? 'w-[300px]' : 'w-0 border-r-0'
         }`}
       >
         {/* Cabeçalho */}
-        <div className="p-4 border-b border-slate-800 bg-slate-950 flex flex-col gap-2">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
-              <h1 className="text-sm font-bold text-slate-100">
+              <h1 className="text-sm font-bold text-slate-800">
                 Paranapiacaba WebGIS
               </h1>
             </div>
@@ -186,7 +186,7 @@ export function LayerPanel({
             {/* Botão de recolher */}
             <button
               onClick={() => setIsPanelOpen(false)}
-              className="text-slate-500 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+              className="text-slate-400 hover:text-slate-800 p-1 rounded hover:bg-slate-100 transition-colors"
               title="Recolher painel"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,13 +195,13 @@ export function LayerPanel({
             </button>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] font-semibold">
-            <span className="bg-emerald-950 text-emerald-300 border border-emerald-900/50 px-2 py-0.5 rounded-full">
-              {activeCount} active layers
+          <div className="flex items-center justify-between text-[10px] font-bold">
+            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+              {activeCount} camadas ativas
             </span>
             <button 
               onClick={onOpenAbout}
-              className="text-slate-400 hover:text-white hover:underline uppercase tracking-wider"
+              className="text-slate-450 hover:text-slate-800 hover:underline uppercase tracking-wider"
             >
               Sobre
             </button>
@@ -209,18 +209,18 @@ export function LayerPanel({
         </div>
 
         {/* Barra de Busca */}
-        <div className="p-3 bg-slate-950/40 border-b border-slate-800/60 flex items-center gap-2 relative">
+        <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 relative">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Buscar camada..."
-            className="w-full bg-slate-800 border border-slate-700 text-slate-200 placeholder-slate-500 text-xs px-3 py-1.5 rounded focus:outline-none focus:border-emerald-600 transition-colors pr-8"
+            className="w-full bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-3 py-1.5 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors pr-8"
           />
           {isSearching ? (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-6 text-slate-500 hover:text-slate-350 p-1"
+              className="absolute right-6 text-slate-400 hover:text-slate-700 p-1"
               title="Limpar busca"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,7 +228,7 @@ export function LayerPanel({
               </svg>
             </button>
           ) : (
-            <svg className="absolute right-6 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute right-6 w-3.5 h-3.5 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           )}
@@ -238,8 +238,8 @@ export function LayerPanel({
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
           {isSearching ? (
             /* Resultados de Busca (Flat list) */
-            <div className="border border-slate-800/80 rounded-lg overflow-hidden bg-slate-950/20 p-2 space-y-1">
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 pb-1 border-b border-slate-800">
+            <div className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50/20 p-2 space-y-1">
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 pb-1 border-b border-slate-200">
                 Resultados ({filteredLayers.length})
               </div>
               {filteredLayers.length === 0 ? (
@@ -272,33 +272,33 @@ export function LayerPanel({
               return (
                 <div 
                   key={group} 
-                  className="border border-slate-800/80 rounded-lg overflow-hidden bg-slate-950/20"
+                  className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50/20"
                 >
                   {/* Header do Grupo */}
-                  <div className="group/header w-full flex flex-col px-3 py-2 bg-slate-950/50 hover:bg-slate-950/80 transition-colors">
+                  <div className="group/header w-full flex flex-col px-3 py-2 bg-slate-100/50 hover:bg-slate-100/80 transition-colors">
                     <div className="flex items-center justify-between">
                       <button
                         onClick={() => toggleGroup(group)}
                         className="flex items-center gap-1.5 text-left flex-1 min-w-0"
                       >
                         <svg
-                          className={`w-3.5 h-3.5 text-slate-500 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                          className={`w-3.5 h-3.5 text-slate-400 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                        <span className="text-[11px] font-bold text-slate-300 tracking-wider uppercase truncate">
+                        <span className="text-[11px] font-bold text-slate-600 tracking-wider uppercase truncate">
                           {group}
                         </span>
                       </button>
 
                       {/* Botões de Ação Rápida (Ativar / Desativar tudo) - Visíveis apenas no hover */}
-                      <div className="hidden group-hover/header:flex items-center space-x-2 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                      <div className="hidden group-hover/header:flex items-center space-x-2 text-[9px] font-bold uppercase tracking-wider text-slate-400">
                         <button
                           onClick={() => onToggleAllInGroup(group, true)}
-                          className="hover:text-emerald-500 transition-colors"
+                          className="hover:text-emerald-600 transition-colors"
                           title="Ativar todas as camadas do grupo"
                         >
                           Ativar
@@ -306,7 +306,7 @@ export function LayerPanel({
                         <span>|</span>
                         <button
                           onClick={() => onToggleAllInGroup(group, false)}
-                          className="hover:text-rose-500 transition-colors"
+                          className="hover:text-rose-600 transition-colors"
                           title="Desativar todas as camadas do grupo"
                         >
                           Limpar
@@ -317,10 +317,10 @@ export function LayerPanel({
                     {/* Slider de Opacidade - Visível apenas se houver camadas ativas no grupo */}
                     {hasActiveLayers && (
                       <div 
-                        className="mt-2 flex items-center space-x-2 bg-slate-900/60 p-1.5 rounded border border-slate-800/40 animate-fade-in"
+                        className="mt-2 flex items-center space-x-2 bg-white p-1.5 rounded border border-slate-200 animate-fade-in"
                         onClick={(e) => e.stopPropagation()} // Impede que o clique no controle recolha o accordion
                       >
-                        <span className="text-[9px] uppercase tracking-wide text-slate-500 font-bold">
+                        <span className="text-[9px] uppercase tracking-wide text-slate-400 font-bold">
                           Opacidade:
                         </span>
                         <input
@@ -329,9 +329,9 @@ export function LayerPanel({
                           max="100"
                           value={opacity}
                           onChange={(e) => onGroupOpacityChange(group, parseInt(e.target.value))}
-                          className="flex-1 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                          className="flex-1 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                         />
-                        <span className="text-[9px] font-semibold text-slate-400 w-6 text-right">
+                        <span className="text-[9px] font-semibold text-slate-500 w-6 text-right">
                           {opacity}%
                         </span>
                       </div>
@@ -340,7 +340,7 @@ export function LayerPanel({
 
                   {/* Camadas do Grupo */}
                   {isExpanded && (
-                    <div className="p-1 space-y-0.5 bg-slate-900/10">
+                    <div className="p-1 space-y-0.5 bg-white/40">
                       {groupLayers.map((layer) => (
                         <LayerItem
                           key={layer.id}
@@ -360,8 +360,8 @@ export function LayerPanel({
         </div>
 
         {/* Rodapé institucional */}
-        <div className="p-3 border-t border-slate-800 bg-slate-950 text-center">
-          <span className="text-[9px] text-slate-600 font-bold tracking-wider uppercase">
+        <div className="p-3 border-t border-slate-200 bg-slate-50 text-center">
+          <span className="text-[9px] text-slate-400 font-bold tracking-wider uppercase">
             FAPESP PUC-CAMPINAS &copy; 2026
           </span>
         </div>

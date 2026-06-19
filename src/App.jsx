@@ -77,7 +77,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-950 relative select-none">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 relative select-none">
       
       {/* Painel Lateral Esquerdo (Camadas e Filtros) */}
       <LayerPanel

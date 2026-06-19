@@ -89,24 +89,24 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
     const regiaoColor = PALETTE[regiaoKey] || PALETTE.trilha_default;
 
     // Estilo de dificuldade
-    let diffColorClass = 'bg-slate-800 text-slate-300';
-    if (dificuldade.toLowerCase().includes('fácil')) diffColorClass = 'bg-emerald-950 text-emerald-300 border border-emerald-800';
-    else if (dificuldade.toLowerCase().includes('moderada') || dificuldade.toLowerCase().includes('médio')) diffColorClass = 'bg-amber-950 text-amber-300 border border-amber-800';
-    else if (dificuldade.toLowerCase().includes('difícil') || dificuldade.toLowerCase().includes('pesada')) diffColorClass = 'bg-rose-950 text-rose-300 border border-rose-800';
+    let diffColorClass = 'bg-slate-100 text-slate-600 border border-slate-200';
+    if (dificuldade.toLowerCase().includes('fácil')) diffColorClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+    else if (dificuldade.toLowerCase().includes('moderada') || dificuldade.toLowerCase().includes('médio')) diffColorClass = 'bg-amber-50 text-amber-700 border border-amber-200';
+    else if (dificuldade.toLowerCase().includes('difícil') || dificuldade.toLowerCase().includes('pesada')) diffColorClass = 'bg-rose-50 text-rose-700 border border-rose-200';
 
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-slate-100 leading-tight">{nome}</h2>
+        <h2 className="text-lg font-bold text-slate-800 leading-tight">{nome}</h2>
         
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
           <span 
-            className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-white"
+            className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-white shadow-sm"
             style={{ backgroundColor: regiaoColor }}
           >
             Região: {regiao}
           </span>
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-200 border border-slate-700">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
             {tipo}
           </span>
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${diffColorClass}`}>
@@ -115,29 +115,29 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
         </div>
 
         {/* Grid Altimétrico/Métricas */}
-        <div className="grid grid-cols-2 gap-3 bg-slate-950/60 p-3 rounded-lg border border-slate-800/80">
+        <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
           <div>
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Extensão</span>
-            <span className="text-sm font-bold text-slate-200">{distancia} km</span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Extensão</span>
+            <span className="text-sm font-bold text-slate-800">{distancia} km</span>
           </div>
           <div>
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Desnível (+)</span>
-            <span className="text-sm font-bold text-slate-200">+{desnivel} m</span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Desnível (+)</span>
+            <span className="text-sm font-bold text-slate-800">+{desnivel} m</span>
           </div>
           <div>
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Nº de Pontos</span>
-            <span className="text-sm font-bold text-slate-200">{waypointsCount}</span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Nº de Pontos</span>
+            <span className="text-sm font-bold text-slate-800">{waypointsCount}</span>
           </div>
           <div>
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Tempo Estimado</span>
-            <span className="text-sm font-bold text-slate-200">{tempoEstimado}</span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Tempo Estimado</span>
+            <span className="text-sm font-bold text-slate-800">{tempoEstimado}</span>
           </div>
         </div>
 
         {/* Alerta de Risco */}
         {isRisk && (
-          <div className="p-3 bg-rose-950/50 border border-rose-900/60 rounded-lg text-rose-300 text-xs flex gap-2">
-            <svg className="w-5 h-5 text-rose-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex gap-2 shadow-sm">
+            <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
@@ -190,37 +190,37 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-inner border border-slate-700/50"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-md border border-white/80"
             style={{ backgroundColor: atrativoColor }}
           >
             {emoji}
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-100 leading-tight">{nome}</h2>
+            <h2 className="text-base font-bold text-slate-800 leading-tight">{nome}</h2>
             <span className="text-xs text-slate-400 capitalize">{tipo}</span>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
             Região: {regiao}
           </span>
         </div>
 
         {descricao && (
-          <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/40 p-3 rounded border border-slate-800/80">
+          <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded border border-slate-200">
             {descricao}
           </p>
         )}
 
         {lat && lng && (
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80 space-y-1.5 text-xs text-slate-300">
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Coordenadas</span>
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5 text-xs text-slate-600">
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Coordenadas</span>
             <div className="flex justify-between">
-              <span>Latitude:</span> <span className="font-mono font-semibold">{lat}</span>
+              <span>Latitude:</span> <span className="font-mono font-semibold text-slate-800">{lat}</span>
             </div>
             <div className="flex justify-between">
-              <span>Longitude:</span> <span className="font-mono font-semibold">{lng}</span>
+              <span>Longitude:</span> <span className="font-mono font-semibold text-slate-800">{lng}</span>
             </div>
           </div>
         )}
@@ -230,10 +230,10 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
             href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-2 px-4 rounded border border-slate-700 transition-colors shadow-md"
+            className="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-4 rounded border border-slate-200 transition-colors shadow-sm"
           >
             Como Chegar (Google Maps)
-            <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -258,11 +258,11 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
 
     return (
       <div className="space-y-4">
-        <h2 className="text-base font-bold text-slate-100 leading-tight">{nome}</h2>
+        <h2 className="text-base font-bold text-slate-800 leading-tight">{nome}</h2>
         
         <div className="flex flex-wrap gap-2">
           <span 
-            className="px-2.5 py-0.5 rounded-full text-[11px] font-bold text-slate-950"
+            className="px-2.5 py-0.5 rounded-full text-[11px] font-bold text-slate-900 shadow-sm"
             style={{ backgroundColor: badgeColor }}
           >
             Tombamento: {instancia}
@@ -270,24 +270,24 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
         </div>
 
         {endereco && (
-          <div className="text-xs text-slate-300">
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Localização / Endereço</span>
-            <span className="font-semibold">{endereco}</span>
+          <div className="text-xs text-slate-600">
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Localização / Endereço</span>
+            <span className="font-semibold text-slate-800">{endereco}</span>
           </div>
         )}
 
         {(processo || tipologia) && (
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80 space-y-2 text-xs text-slate-300">
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2 text-xs text-slate-600">
             {processo && (
               <div>
-                <span className="text-[10px] uppercase text-slate-500 font-semibold block">Nº Processo</span>
-                <span className="font-semibold font-mono">{processo}</span>
+                <span className="text-[10px] uppercase text-slate-400 font-bold block">Nº Processo</span>
+                <span className="font-semibold font-mono text-slate-800">{processo}</span>
               </div>
             )}
             {tipologia && (
               <div>
-                <span className="text-[10px] uppercase text-slate-500 font-semibold block">Tipologia Construtiva</span>
-                <span className="font-semibold text-emerald-400">{tipologia}</span>
+                <span className="text-[10px] uppercase text-slate-400 font-bold block">Tipologia Construtiva</span>
+                <span className="font-semibold text-emerald-600">{tipologia}</span>
               </div>
             )}
           </div>
@@ -307,20 +307,20 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
 
     return (
       <div className="space-y-4">
-        <h2 className="text-base font-bold text-slate-100 leading-tight">
+        <h2 className="text-base font-bold text-slate-800 leading-tight">
           {properties.nome || properties.name || layer.label || 'Feição do Mapa'}
         </h2>
 
         {filteredProps.length > 0 ? (
-          <div className="max-h-[300px] overflow-y-auto custom-scrollbar border border-slate-800 rounded bg-slate-950/40">
+          <div className="max-h-[300px] overflow-y-auto custom-scrollbar border border-slate-200 rounded bg-slate-50">
             <table className="w-full text-left border-collapse text-xs">
               <tbody>
                 {filteredProps.map(([key, val], idx) => (
-                  <tr key={key} className={idx % 2 === 0 ? 'bg-slate-900/50' : 'bg-slate-900/10'}>
-                    <td className="p-2 font-medium text-slate-400 border-b border-slate-800/60 w-1/3">
+                  <tr key={key} className={idx % 2 === 0 ? 'bg-slate-100/50' : 'bg-white'}>
+                    <td className="p-2 font-medium text-slate-500 border-b border-slate-200/60 w-1/3 text-[10px] uppercase tracking-wider">
                       {formatKey(key)}
                     </td>
-                    <td className="p-2 font-semibold text-slate-200 border-b border-slate-800/60 break-all">
+                    <td className="p-2 font-semibold text-slate-700 border-b border-slate-200/60 break-all">
                       {String(val)}
                     </td>
                   </tr>
@@ -329,14 +329,14 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
             </table>
           </div>
         ) : (
-          <p className="text-xs text-slate-500 italic">Nenhum atributo disponível.</p>
+          <p className="text-xs text-slate-400 italic">Nenhum atributo disponível.</p>
         )}
 
         {lat && lng && (
-          <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80 text-xs text-slate-400 space-y-1">
-            <span className="text-[10px] uppercase text-slate-500 font-semibold block">Coordenadas de Centroide</span>
-            <div>Lat: <span className="font-mono font-semibold text-slate-300">{lat}</span></div>
-            <div>Lng: <span className="font-mono font-semibold text-slate-300">{lng}</span></div>
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs text-slate-500 space-y-1">
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Coordenadas de Centroide</span>
+            <div>Lat: <span className="font-mono font-semibold text-slate-700">{lat}</span></div>
+            <div>Lng: <span className="font-mono font-semibold text-slate-700">{lng}</span></div>
           </div>
         )}
       </div>
@@ -357,16 +357,16 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
   };
 
   return (
-    <div className="absolute top-0 right-0 h-full w-[320px] bg-slate-900/95 backdrop-blur border-l border-slate-800 shadow-2xl flex flex-col z-[1010] transform transition-transform duration-300 animate-slide-in">
+    <div className="absolute top-0 right-0 h-full w-[320px] bg-white/95 backdrop-blur border-l border-slate-200 shadow-2xl flex flex-col z-[1010] transform transition-transform duration-300 animate-slide-in">
       {/* Header do Painel */}
-      <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Pill de origem */}
           <span 
-            className="w-3 h-3 rounded-full border border-slate-900/40"
+            className="w-3 h-3 rounded-full border border-slate-900/10"
             style={{ backgroundColor: layer.color || '#fff' }}
           />
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {layer.label || 'Detalhes'}
           </span>
         </div>
@@ -374,7 +374,7 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
         {/* Botão de Fechar */}
         <button 
           onClick={onClose}
-          className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800 transition-colors"
+          className="text-slate-400 hover:text-slate-800 p-1 rounded-md hover:bg-slate-100 transition-colors"
           title="Fechar painel"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,8 +389,8 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
       </div>
 
       {/* Rodapé institucional */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950 text-center">
-        <span className="text-[9px] text-slate-600 font-bold uppercase tracking-wider">
+      <div className="p-3 border-t border-slate-200 bg-slate-50 text-center">
+        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
           WebGIS Paranapiacaba
         </span>
       </div>
