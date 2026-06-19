@@ -7,7 +7,8 @@ import { PALETTE } from '../config/styleGuide';
 import { simplifyGeoJSON } from '../utils/simplify';
 import { MapToolbar } from './MapToolbar';
 
-// Importa estilos de clusterização do leaflet.markercluster
+// Importa biblioteca e estilos de clusterização do leaflet.markercluster
+import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { BASEMAPS } from './BasemapSelector';
