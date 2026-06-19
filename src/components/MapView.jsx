@@ -10,6 +10,7 @@ import { MapToolbar } from './MapToolbar';
 // Importa estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { BASEMAPS } from './BasemapSelector';
 
 // Componente auxiliar para sincronização da posição do mapa no URL hash (#zoom/lat/lng)
 function MapHashHandler() {
