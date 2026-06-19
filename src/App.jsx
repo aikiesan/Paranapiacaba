@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { LAYERS } from './config/layers';
+import { LAYERS, GROUPS } from './config/layers';
 import { LayerPanel } from './components/LayerPanel';
 import { MapView } from './components/MapView';
 import { BasemapSelector } from './components/BasemapSelector';
 import { Legend } from './components/Legend';
+import { FeatureDetailPanel } from './components/FeatureDetailPanel';
+import { AboutPanel } from './components/AboutPanel';
 
 export default function App() {
   // Estado das camadas ativas, inicializado com as que têm visible: true
@@ -14,8 +16,19 @@ export default function App() {
   // Estado do basemap selecionado (default 'osm')
   const [selectedBasemap, setSelectedBasemap] = useState('osm');
 
-  // Estado do nível de zoom atual (inicializado próximo ao zoom de centro 13)
+  // Estado do nível de zoom atual (inicializado no zoom padrão 13)
   const [currentZoom, setCurrentZoom] = useState(13);
+
+  // Estado das opacidades por grupo de camadas (0 a 100)
+  const [groupOpacities, setGroupOpacities] = useState(() => {
+    return GROUPS.reduce((acc, group) => ({ ...acc, [group]: 100 }), {});
+  });
+
+  // Estado da feição atualmente selecionada para exibição no painel lateral direito
+  const [activeFeature, setActiveFeature] = useState(null);
+
+  // Estado de controle de exibição do painel "Sobre"
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   // Manipulador para alternar a visibilidade de uma camada
   const handleToggleLayer = (layerId) => {
@@ -23,6 +36,10 @@ export default function App() {
       const nextActive = new Set(prevActive);
       if (nextActive.has(layerId)) {
         nextActive.delete(layerId);
+        // Se a feição selecionada for dessa camada que foi desligada, fecha o painel
+        if (activeFeature && activeFeature.layerId === layerId) {
+          setActiveFeature(null);
+        }
       } else {
         nextActive.add(layerId);
       }
@@ -30,31 +47,84 @@ export default function App() {
     });
   };
 
+  // Manipulador para alterar opacidade de um grupo inteiro
+  const handleGroupOpacityChange = (group, opacity) => {
+    setGroupOpacities(prev => ({
+      ...prev,
+      [group]: opacity
+    }));
+  };
+
+  // Ativar ou desativar todas as camadas de um grupo específico
+  const handleToggleAllInGroup = (group, enable) => {
+    setActiveLayers(prevActive => {
+      const nextActive = new Set(prevActive);
+      const groupLayers = LAYERS.filter(layer => layer.group === group);
+      
+      groupLayers.forEach(layer => {
+        if (enable) {
+          nextActive.add(layer.id);
+        } else {
+          nextActive.delete(layer.id);
+          // Fecha o painel de detalhes se a feição selecionada pertencer a essa camada sendo desligada
+          if (activeFeature && activeFeature.layerId === layer.id) {
+            setActiveFeature(null);
+          }
+        }
+      });
+      return nextActive;
+    });
+  };
+
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-950">
-      {/* Painel Lateral Esquerdo */}
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-950 relative select-none">
+      
+      {/* Painel Lateral Esquerdo (Camadas e Filtros) */}
       <LayerPanel
         activeLayers={activeLayers}
         onToggle={handleToggleLayer}
         currentZoom={currentZoom}
+        groupOpacities={groupOpacities}
+        onGroupOpacityChange={handleGroupOpacityChange}
+        onToggleAllInGroup={handleToggleAllInGroup}
+        onOpenAbout={() => setIsAboutOpen(true)}
       />
 
-      {/* Área do Mapa (ocupa todo o restante) */}
-      <MapView
-        activeLayers={activeLayers}
-        selectedBasemap={selectedBasemap}
-        currentZoom={currentZoom}
-        onZoomChange={setCurrentZoom}
-      >
-        {/* Controles de Basemap (canto inferior direito) */}
-        <BasemapSelector
+      {/* Área Principal (Mapa) */}
+      <div className="relative flex-1 h-full">
+        <MapView
+          activeLayers={activeLayers}
           selectedBasemap={selectedBasemap}
-          onChange={setSelectedBasemap}
-        />
+          currentZoom={currentZoom}
+          onZoomChange={setCurrentZoom}
+          groupOpacities={groupOpacities}
+          onFeatureClick={setActiveFeature}
+          onMapClick={() => setActiveFeature(null)} // Fecha o painel ao clicar em área vazia do mapa
+        >
+          {/* Pills de seleção do basemap (canto inferior direito) */}
+          <BasemapSelector
+            selectedBasemap={selectedBasemap}
+            onChange={setSelectedBasemap}
+          />
 
-        {/* Legenda Dinâmica (canto inferior esquerdo) */}
-        <Legend activeLayers={activeLayers} />
-      </MapView>
+          {/* Legenda Dinâmica baseada em camadas ativas (canto inferior esquerdo) */}
+          <Legend activeLayers={activeLayers} />
+        </MapView>
+
+        {/* Painel Lateral Direito (Detalhes da Feição Selecionada) */}
+        {activeFeature && (
+          <FeatureDetailPanel
+            activeFeature={activeFeature}
+            onClose={() => setActiveFeature(null)}
+          />
+        )}
+      </div>
+
+      {/* Modal Sobre o Projeto */}
+      <AboutPanel
+        isOpen={isAboutOpen}
+        onClose={() => setIsAboutOpen(false)}
+      />
     </div>
   );
 }
