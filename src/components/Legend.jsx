@@ -8,16 +8,16 @@ export function Legend({ activeLayers }) {
   const activeList = LAYERS.filter((layer) => activeLayers.has(layer.id));
 
   return (
-    <div className="absolute bottom-4 left-4 z-[1000] max-w-[240px] bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-xl overflow-hidden transition-all duration-300">
+    <div className="absolute bottom-4 left-4 z-[1000] w-[220px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
       {/* Cabeçalho com toggle */}
       <div 
-        className="flex items-center justify-between px-3 py-2 bg-slate-800/80 cursor-pointer border-b border-slate-700/30 select-none"
+        className="flex items-center justify-between px-3 py-2 bg-slate-50 cursor-pointer border-b border-slate-200 select-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-xs font-bold text-slate-200 tracking-wide uppercase">
+        <span className="text-[10px] font-bold text-slate-700 tracking-wider uppercase">
           Legenda
         </span>
-        <button className="text-slate-400 hover:text-slate-200 focus:outline-none transition-transform duration-200">
+        <button className="text-slate-400 hover:text-slate-750 focus:outline-none transition-transform duration-200">
           <svg
             className={`w-4 h-4 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
@@ -33,8 +33,8 @@ export function Legend({ activeLayers }) {
       {isOpen && (
         <div className="p-3 space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar">
           {activeList.length === 0 ? (
-            <div className="text-xs italic text-slate-500 py-1">
-              Nenhuma camada visível
+            <div className="text-xs italic text-slate-400 py-1 text-center">
+              Nenhuma camada ativa
             </div>
           ) : (
             <div className="space-y-2">
@@ -43,27 +43,27 @@ export function Legend({ activeLayers }) {
                   {/* Símbolo de acordo com o tipo */}
                   {layer.type === 'point' && (
                     <div 
-                      className="w-3.5 h-3.5 rounded-full flex-shrink-0 border border-slate-900/40"
+                      className="w-3 h-3 rounded-full flex-shrink-0 border border-slate-900/10 shadow-sm"
                       style={{ backgroundColor: layer.color }}
                     />
                   )}
                   {layer.type === 'line' && (
                     <div 
-                      className="w-5 h-1.5 rounded-sm flex-shrink-0"
+                      className="w-4.5 h-1.5 rounded-sm flex-shrink-0 shadow-sm"
                       style={{ backgroundColor: layer.color }}
                     />
                   )}
                   {layer.type === 'polygon' && (
                     <div 
-                      className="w-4 h-4 rounded border flex-shrink-0"
+                      className="w-3.5 h-3.5 rounded border flex-shrink-0 shadow-sm"
                       style={{ 
                         borderColor: layer.color, 
-                        backgroundColor: `${layer.color}25`, // Opacidade de 15% em hex
+                        backgroundColor: `${layer.color}18`, // Opacidade de ~10% em hex
                         borderWidth: layer.weight > 0 ? '1.5px' : '0px'
                       }}
                     />
                   )}
-                  <span className="text-xs text-slate-300 font-medium truncate" title={layer.label}>
+                  <span className="text-xs text-slate-600 font-semibold truncate" title={layer.label}>
                     {layer.label}
                   </span>
                 </div>

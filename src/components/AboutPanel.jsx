@@ -4,25 +4,25 @@ export function AboutPanel({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fade-in">
       {/* Modal Container */}
       <div 
-        className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-up"
+        className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabeçalho */}
-        <div className="px-5 py-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-100 leading-tight">
+            <h2 className="text-base font-bold text-slate-800 leading-tight">
               Sobre o Projeto
             </h2>
-            <p className="text-[11px] text-emerald-500 font-medium">
+            <p className="text-[11px] text-emerald-600 font-semibold">
               Dossiê Temático GIS
             </p>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800 transition-colors"
+            className="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100 transition-colors"
             title="Fechar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,73 +32,73 @@ export function AboutPanel({ isOpen, onClose }) {
         </div>
 
         {/* Conteúdo */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-5 text-slate-300 text-xs">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-5 text-slate-650 text-xs">
           
           {/* Sessão: O Projeto */}
           <div className="space-y-1.5">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wide border-b border-slate-800 pb-1">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-250 pb-1">
               O Projeto
             </h3>
-            <p className="leading-relaxed text-justify text-slate-300">
+            <p className="leading-relaxed text-justify text-slate-600">
               O WebGIS Paranapiacaba consolida o levantamento cartográfico e de campo realizado para subsidiar a salvaguarda e candidatura do Sítio Histórico e Natural à Chancela de Patrimônio Mundial da UNESCO. O distrito, fundado em 1867 pela São Paulo Railway, é um marco único de arquitetura inglesa e engenharia na Serra do Mar paulista.
             </p>
           </div>
 
           {/* Sessão: Indicadores / Dados */}
           <div className="space-y-2">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wide border-b border-slate-800 pb-1">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-250 pb-1">
               Dossier de Dados Integrados
             </h3>
-            <ul className="space-y-1.5 list-disc list-inside text-slate-300">
+            <ul className="space-y-1.5 list-disc list-inside text-slate-600">
               <li>
-                <span className="font-semibold text-slate-200">182 camadas geoespaciais</span> estruturadas sob datum SIRGAS 2000.
+                <span className="font-semibold text-slate-750">182 camadas geoespaciais</span> estruturadas sob datum SIRGAS 2000.
               </li>
               <li>
-                <span className="font-semibold text-slate-200">45 trilhas mapeadas</span> representando aproximadamente ~763 km de caminhamento mapeados via GPS.
+                <span className="font-semibold text-slate-750">45 trilhas mapeadas</span> representando aproximadamente ~763 km de caminhamento mapeados via GPS.
               </li>
               <li>
-                <span className="font-semibold text-slate-200">331 atrativos naturais</span> inventariados e classificados por tipo (cachoeiras, poços, mirantes, ruínas, etc.).
+                <span className="font-semibold text-slate-750">331 atrativos naturais</span> inventariados e classificados por tipo (cachoeiras, poços, mirantes, ruínas, etc.).
               </li>
               <li>
-                <span className="font-semibold text-slate-200">39 pranchas cartográficas</span> de nível profissional prontas em formato A0.
+                <span className="font-semibold text-slate-750">39 pranchas cartográficas</span> de nível profissional prontas em formato A0.
               </li>
               <li>
-                Integração com dados socioeconômicos do <span className="font-semibold text-slate-200">Censo IBGE 2022</span> recortados por setor censitário.
+                Integração com dados socioeconômicos do <span className="font-semibold text-slate-750">Censo IBGE 2022</span> recortados por setor censitário.
               </li>
             </ul>
           </div>
 
           {/* Sessão: Créditos */}
           <div className="space-y-1">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wide border-b border-slate-800 pb-1">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-250 pb-1">
               Parcerias e Financiamento
             </h3>
-            <div className="bg-slate-950/40 p-2.5 rounded border border-slate-850/80 space-y-1 text-slate-400">
-              <div><strong className="text-slate-300">Coordenação:</strong> CP2b/NIPE-Unicamp</div>
-              <div><strong className="text-slate-300">Execução Técnica:</strong> PUC-Campinas</div>
-              <div><strong className="text-slate-300">Fomento:</strong> FAPESP (Fundação de Amparo à Pesquisa do Estado de São Paulo)</div>
+            <div className="bg-slate-50 p-2.5 rounded border border-slate-200 space-y-1 text-slate-500">
+              <div><strong className="text-slate-700">Coordenação:</strong> CP2b/NIPE-Unicamp</div>
+              <div><strong className="text-slate-700">Execução Técnica:</strong> PUC-Campinas</div>
+              <div><strong className="text-slate-700">Fomento:</strong> FAPESP (Fundação de Amparo à Pesquisa do Estado de São Paulo)</div>
             </div>
           </div>
 
           {/* Sessão: Fontes Abertas */}
           <div className="space-y-1.5">
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wide border-b border-slate-800 pb-1">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-250 pb-1">
               Fontes de Informação
             </h3>
-            <p className="text-[11px] leading-relaxed text-slate-400">
+            <p className="text-[11px] leading-relaxed text-slate-500">
               MapBiomas (séries temporais), IBGE (Bases Censitárias), Wikiloc (tracks GPS de trilhas), IPHAN (delimitações do patrimônio), Fundação Santo André.
             </p>
           </div>
         </div>
 
         {/* Rodapé do Modal */}
-        <div className="px-5 py-3 border-t border-slate-800 bg-slate-950 flex justify-between items-center text-[10px] text-slate-500 font-medium">
+        <div className="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-[10px] text-slate-400 font-medium">
           <span>v0.2 · Junho 2026</span>
           <a
             href="https://github.com/aikiesan/Paranapiacaba"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-500 hover:text-emerald-400 font-bold transition-colors"
+            className="text-emerald-600 hover:text-emerald-700 font-bold transition-colors"
           >
             Repositório GitHub &rarr;
           </a>

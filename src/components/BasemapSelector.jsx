@@ -29,17 +29,17 @@ export const BASEMAPS = [
 
 export function BasemapSelector({ selectedBasemap, onChange }) {
   return (
-    <div className="absolute bottom-4 right-4 z-[1000] flex bg-slate-900/90 backdrop-blur-md p-1.5 rounded-full border border-slate-700/50 shadow-lg transition-all duration-300 hover:border-slate-600">
+    <div className="absolute bottom-4 right-4 z-[1000] flex bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
       {BASEMAPS.map((basemap) => {
         const isActive = selectedBasemap === basemap.id;
         return (
           <button
             key={basemap.id}
             onClick={() => onChange(basemap.id)}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all duration-200 ${
+            className={`px-3 py-1 text-xs font-bold rounded-full transition-all duration-200 ${
               isActive
-                ? 'bg-emerald-600 text-white shadow-md'
-                : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                ? 'bg-emerald-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
             }`}
           >
             {basemap.label}
