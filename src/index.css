@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Ajustes finos do Leaflet */
+.leaflet-container {
+  font-family: inherit !important;
+}
+
+/* Garante que os controles do Leaflet fiquem abaixo do painel lateral (z-[1001]) */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 900 !important;
+}
+
+/* Customização dos Popups do Leaflet */
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  padding: 0px !important;
+}
+
+.custom-leaflet-popup .leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: inherit !important;
+}
+
+.custom-leaflet-popup .leaflet-popup-tip {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: none !important;
+}
+
+/* Animação suave para hover */
+.leaflet-interactive {
+  transition: stroke-width 0.15s ease, fill-opacity 0.15s ease;
+}

@@ -1,0 +1,49 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependências e compilação
+node_modules
+dist
+dist-ssr
+*.local
+
+# Diretórios de Editores
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvsca
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# Ignorar pastas de dados geográficos e SIG
+# ==========================================
+/00_DADOS_BRUTOS/
+/01_CAMADAS_BASE/
+/02_PATRIMONIO/
+/03_LEGISLACAO_PLANEJAMENTO/
+/04_SOCIOECONOMICO/
+/05_TURISMO_CIRCUITOS/
+/06_MAPAS_FINAIS/
+/07_ARCGIS_PRO/
+/08_DOCUMENTACAO/
+/09_IBGE/
+/0_GIS_WORKSPACE/
+/4_OUTRAS PAISAGENS TOMBADAS - UNESCO-20260505T140749Z-3-001/
+/BASES_DATAGEO/
+/B_CARTOGRAFIA E MAPAS HISTORICOS/
+/MAPAS AFETIVOS/
+/analise_ambiental_paranapiacaba/
+
+# Documentos da raiz
+/*.docx
+/*.xlsx
