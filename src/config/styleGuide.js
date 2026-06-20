@@ -52,6 +52,22 @@ export const PALETTE = {
   // Mobilidade urbana (linhas de ônibus por tipo)
   bus_municipal:      '#0D9488',
   bus_intermunicipal: '#7C3AED',
+
+  // Vegetação — estágios de sucessão da Mata Atlântica
+  veg_nao_macico:     '#C2C5AA',
+  veg_pioneiro:       '#A7C957',
+  veg_inicial:        '#74C69D',
+  veg_medio:          '#40916C',
+  veg_avancado:       '#1B4332',
+  veg_default:        '#52B788',
+
+  // Riscos (Defesa Civil / IPT) por grau
+  risco_r1:           '#FCD34D',
+  risco_r2:           '#FB923C',
+  risco_r3:           '#EF4444',
+  risco_r4:           '#991B1B',
+  risco_sm:           '#64748B',
+  risco_default:      '#EF4444',
 };
 
 // Ícone + cor de destaque por grupo de camadas — dá identidade visual a cada
@@ -67,7 +83,32 @@ export const GROUP_META = {
   'Legislação e Planejamento':     { icon: '📐', accent: '#7C3AED' },
   'Socioeconomia':                 { icon: '📊', accent: '#9B5DE5' },
   'Equipamentos Urbanos':          { icon: '🏥', accent: '#EF4444' },
+  'Riscos (Defesa Civil)':         { icon: '⚠️', accent: '#DC2626' },
 };
+
+const _norm = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// Cor por estágio de sucessão da vegetação (classif_vegetal).
+export function vegColor(classe) {
+  const c = _norm(classe);
+  if (c.includes('avancado')) return PALETTE.veg_avancado;
+  if (c.includes('medio')) return PALETTE.veg_medio;
+  if (c.includes('inicial')) return PALETTE.veg_inicial;
+  if (c.includes('pionei')) return PALETTE.veg_pioneiro;
+  if (c.includes('maci')) return PALETTE.veg_nao_macico;
+  return PALETTE.veg_default;
+}
+
+// Cor por grau de risco (R1–R4 / SM) das camadas de Defesa Civil.
+export function riskColor(grau) {
+  const g = (grau || '').toUpperCase();
+  if (g.includes('R4')) return PALETTE.risco_r4;
+  if (g.includes('R3')) return PALETTE.risco_r3;
+  if (g.includes('R2')) return PALETTE.risco_r2;
+  if (g.includes('R1')) return PALETTE.risco_r1;
+  if (g.includes('SM')) return PALETTE.risco_sm;
+  return PALETTE.risco_default;
+}
 
 export function groupMeta(group) {
   return GROUP_META[group] || { icon: '📁', accent: '#64748B' };

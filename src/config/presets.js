@@ -11,7 +11,7 @@ export const PRESETS = [
     description: 'Visão de síntese para o dossiê: sítio, vila, ferrovia, tombamentos, UCs e atrativos.',
     layers: [
       'limite_sitio', 'limite_vila', 'ferrovia_corredor', 'estacoes',
-      'patrimonio_tombados', 'edificacoes_vila', 'ucs', 'atrativos',
+      'patrimonio_tombados', 'areas_envoltorias', 'edificacoes_vila', 'ucs', 'atrativos',
     ],
   },
   {
@@ -21,8 +21,8 @@ export const PRESETS = [
     basemap: 'satellite',
     description: 'Camadas de patrimônio material e morfologia da vila.',
     layers: [
-      'limite_vila', 'patrimonio_tombados', 'bens_registrados', 'bens_estudo',
-      'edificacoes_vila', 'edificacoes_cad', 'patrimonio_ferroviario', 'abpf',
+      'limite_vila', 'patrimonio_tombados', 'areas_envoltorias', 'bens_registrados',
+      'bens_estudo', 'edificacoes_vila', 'edificacoes_cad', 'patrimonio_ferroviario', 'abpf',
     ],
   },
   {
@@ -32,8 +32,19 @@ export const PRESETS = [
     basemap: 'terrain',
     description: 'Unidades de conservação, bacias, hidrografia e relevo.',
     layers: [
-      'ucs', 'subbacias', 'regioes_hidrograficas', 'hidrografia',
-      'nascentes', 'app_buffers', 'curvas_nivel',
+      'ucs', 'pnm_nascentes', 'classif_vegetal', 'app_sul', 'subbacias',
+      'regioes_hidrograficas', 'hidrografia', 'nascentes', 'app_buffers',
+    ],
+  },
+  {
+    id: 'riscos',
+    label: 'Riscos & Serra',
+    icon: '⚠️',
+    basemap: 'terrain',
+    description: 'Ameaças à conservação: deslizamentos, incêndio e relevo da escarpa.',
+    layers: [
+      'limite_vila', 'ferrovia_corredor', 'susc_movmas', 'risco_movmas',
+      'risco_incendio', 'classif_vegetal', 'altimetria_serra',
     ],
   },
   {

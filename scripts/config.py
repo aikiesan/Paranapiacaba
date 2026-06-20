@@ -16,6 +16,11 @@ SOURCE_ROOT = os.path.join(
     EXTERNAL, "01_CAMADAS_BASE-20260619T230527Z-3-001", "01_CAMADAS_BASE"
 )
 
+# Lote extra de shapefiles SIGA (Santo André) — camadas ambientais, de risco e
+# socioeconômicas adicionais (EPSG:31983). Fora do versionamento; jobs apontam
+# para cá via "root": SIGA_MAPA.
+SIGA_MAPA = os.path.join(REPO, "OTHER_SHAPEFILES_SIGA_MAPA")
+
 
 def src(*parts):
     return os.path.join(SOURCE_ROOT, *parts)
@@ -369,5 +374,90 @@ JOBS = [
         "family": "categoria", "family_prefix": "SIGA_MUR_BUS_",
         "keep": {"LINHA": "nome", "NOME": "nome", "NUMERO": "numero",
                  "SENTIDO": "sentido"},
+    },
+
+    # ===== Lote SIGA_MAPA (Santo André) — ambiental, risco, socioeconômico =====
+    # Todos EPSG:31983 (to_wgs84 reprojeta), sem nudge. root=SIGA_MAPA.
+
+    # ---- Meio Ambiente (serra/Paranapiacaba) ---------------------------------
+    {
+        # Classificação da vegetação (estágios de sucessão da Mata Atlântica).
+        "out": "classif_vegetal.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 2e-5,
+        "src": ["SIGA_AMB_CLASSIF_VEGETAL/*.shp"],
+        "keep": {"CLASSIFICA": "classe", "AREA_M2": "area_m2"}, "mapshaper": "20%",
+    },
+    {
+        "out": "app_sul.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 2e-5,
+        "src": ["SIGA_AMB_APP_LICENC_SUL/*.shp"],
+        "extra": {"tipo": "APP (licenciamento Sul)"},
+    },
+    {
+        "out": "rios_sul.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 1e-5,
+        "src": ["SIGA_AMB_RIOS_LICENC_SUL/*.shp"],
+        "extra": {"tipo": "Curso d'água (Sul)"}, "dissolve": True,
+    },
+    {
+        "out": "billings_747.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 5e-5,
+        "src": ["SIGA_LIM_BILLINGS_COTA_747/*.shp"],
+        "extra": {"nome": "Represa Billings (cota 747)"},
+    },
+    {
+        # Parque Natural Municipal Nascentes de Paranapiacaba (UC específica).
+        "out": "pnm_nascentes.geojson", "root": SIGA_MAPA, "aoi": None, "simplify": 1e-5,
+        "src": ["SIGA_AMB_UC_MUN_NASC_PARANAP/*.shp"],
+        "keep": {"NOM_UNIDAD": "nome", "AREA_HA": "area_ha",
+                 "DSC_LEGISL": "legislacao", "TPO_UNIDAD": "tipo"},
+    },
+    {
+        # Altimetria da escarpa — curvas-mestras a cada 50 m (com altitude),
+        # filtradas da base de 5 m para manter o arquivo leve.
+        "out": "altimetria_serra.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 3e-5,
+        "src": ["SIGA_AMB_ALTIMETRIA_SUL_5M/*.shp"],
+        "keep": {"NUM_ALTITU": "altitude_m"},
+        "filter": ("NUM_ALTITU", [f"{v}.0" for v in range(500, 1151, 50)]),
+    },
+
+    # ---- Patrimônio (áreas envoltórias / zonas de entorno) -------------------
+    {
+        "out": "areas_envoltorias.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 1e-5,
+        "src": ["SIGA_CUL_AREAS_ENVOLTORIAS/*.shp"],
+        "keep": {"DSC_DENOMI": "nome", "NUM_PROCES": "processo", "NOM_ORGAO": "orgao"},
+    },
+
+    # ---- Riscos (Defesa Civil / IPT) -----------------------------------------
+    {
+        "out": "risco_movmas.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 1e-5,
+        "src": ["SIGA_DCI_RISCO_MOVMAS_IPT2014/*.shp"],
+        "keep": {"GRAU_RISCO": "grau", "NUM_SETOR": "setor", "DSC_PROCES": "processo"},
+    },
+    {
+        "out": "susc_movmas.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 1e-5,
+        "src": ["SIGA_DCI_SUSC_MOVMAS_IPT2025/*.shp"],
+        "keep": {"DSC_GRAU_R": "grau", "DSC_AREA": "area", "DSC_PROCES": "processo"},
+    },
+    {
+        "out": "risco_incendio.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 1e-5,
+        "src": ["SIGA_DCI_RISCO_INCENDIO/*.shp"], "keep": {"CLASSE": "grau"},
+    },
+
+    # ---- Território (distritos) -----------------------------------------------
+    {
+        "out": "distritos.geojson", "root": SIGA_MAPA, "aoi": None, "simplify": 3e-5,
+        "src": ["SIGA_LIM_DISTRITO_SUBDISTRITO/*.shp"],
+        "keep": {"NOM_DISTRI": "nome", "DSC_SUBDIS": "subdistrito"}, "mapshaper": "15%",
+    },
+
+    # ---- Socioeconomia (Censo 2022) ------------------------------------------
+    {
+        "out": "densidade_2022.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 3e-5,
+        "src": ["SIGA_PLA_POP_DENSIDADE_2022/*.shp"],
+        "keep": {"NOME": "nome", "DENSIDADE": "densidade", "CODIGO_BAI": "cod_bairro"},
+        "mapshaper": "20%",
+    },
+    {
+        "out": "populacao_2022.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 3e-5,
+        "src": ["SIGA_PLA_POPULACAO_CENSO_2022/*.shp"],
+        "keep": {"NOME": "nome", "POPULACAO": "populacao", "CODIGO_BAI": "cod_bairro"},
+        "mapshaper": "20%",
     },
 ]
