@@ -16,7 +16,7 @@ import warnings
 import geopandas as gpd
 import numpy as np
 from shapely import make_valid
-from shapely.geometry import LineString, mapping
+from shapely.geometry import LineString, Point, mapping
 
 warnings.filterwarnings("ignore")
 
@@ -182,6 +182,69 @@ def read_kml_tracks(kml_dir, simplify_tol=1e-5):
     if simplify_tol:
         gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=False)
     return gdf
+
+
+# Keyword -> attraction type (matches the app's icon/palette keys, no accents).
+_ATRATIVO_KW = [
+    ("cachoeira", "cachoeira"), ("cascata", "cachoeira"), ("salto", "cachoeira"),
+    ("poco", "poco"), ("poca", "poco"),
+    ("mirante", "mirante"), ("vista", "mirante"),
+    ("pedra", "pedra"), ("nascente", "nascente"),
+    ("ruina", "ruina"), ("gruta", "gruta"), ("caverna", "gruta"),
+]
+
+
+def _read_kml_text(path):
+    data = open(path, "rb").read()
+    for enc in ("utf-8", "cp1252", "latin-1"):
+        try:
+            return data.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return None
+
+
+def read_kml_waypoints(kml_dir, snap=0.0003):
+    """Extract natural-attraction waypoints (Points) from the Wikiloc KMLs.
+
+    Keeps only recognized attraction types (cachoeira/poço/mirante/pedra/
+    nascente/ruína/gruta — the categories the app already styles), drops
+    navigation points, and de-duplicates near-identical points (~33 m grid)
+    that repeat across overlapping trails.
+    """
+    seen = {}
+    for f in sorted(glob.glob(os.path.join(kml_dir, "*.kml"))):
+        raw = _read_kml_text(f)
+        if not raw:
+            continue
+        for pm in re.findall(r"<Placemark>(.*?)</Placemark>", raw, re.S):
+            if "<Point>" not in pm:
+                continue
+            cm = re.search(r"<Point>.*?<coordinates>(.*?)</coordinates>", pm, re.S)
+            nm = re.search(r"<name>(.*?)</name>", pm, re.S)
+            if not cm or not nm:
+                continue
+            c = cm.group(1).strip().split(",")
+            if len(c) < 2:
+                continue
+            try:
+                lon, lat = float(c[0]), float(c[1])
+            except ValueError:
+                continue
+            nome = re.sub(r"\s+", " ", nm.group(1)).strip()
+            t = _strip_accents(nome)
+            tipo = next((tp for kw, tp in _ATRATIVO_KW if kw in t), None)
+            if tipo is None:
+                continue
+            key = (tipo, round(lon / snap), round(lat / snap))
+            if key in seen:
+                if len(nome) > len(seen[key]["nome"]):
+                    seen[key]["nome"] = nome
+                continue
+            seen[key] = {"nome": nome, "tipo": tipo,
+                         "regiao": _classify_trail(nome, f),
+                         "geometry": Point(lon, lat)}
+    return gpd.GeoDataFrame(list(seen.values()), crs="EPSG:4326")
 
 
 def _round(obj, p):

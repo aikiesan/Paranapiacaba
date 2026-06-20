@@ -160,6 +160,11 @@ JOBS = [
         "kml_dir": TRILHAS_KML_DIR,
     },
     {
+        # Atrativos naturais extraídos dos waypoints dos KML (cachoeiras, poços…).
+        "out": "atrativos.geojson", "aoi": None, "simplify": 0,
+        "kml_dir": TRILHAS_KML_DIR, "kml_mode": "waypoints",
+    },
+    {
         "out": "circuitos.geojson", "aoi": "vila", "simplify": 0,
         "src": ["07_TURISMO_CIRCUITOS/SIGA_TUR_*.shp"],
         "family": "categoria", "family_prefix": "SIGA_TUR_",

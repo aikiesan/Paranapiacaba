@@ -134,9 +134,12 @@ def corridor_rail_buffer(deg):
 
 
 def build_job(job):
-    # Special case: trilhas built from Wikiloc KML tracks.
+    # Special case: layers built from Wikiloc KML (tracks or attraction waypoints).
     if job.get("kml_dir"):
-        merged = lib.read_kml_tracks(job["kml_dir"], job.get("simplify", 1e-5))
+        if job.get("kml_mode") == "waypoints":
+            merged = lib.read_kml_waypoints(job["kml_dir"])
+        else:
+            merged = lib.read_kml_tracks(job["kml_dir"], job.get("simplify", 1e-5))
         if merged.empty:
             return None, 0, 0
         mask = get_mask(job["aoi"]) if job.get("aoi") else None

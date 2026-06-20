@@ -406,8 +406,8 @@ export const LAYERS = [
     visible: false,
     cluster: true,
     popupFields: [],
-    description: "Atrativos naturais (cachoeiras, poços, mirantes, etc.) — em breve, a partir dos inventários Wikiloc.",
-    available: false
+    description: "243 atrativos naturais extraídos dos waypoints GPS Wikiloc: 115 cachoeiras, 50 poços, 30 pedras, 30 mirantes, 7 ruínas, 6 nascentes e 5 grutas.",
+    available: true
   },
   {
     id: "circuitos",
