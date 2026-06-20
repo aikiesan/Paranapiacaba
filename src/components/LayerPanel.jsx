@@ -4,7 +4,7 @@ import { useGeoJSON } from '../hooks/useGeoJSON';
 import { PALETTE } from '../config/styleGuide';
 
 // Componente para item de camada individual, lidando com seu próprio hook de dados
-function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) {
+function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, onOpenTable }) {
   // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
   const shouldLoad = isGroupExpanded || isActive;
   const { loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
@@ -56,6 +56,19 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded }) 
 
         {/* Controles de Info, Restrição de Zoom e Erro */}
         <div className="flex items-center space-x-1.5 ml-2">
+          {/* Botão de Tabela de Atributos */}
+          {layer.available !== false && !error && onOpenTable && (
+            <button
+              onClick={() => onOpenTable(layer.id)}
+              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              title="Tabela de atributos / exportar"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M3 14h18M3 6h18M3 18h18" />
+              </svg>
+            </button>
+          )}
+
           {/* Botão de Info */}
           {layer.description && (
             <button
@@ -112,9 +125,10 @@ export function LayerPanel({
   onToggle, 
   currentZoom, 
   groupOpacities, 
-  onGroupOpacityChange, 
+  onGroupOpacityChange,
   onToggleAllInGroup,
-  onOpenAbout
+  onOpenAbout,
+  onOpenTable
 }) {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -255,6 +269,7 @@ export function LayerPanel({
                     onToggle={onToggle}
                     currentZoom={currentZoom}
                     isGroupExpanded={true}
+                    onOpenTable={onOpenTable}
                   />
                 ))
               )}
@@ -349,6 +364,7 @@ export function LayerPanel({
                           onToggle={onToggle}
                           currentZoom={currentZoom}
                           isGroupExpanded={isExpanded}
+                          onOpenTable={onOpenTable}
                         />
                       ))}
                     </div>

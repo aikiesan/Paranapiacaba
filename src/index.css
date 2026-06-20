@@ -143,6 +143,19 @@ body,
   animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Estilos de inputs de range customizados para harmonia light */
 input[type="range"]::-webkit-slider-thumb {
   border: 2px solid #10b981; /* esmeralda */

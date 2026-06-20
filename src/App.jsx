@@ -6,6 +6,7 @@ import { BasemapSelector } from './components/BasemapSelector';
 import { Legend } from './components/Legend';
 import { FeatureDetailPanel } from './components/FeatureDetailPanel';
 import { AboutPanel } from './components/AboutPanel';
+import { DataTablePanel } from './components/DataTablePanel';
 
 export default function App() {
   // Estado das camadas ativas, inicializado com as que têm visible: true
@@ -29,6 +30,22 @@ export default function App() {
 
   // Estado de controle de exibição do painel "Sobre"
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+
+  // Camada com a tabela de atributos aberta (gaveta inferior) e feição a focar no mapa
+  const [tableLayerId, setTableLayerId] = useState(null);
+  const [focusFeature, setFocusFeature] = useState(null);
+
+  // Abre a tabela de uma camada e garante que ela esteja ativa no mapa
+  const handleOpenTable = (layerId) => {
+    setTableLayerId(layerId);
+    setActiveLayers((prev) => new Set(prev).add(layerId));
+  };
+
+  // Clique numa linha da tabela: abre detalhes e centraliza a feição
+  const handleSelectFromTable = (feature) => {
+    setActiveFeature({ feature, layerId: tableLayerId });
+    setFocusFeature({ feature, ts: Date.now() });
+  };
 
   // Manipulador para alternar a visibilidade de uma camada
   const handleToggleLayer = (layerId) => {
@@ -88,6 +105,7 @@ export default function App() {
         onGroupOpacityChange={handleGroupOpacityChange}
         onToggleAllInGroup={handleToggleAllInGroup}
         onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenTable={handleOpenTable}
       />
 
       {/* Área Principal (Mapa) */}
@@ -100,6 +118,7 @@ export default function App() {
           groupOpacities={groupOpacities}
           onFeatureClick={setActiveFeature}
           onMapClick={() => setActiveFeature(null)} // Fecha o painel ao clicar em área vazia do mapa
+          focusFeature={focusFeature}
         >
           {/* Pills de seleção do basemap (canto inferior direito) */}
           <BasemapSelector
@@ -119,6 +138,15 @@ export default function App() {
           />
         )}
       </div>
+
+      {/* Tabela de Atributos (gaveta inferior) */}
+      {tableLayerId && (
+        <DataTablePanel
+          layerId={tableLayerId}
+          onClose={() => setTableLayerId(null)}
+          onSelectFeature={handleSelectFromTable}
+        />
+      )}
 
       {/* Modal Sobre o Projeto */}
       <AboutPanel

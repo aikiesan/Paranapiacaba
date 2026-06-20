@@ -256,15 +256,38 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
   return null;
 }
 
-export function MapView({ 
-  activeLayers, 
-  selectedBasemap, 
-  currentZoom, 
-  onZoomChange, 
-  groupOpacities, 
+// Centraliza/aproxima o mapa numa feição selecionada (ex.: clique na tabela)
+function FlyToFeature({ focusFeature }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!focusFeature || !focusFeature.feature) return;
+    try {
+      const gj = L.geoJSON(focusFeature.feature);
+      const bounds = gj.getBounds();
+      if (bounds.isValid()) {
+        if (focusFeature.feature.geometry?.type === 'Point') {
+          map.setView(bounds.getCenter(), Math.max(map.getZoom(), 16));
+        } else {
+          map.fitBounds(bounds, { padding: [60, 60], maxZoom: 17 });
+        }
+      }
+    } catch (e) {
+      console.warn('FlyToFeature:', e);
+    }
+  }, [focusFeature, map]);
+  return null;
+}
+
+export function MapView({
+  activeLayers,
+  selectedBasemap,
+  currentZoom,
+  onZoomChange,
+  groupOpacities,
   onFeatureClick,
   onMapClick,
-  children 
+  focusFeature,
+  children
 }) {
   const basemapConfig = LAYERS; // Só pra garantir
   const activeBasemap = selectedBasemap;
@@ -296,6 +319,9 @@ export function MapView({
 
         {/* Captura de mudanças do zoom */}
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
+
+        {/* Centralização em feição selecionada na tabela */}
+        <FlyToFeature focusFeature={focusFeature} />
 
         {/* Renderização individualizada das camadas geográficas */}
         {LAYERS.map((layer) => {
