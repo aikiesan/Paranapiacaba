@@ -5,15 +5,18 @@ the files small enough to serve statically from GitHub Pages.
 """
 from __future__ import annotations
 
+import glob
 import json
 import math
 import os
+import re
+import unicodedata
 import warnings
 
 import geopandas as gpd
 import numpy as np
 from shapely import make_valid
-from shapely.geometry import mapping
+from shapely.geometry import LineString, mapping
 
 warnings.filterwarnings("ignore")
 
@@ -101,6 +104,86 @@ def simplify_geom(gdf, tol):
     return gdf
 
 
+_REGION_KW = [
+    ("funicular", "funicular"), ("quilomb", "quilombo"), ("mogi", "rio_mogi"),
+    ("quatinga", "quatinga"), ("pedra grande", "quatinga"),
+    ("cachoeira", "cachoeiras"), ("carvoeiro", "cachoeiras"),
+    ("anhangab", "cachoeiras"), ("perdidos", "cachoeiras"),
+    ("campainha", "cachoeiras"), ("escorrega", "cachoeiras"),
+    ("formoso", "cachoeiras"), ("banheira", "cachoeiras"),
+]
+
+
+def _strip_accents(s):
+    return "".join(c for c in unicodedata.normalize("NFKD", s or "")
+                   if not unicodedata.combining(c)).lower()
+
+
+def _classify_trail(nome, fname):
+    text = _strip_accents(nome) + " " + _strip_accents(os.path.basename(fname))
+    for kw, region in _REGION_KW:
+        if kw in text:
+            return region
+    return "geral"
+
+
+def read_kml_tracks(kml_dir, simplify_tol=1e-5):
+    """Parse Wikiloc KML exports into a trilhas GeoDataFrame (EPSG:4326).
+
+    Each KML holds one track <LineString> with lon,lat,elevation. We extract
+    the track, the human name, total length (km, via UTM 31983) and positive
+    elevation gain (m, from the Z values), and classify region for styling.
+    """
+    rows = []
+    for f in sorted(glob.glob(os.path.join(kml_dir, "*.kml"))):
+        # The folder mixes encodings: some KMLs are UTF-8, some cp1252.
+        data = open(f, "rb").read()
+        raw = None
+        for enc in ("utf-8", "cp1252", "latin-1"):
+            try:
+                raw = data.decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        if raw is None:
+            continue
+        m = re.search(r"<LineString>.*?<coordinates>(.*?)</coordinates>", raw, re.S)
+        if not m:
+            continue
+        pts = []
+        for tok in m.group(1).split():
+            c = tok.split(",")
+            if len(c) >= 2:
+                try:
+                    pts.append((float(c[0]), float(c[1]),
+                                float(c[2]) if len(c) > 2 else 0.0))
+                except ValueError:
+                    pass
+        if len(pts) < 2:
+            continue
+        nome = None
+        for n in re.findall(r"<name>(.*?)</name>", raw, re.S):
+            n = n.strip()
+            if n and n not in ("Trails", "Path", "Waypoints") and not n.startswith("Track "):
+                nome = n
+                break
+        if not nome:
+            nome = os.path.splitext(os.path.basename(f))[0].replace("-", " ").strip().title()
+        gain = sum(max(0.0, pts[i][2] - pts[i - 1][2]) for i in range(1, len(pts)))
+        rows.append({
+            "nome": nome,
+            "desnivel_m": round(gain),
+            "regiao": _classify_trail(nome, f),
+            "tipo": "Trilha",
+            "geometry": LineString([(p[0], p[1]) for p in pts]),
+        })
+    gdf = gpd.GeoDataFrame(rows, crs="EPSG:4326")
+    gdf["distancia_km"] = (gdf.to_crs(31983).length / 1000).round(2)
+    if simplify_tol:
+        gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=False)
+    return gdf
+
+
 def _round(obj, p):
     if isinstance(obj, (list, tuple)):
         return [_round(o, p) for o in obj]
@@ -112,18 +195,16 @@ def _round(obj, p):
 def _clean_val(v):
     if v is None:
         return None
-    if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
-        return None
-    if isinstance(v, (np.integer,)):
-        return int(v)
-    if isinstance(v, (np.floating,)):
-        f = float(v)
-        return None if math.isnan(f) else f
-    if isinstance(v, (np.bool_,)):
-        return bool(v)
-    s = v if isinstance(v, str) else str(v)
-    s = s.strip()
-    return None if s in ("", "None", "nan", "<NA>") else s
+    if isinstance(v, np.generic):          # numpy scalar -> native python
+        v = v.item()
+    if isinstance(v, bool):                # before int (bool subclasses int)
+        return v
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
+        return None if (math.isnan(v) or math.isinf(v)) else v
+    s = str(v).strip()
+    return None if s in ("", "None", "nan", "NaN", "<NA>") else s
 
 
 def write_geojson(gdf, out_path, precision=6):

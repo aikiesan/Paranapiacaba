@@ -280,7 +280,7 @@ export const LAYERS = [
     label: "Lotes / Cadastro da Vila",
     file: "pac_lotes.geojson",
     group: "Patrimônio",
-    type: "polygon",
+    type: "line",
     color: "#E76F51",
     weight: 1,
     fillOpacity: 0.35,
@@ -383,16 +383,16 @@ export const LAYERS = [
   // ====================== TURISMO E TRILHAS ======================
   {
     id: "trilhas",
-    label: "Trilhas e Caminhos",
+    label: "Trilhas (Wikiloc)",
     file: "trilhas.geojson",
     group: "Turismo e Trilhas",
     type: "line",
     color: "#FB5607",
     weight: 2,
-    minZoom: 12,
+    minZoom: 11,
     visible: false,
     popupFields: [],
-    description: "Trilhas e caminhos mapeados na região da Vila e da Serra.",
+    description: "46 trilhas reais mapeadas por GPS (Wikiloc), ~793 km, com distância e desnível acumulado, coloridas por região (Quilombo, Cachoeiras, Funicular, Rio Mogi, Quatinga).",
     available: true
   },
   {

@@ -31,6 +31,18 @@ VILA_MASK_SRC = src("01_LIMITES_ADMINISTRATIVOS", "ALTO_DA_SERRA",
                     "FAPESP_Alto_da_Serra_Delimitacao.shp")
 VILA_BUFFER_DEG = 0.006  # ~650 m so edge features are not clipped off
 
+# Georeferencing nudge for the Vila CAD layers (houses + lots + local rail share
+# one CAD georef). Measured against OSM/Esri building footprints: the CAD sits
+# ~3.22 m E and ~3.37 m N of imagery, so shift W/S. Stored in degrees at ~lat -23.78.
+# (dlon, dlat). Tweak here to re-align; re-run build_data.py.
+NUDGE_VILA_DEG = (-0.0000316, -0.0000303)
+
+# Wikiloc GPS tracks (real trilhas) — 46 KML exports in the raw data tree.
+TRILHAS_KML_DIR = os.path.join(
+    EXTERNAL, "00_DADOS_BRUTOS-20260619T230500Z-3-001", "00_DADOS_BRUTOS",
+    "07_TRILHAS_KML"
+)
+
 # --- Candidate name columns for layers with heterogeneous schemas ------------
 NAME_CANDIDATES = [
     "nome", "NOME", "EQUIPAMENT", "DSC_DENOMI", "NomeEstaca", "NM_MUN",
@@ -60,7 +72,7 @@ JOBS = [
     {
         "out": "ferrovia_local.geojson", "aoi": "vila", "simplify": 5e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_trilhos_ferrovia_georef.shp"],
-        "repair_epsg": 31983, "keep": {"Layer": "elemento"},
+        "repair_epsg": 31983, "keep": {"Layer": "elemento"}, "nudge": True,
     },
     {
         "out": "funicular.geojson", "aoi": None, "simplify": 1e-5,
@@ -71,6 +83,7 @@ JOBS = [
         "out": "patrimonio_ferroviario.geojson", "aoi": "vila", "simplify": 5e-6,
         "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Ruinas.shp"],
         "keep": {"layer": "condicao"}, "extra": {"tipo": "Ruína ferroviária"},
+        "nudge": True,
     },
 
     # ---- Território ----------------------------------------------------------
@@ -106,7 +119,7 @@ JOBS = [
     {
         "out": "hidrografia.geojson", "aoi": "vila", "simplify": 2e-5,
         "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Corregos.shp"],
-        "keep": {"layer": "tipo"},
+        "keep": {"layer": "tipo"}, "nudge": True,
     },
     {
         "out": "nascentes.geojson", "aoi": "vila", "simplify": 0,
@@ -132,19 +145,19 @@ JOBS = [
     {
         "out": "edificacoes_vila.geojson", "aoi": "vila", "simplify": 4e-6,
         "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Edificacoes_*.shp"],
-        "family": "uso", "family_prefix": "Edificacoes_",
+        "family": "uso", "family_prefix": "Edificacoes_", "nudge": True,
     },
     {
         "out": "pac_lotes.geojson", "aoi": None, "simplify": 4e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_lotes_georef.shp"],
-        "repair_epsg": 31983, "keep": {"Layer": "lote"},
+        "repair_epsg": 31983, "keep": {"Layer": "lote"}, "nudge": True,
     },
 
     # ---- Turismo e Trilhas ---------------------------------------------------
     {
-        "out": "trilhas.geojson", "aoi": "vila", "simplify": 1e-5,
-        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Caminhos.shp"],
-        "keep": {"layer": "tipo"},
+        # Trilhas reais (Wikiloc) — uma faixa por KML, com distância e desnível.
+        "out": "trilhas.geojson", "aoi": None, "simplify": 4e-5,
+        "kml_dir": TRILHAS_KML_DIR,
     },
     {
         "out": "circuitos.geojson", "aoi": "vila", "simplify": 0,

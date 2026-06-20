@@ -134,6 +134,18 @@ def corridor_rail_buffer(deg):
 
 
 def build_job(job):
+    # Special case: trilhas built from Wikiloc KML tracks.
+    if job.get("kml_dir"):
+        merged = lib.read_kml_tracks(job["kml_dir"], job.get("simplify", 1e-5))
+        if merged.empty:
+            return None, 0, 0
+        mask = get_mask(job["aoi"]) if job.get("aoi") else None
+        if mask is not None:
+            merged = lib.clip_to(merged, mask)
+        out_path = os.path.join(C.OUT_DIR, job["out"])
+        n, size = lib.write_geojson(merged, out_path)
+        return out_path, n, size
+
     paths = resolve(job["src"])
     parts = []
     for p in paths:
@@ -164,6 +176,10 @@ def build_job(job):
     merged = lib.simplify_geom(merged, job.get("simplify", 0))
     if merged.empty:
         return None, 0, 0
+
+    if job.get("nudge"):
+        dlon, dlat = C.NUDGE_VILA_DEG
+        merged["geometry"] = merged.geometry.translate(xoff=dlon, yoff=dlat)
 
     out_path = os.path.join(C.OUT_DIR, job["out"])
     n, size = lib.write_geojson(merged, out_path)
