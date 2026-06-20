@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LAYERS, GROUPS } from './config/layers';
+import { useIsMobile } from './hooks/useIsMobile';
 import { LayerPanel } from './components/LayerPanel';
 import { MapView } from './components/MapView';
 import { BasemapSelector } from './components/BasemapSelector';
@@ -9,6 +10,8 @@ import { AboutPanel } from './components/AboutPanel';
 import { DataTablePanel } from './components/DataTablePanel';
 
 export default function App() {
+  const isMobile = useIsMobile();
+
   // Estado das camadas ativas, inicializado com as que têm visible: true
   const [activeLayers, setActiveLayers] = useState(() => {
     return new Set(LAYERS.filter((layer) => layer.visible).map((layer) => layer.id));
@@ -48,6 +51,9 @@ export default function App() {
   const handleSelectFromTable = (feature) => {
     setActiveFeature({ feature, layerId: tableLayerId });
     setFocusFeature({ feature, ts: Date.now() });
+    // No mobile a tabela e o painel de detalhes são ambos "folhas" inferiores;
+    // fecha a tabela para que os detalhes da feição fiquem visíveis.
+    if (isMobile) setTableLayerId(null);
   };
 
   // Manipulador para alternar a visibilidade de uma camada
@@ -127,8 +133,8 @@ export default function App() {
         onApplyPreset={handleApplyPreset}
       />
 
-      {/* Área Principal (Mapa) */}
-      <div className="relative flex-1 h-full">
+      {/* Área Principal (Mapa) — min-w-0 evita que o flex item ultrapasse a viewport no mobile */}
+      <div className="relative flex-1 h-full min-w-0">
         <MapView
           activeLayers={activeLayers}
           selectedBasemap={selectedBasemap}

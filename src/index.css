@@ -13,6 +13,8 @@ body,
   background-color: #f8fafc; /* bg-slate-50 */
   color: #0f172a; /* text-slate-900 */
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Remove o flash cinza ao tocar em botões no mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Scrollbar personalizada fina */
@@ -175,4 +177,27 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
   margin-top: -4px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ==================================================== */
+/* AJUSTES PARA TOQUE (MOBILE < 768px)                  */
+/* ==================================================== */
+@media (max-width: 767px) {
+  /* Scrollbar mais larga para facilitar o arraste com o dedo */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  /* Thumb do range maior — alvo de toque mais confortável */
+  input[type="range"]::-webkit-slider-thumb {
+    height: 18px;
+    width: 18px;
+    margin-top: -7px;
+  }
+
+  /* Atribuição do basemap mais legível em telas pequenas */
+  .leaflet-control-attribution {
+    font-size: 9px;
+  }
 }
