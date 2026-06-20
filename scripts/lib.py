@@ -175,13 +175,49 @@ def read_kml_tracks(kml_dir, simplify_tol=1e-5):
             "desnivel_m": round(gain),
             "regiao": _classify_trail(nome, f),
             "tipo": "Trilha",
+            "perfil": _elevation_profile(pts),
             "geometry": LineString([(p[0], p[1]) for p in pts]),
         })
     gdf = gpd.GeoDataFrame(rows, crs="EPSG:4326")
     gdf["distancia_km"] = (gdf.to_crs(31983).length / 1000).round(2)
+    gdf["dificuldade"] = [_difficulty(d, g) for d, g in zip(gdf["distancia_km"], gdf["desnivel_m"])]
     if simplify_tol:
         gdf["geometry"] = gdf.geometry.simplify(simplify_tol, preserve_topology=False)
     return gdf
+
+
+def _haversine_m(a, b):
+    R = 6371000.0
+    dlat = math.radians(b[1] - a[1])
+    dlon = math.radians(b[0] - a[0])
+    h = (math.sin(dlat / 2) ** 2 + math.cos(math.radians(a[1]))
+         * math.cos(math.radians(b[1])) * math.sin(dlon / 2) ** 2)
+    return 2 * R * math.asin(math.sqrt(h))
+
+
+def _elevation_profile(pts, n=48):
+    """Downsampled [cumulative_km, elevation_m] pairs for a profile chart."""
+    cum = [0.0]
+    for i in range(1, len(pts)):
+        cum.append(cum[-1] + _haversine_m(pts[i - 1], pts[i]))
+    if len(pts) <= n:
+        idx = range(len(pts))
+    else:
+        step = (len(pts) - 1) / (n - 1)
+        idx = [round(i * step) for i in range(n)]
+    return [[round(cum[i] / 1000, 2), round(pts[i][2])] for i in idx]
+
+
+def _difficulty(dist_km, gain_m):
+    """Effort index (~Cifuentes): horizontal km + 100 m climb counted as 1 km."""
+    ei = (dist_km or 0) + (gain_m or 0) / 100.0
+    if ei < 8:
+        return "Fácil"
+    if ei < 15:
+        return "Moderada"
+    if ei < 25:
+        return "Difícil"
+    return "Muito difícil"
 
 
 # Keyword -> attraction type (matches the app's icon/palette keys, no accents).
@@ -258,6 +294,10 @@ def _round(obj, p):
 def _clean_val(v):
     if v is None:
         return None
+    if isinstance(v, np.ndarray):
+        v = v.tolist()
+    if isinstance(v, (list, tuple)):       # e.g. trail elevation profile arrays
+        return [_clean_val(x) for x in v]
     if isinstance(v, np.generic):          # numpy scalar -> native python
         v = v.item()
     if isinstance(v, bool):                # before int (bool subclasses int)

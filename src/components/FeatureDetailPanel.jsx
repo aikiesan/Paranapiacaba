@@ -32,6 +32,36 @@ function getCentroid(feature) {
   return count > 0 ? [sumLng / count, sumLat / count] : null;
 }
 
+// Mini gráfico SVG do perfil de elevação de uma trilha (array [km, elev_m])
+function ElevationProfile({ perfil, color = '#FB5607' }) {
+  if (!Array.isArray(perfil) || perfil.length < 2) return null;
+  const W = 280, H = 88, pad = 5;
+  const xs = perfil.map(p => p[0]);
+  const ys = perfil.map(p => p[1]);
+  const xmin = Math.min(...xs), xmax = Math.max(...xs);
+  const ymin = Math.min(...ys), ymax = Math.max(...ys);
+  const sx = x => pad + (xmax > xmin ? (x - xmin) / (xmax - xmin) : 0) * (W - 2 * pad);
+  const sy = y => H - pad - (ymax > ymin ? (y - ymin) / (ymax - ymin) : 0) * (H - 2 * pad);
+  const line = perfil.map((p, i) => `${i ? 'L' : 'M'}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(' ');
+  const area = `${line} L${sx(xmax).toFixed(1)},${(H - pad).toFixed(1)} L${sx(xmin).toFixed(1)},${(H - pad).toFixed(1)} Z`;
+
+  return (
+    <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+      <div className="flex justify-between items-baseline mb-1">
+        <span className="text-[10px] uppercase text-slate-400 font-bold">Perfil de Elevação</span>
+        <span className="text-[10px] font-semibold text-slate-500">{Math.round(ymin)}–{Math.round(ymax)} m</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 88 }} preserveAspectRatio="none">
+        <path d={area} fill={color} fillOpacity="0.15" />
+        <path d={line} fill="none" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+      <div className="flex justify-between text-[9px] text-slate-400 font-medium">
+        <span>0 km</span><span>{xmax.toFixed(1)} km</span>
+      </div>
+    </div>
+  );
+}
+
 // Formata chaves (ex: "distancia_km" -> "Distancia Km")
 function formatKey(key) {
   const technicalPrefixes = ['Shape_', 'FID_', 'OBJECTID_'];
@@ -133,6 +163,9 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
             <span className="text-sm font-bold text-slate-800">{tempoEstimado}</span>
           </div>
         </div>
+
+        {/* Perfil de Elevação */}
+        <ElevationProfile perfil={properties.perfil} color={regiaoColor} />
 
         {/* Alerta de Risco */}
         {isRisk && (
