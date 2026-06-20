@@ -21,7 +21,12 @@ pip install -r requirements.txt          # geopandas, shapely, pyogrio, requests
 python build_data.py                     # gera todos os public/data/*.geojson
 python build_data.py ferrovia_corredor.geojson   # ou apenas camadas específicas
 python validate_data.py                  # valida (4326, FeatureCollection, bbox)
+python build_rasters.py                  # overlays raster: MapBiomas 2008–2024 + declividade
 ```
+
+Os overlays raster (PNGs georreferenciados + `rasters/manifest.json`) são
+gerados por `build_rasters.py`: cobertura MapBiomas colorizada por ano e
+declividade (5 classes) interpolada a partir das curvas de nível.
 
 Opcional — checagem de continuidade do corredor via OpenStreetMap:
 ```bash
