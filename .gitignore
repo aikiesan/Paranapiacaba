@@ -47,3 +47,15 @@ dist-ssr
 # Documentos da raiz
 /*.docx
 /*.xlsx
+
+# Pastas de dados externos
+/EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/
+
+# Pipeline (Python caches e download OSM)
+scripts/.cache/
+__pycache__/
+*.pyc
+
+# Configurações locais do Claude Code (mantém launch.json compartilhado)
+.claude/settings.local.json
+

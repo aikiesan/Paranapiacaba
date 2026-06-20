@@ -1,64 +1,35 @@
-# Diretório de Dados Geográficos (GeoJSON)
+# Dados Geográficos (GeoJSON) — `public/data/`
 
-Este diretório contém os arquivos de dados geográficos no formato GeoJSON que servem de fonte para as camadas do WebGIS.
+Os arquivos GeoJSON desta pasta são as **fontes das camadas do WebGIS** e são
+**gerados automaticamente** pelo pipeline em [`scripts/`](../../scripts/), a partir
+dos shapefiles organizados em `EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/01_CAMADAS_BASE/`
+(que ficam fora do controle de versão).
 
-## Requisitos dos Arquivos
+> ⚠️ Não edite estes `.geojson` à mão — eles são sobrescritos a cada execução do
+> pipeline. Para mudar uma camada, ajuste o mapeamento em `scripts/config.py`.
 
-1. **Formato:** GeoJSON (`FeatureCollection`)
-2. **Projeção/SRC:** Obrigatório estar em **WGS 84 (EPSG:4326)** (Latitude e Longitude decimais).
-3. **Nomenclatura:** Os nomes dos arquivos devem seguir o padrão `snake_case` e corresponder exatamente à propriedade `file` cadastrada no arquivo [layers.js](file:///c:/Users/Lucas/Documents/PROJETO_FAPESP_PUCCAMP/1_GIS_UNESCO_PARANAPIACABA/src/config/layers.js) (ex: `limite_sitio.geojson`).
+## Requisitos dos arquivos
+- **Formato:** GeoJSON (`FeatureCollection`), RFC 7946.
+- **Projeção:** WGS 84 (EPSG:4326), coordenadas arredondadas a 6 casas.
+- **Nomenclatura:** `snake_case`, casando exatamente com a propriedade `file` de
+  cada camada em [`src/config/layers.js`](../../src/config/layers.js).
 
----
-
-## Como Exportar e Preparar as Camadas
-
-Para garantir o bom desempenho do mapa no navegador, as geometrias não devem possuir excesso de vértices e detalhes (especialmente redes hidrográficas, declividades ou curvas de nível).
-
-### 1. Exportando com `ogr2ogr` (GDAL)
-
-Você pode exportar camadas de bancos de dados geográficos (como File Geodatabase `.gdb`, GeoPackage `.gpkg` ou Shapefiles `.shp`) usando o utilitário `ogr2ogr`.
-
-#### Exemplo a partir de GeoPackage (`.gpkg`):
+## Como regenerar
 ```bash
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 \
-  public/data/trilhas.geojson \
-  caminho/para/banco_paranapiacaba.gpkg \
-  nome_da_tabela_trilhas
+cd scripts
+pip install -r requirements.txt          # geopandas, shapely, pyogrio, requests
+python build_data.py                     # gera todos os public/data/*.geojson
+python build_data.py ferrovia_corredor.geojson   # ou apenas camadas específicas
+python validate_data.py                  # valida (4326, FeatureCollection, bbox)
 ```
 
-#### Exemplo a partir de Shapefile (`.shp`):
+Opcional — checagem de continuidade do corredor via OpenStreetMap:
 ```bash
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 \
-  public/data/hidrografia.geojson \
-  caminho/para/hidrografia_original.shp
+python fetch_osm_railway.py              # baixa malha OSM para scripts/.cache/
+OSM_FILL=1 python build_data.py ferrovia_corredor.geojson
 ```
+(Por padrão o corredor usa a malha IBGE `BaseFerro`, que já cobre Jundiaí→Santos.)
 
-#### Exemplo a partir de File Geodatabase (`.gdb`):
-```bash
-ogr2ogr -f GeoJSON -t_srs EPSG:4326 \
-  public/data/limite_sitio.geojson \
-  caminho/para/Paranapiacaba.gdb \
-  tabela_limite_sitio
-```
-
----
-
-### 2. Simplificando Geometrias Pesadas com `mapshaper`
-
-Para arquivos grandes (> 2MB), é extremamente recomendado reduzir o peso do arquivo simplificando os vértices das linhas e polígonos. A ferramenta recomendada é o **mapshaper** (Node.js).
-
-Instalação global:
-```bash
-npm install -g mapshaper
-```
-
-#### Exemplo de Simplificação (Preservando Topologia):
-Simplifica a hidrografia mantendo 15% dos vértices originais (método Visvalingam-Whyatt):
-
-```bash
-mapshaper public/data/hidrografia.geojson \
-  -simplify 15% keep-shapes \
-  -o public/data/hidrografia.geojson format=geojson
-```
-
-Para camadas de declividade ou setores censitários, o método `keep-shapes` previne a criação de frestas entre polígonos adjacentes.
+## Mapa fonte → camada
+O mapeamento canônico (camada de saída ↔ shapefile de origem, recorte e
+simplificação) está em [`scripts/config.py`](../../scripts/config.py) na lista `JOBS`.

@@ -1,0 +1,6 @@
+# Dependencies for the Paranapiacaba WebGIS data pipeline.
+# geopandas already present in the project env (0.14.x); listed for reproducibility.
+geopandas>=0.14
+shapely>=2.0
+pyogrio>=0.7
+requests>=2.31

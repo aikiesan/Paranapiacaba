@@ -1,8 +1,43 @@
-# 1_GIS_UNESCO_PARANAPIACABA — Workspace consolidado
+# WebGIS Paranapiacaba — Corredor Ferroviário Jundiaí–Santos
 
-**Projeto FAPESP/PUC-Campinas — Sítio UNESCO Paranapiacaba**
-Reorganizado em 17/06/2026. Este diretório é a **fonte única** do SIG: dados,
-projeto ArcGIS, scripts e mapas finais, tudo consolidado aqui.
+**Projeto FAPESP / PUC-Campinas — Sítio UNESCO Paranapiacaba**
+
+Aplicação WebGIS (React + Vite + Leaflet) que mapeia o **corredor ferroviário
+histórico Jundiaí–Santos** (São Paulo Railway, 1867), com a **Vila de
+Paranapiacaba** (Santo André) como núcleo de detalhe. Publicada via GitHub Pages.
+
+🔗 **Deploy:** https://aikiesan.github.io/Paranapiacaba
+
+## Rodar localmente
+```bash
+npm install
+npm run dev        # http://localhost:5173/Paranapiacaba/
+npm run build      # build de produção em dist/
+npm run preview    # serve o build em http://localhost:4173/Paranapiacaba/
+```
+
+## Dados das camadas
+As camadas (`public/data/*.geojson`) são **geradas** pelo pipeline Python em
+[`scripts/`](scripts/) a partir dos shapefiles em
+`EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/01_CAMADAS_BASE/` (fora do versionamento).
+Para regenerar:
+```bash
+cd scripts && pip install -r requirements.txt
+python build_data.py && python validate_data.py
+```
+Mapeamento camada↔fonte em [`scripts/config.py`](scripts/config.py); detalhes em
+[`public/data/README.md`](public/data/README.md).
+
+## Deploy (GitHub Pages)
+Push na branch `main` dispara `.github/workflows/deploy.yml`, que faz o build do
+Vite e publica `dist/` na branch `gh-pages`. O `base` do Vite é `/Paranapiacaba/`.
+
+---
+
+# Workspace SIG consolidado (referência)
+
+**Reorganizado em 17/06/2026.** Documentação do SIG original (dados, projeto
+ArcGIS, scripts e mapas finais) — mantida como referência da fonte dos dados.
 
 ## Estrutura
 

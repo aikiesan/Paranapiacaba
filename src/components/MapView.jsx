@@ -4,8 +4,7 @@ import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
 import { PALETTE } from '../config/styleGuide';
-import { simplifyGeoJSON } from '../utils/simplify';
-import { MapToolbar } from './MapToolbar';
+import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster';
@@ -20,6 +19,7 @@ function MapHashHandler() {
   useEffect(() => {
     // Tenta carregar a posição inicial a partir do hash da URL
     const hash = window.location.hash;
+    let restored = false;
     if (hash && hash.startsWith('#')) {
       const parts = hash.substring(1).split('/');
       if (parts.length === 3) {
@@ -28,8 +28,13 @@ function MapHashHandler() {
         const lng = parseFloat(parts[2]);
         if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
           map.setView([lat, lng], zoom);
+          restored = true;
         }
       }
+    }
+    // Sem link compartilhado: enquadra o corredor Jundiaí–Santos (visão geral)
+    if (!restored) {
+      map.fitBounds(CORRIDOR_BOUNDS, { padding: [30, 30] });
     }
   }, [map]);
 
@@ -95,19 +100,20 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
   useEffect(() => {
     if (!isVisible || !data) return;
 
-    // 1. Aplica simplificação on-the-fly Ramer-Douglas-Peucker para camadas pesadas
-    const heavyLayers = ['hidrografia', 'declividade', 'app_buffers', 'censo_setores'];
-    const processedData = heavyLayers.includes(layer.id)
-      ? simplifyGeoJSON(data, 0.00005)
-      : data;
+    // Os arquivos já são simplificados no pipeline (scripts/build_data.py),
+    // então renderizamos as geometrias como vêm (sem re-simplificar no cliente,
+    // o que destruiria feições pequenas como edificações).
+    const processedData = data;
 
-    // 2. Estilo dinâmico/estático dependendo do tipo da camada e feição
+    // Estilo dinâmico/estático dependendo do tipo da camada e feição
+    let dashArray;
     const getStyle = (feature) => {
       const props = feature.properties || {};
-      
+
       // Cor base padrão
       let strokeColor = layer.color;
       let fillColor = layer.color;
+      dashArray = undefined;
 
       // Estilo dinâmico: Trilhas por Região
       if (layer.id === 'trilhas' && props.regiao) {
@@ -115,18 +121,28 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
         strokeColor = PALETTE[regiaoKey] || PALETTE.trilha_default;
       }
 
+      // Estilo dinâmico: Corredor ferroviário por situação operacional
+      if (layer.id === 'ferrovia_corredor') {
+        const sit = (props.situacao || '').toLowerCase();
+        if (sit.includes('desativ') || sit.includes('erradic')) {
+          strokeColor = PALETTE.ferrovia_desativada;
+          dashArray = '6 4';
+        } else if (sit.includes('plan') || sit.includes('constru')) {
+          strokeColor = PALETTE.ferrovia_planejada;
+        } else {
+          strokeColor = PALETTE.ferrovia_ativa;
+        }
+      }
+
       // Estilo dinâmico: Bens Tombados por Instância
       if (layer.id === 'patrimonio_tombados' && props.instancia) {
         const inst = props.instancia.toUpperCase();
-        if (inst.includes('IPHAN')) {
-          strokeColor = PALETTE.tombado_federal;
-          fillColor = PALETTE.tombado_federal;
-        } else if (inst.includes('CONDEPHAAT')) {
-          strokeColor = PALETTE.tombado_estadual;
-          fillColor = PALETTE.tombado_estadual;
-        } else if (inst.includes('COMDEPHAAPASA') || inst.includes('MUNICIPAL')) {
-          strokeColor = PALETTE.tombado_municipal;
-          fillColor = PALETTE.tombado_municipal;
+        if (inst.includes('FEDERAL') || inst.includes('IPHAN')) {
+          strokeColor = fillColor = PALETTE.tombado_federal;
+        } else if (inst.includes('ESTADUAL') || inst.includes('CONDEPHAAT')) {
+          strokeColor = fillColor = PALETTE.tombado_estadual;
+        } else if (inst.includes('MUNICIPAL') || inst.includes('COMDEPHAAPASA')) {
+          strokeColor = fillColor = PALETTE.tombado_municipal;
         }
       }
 
@@ -143,6 +159,7 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
           color: strokeColor,
           weight: layer.weight,
           opacity: groupOpacity,
+          dashArray,
           fillColor: 'transparent'
         };
       }
@@ -196,17 +213,18 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
       });
     };
 
-    // 5. Renderização (se for a camada de atrativos com mais de 300 pontos, usa cluster)
+    // 5. Renderização — camadas de pontos densas usam clusterização
     let geoJsonLayer;
-    if (layer.id === 'atrativos') {
+    if (layer.cluster && layer.type === 'point') {
+      const clusterColor = layer.color || '#475569';
       const mcg = L.markerClusterGroup({
         disableClusteringAtZoom: 14,
         maxClusterRadius: 40,
         iconCreateFunction: (cluster) => {
           const count = cluster.getChildCount();
           return L.divIcon({
-            html: `<div class="w-8 h-8 rounded-full border border-white/80 bg-amber-600/90 text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-105 transition-transform">${count}</div>`,
-            className: 'custom-atrativos-cluster',
+            html: `<div style="background-color:${clusterColor}" class="w-8 h-8 rounded-full border border-white/80 text-white font-bold text-xs flex items-center justify-center shadow-lg hover:scale-105 transition-transform">${count}</div>`,
+            className: 'custom-cluster-icon',
             iconSize: [32, 32]
           });
         }

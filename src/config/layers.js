@@ -1,56 +1,133 @@
-// Configuração das camadas do WebGIS Paranapiacaba
-// Cada camada contém: id, label, file, group, type, color, weight, fillOpacity, minZoom, visible, popupFields, description, available
-// Todas as camadas são definidas como available: true por padrão para que o app tente buscá-las localmente
+// Configuração das camadas do WebGIS Paranapiacaba.
+// Foco: corredor ferroviário histórico Jundiaí–Santos (São Paulo Railway) e a
+// Vila de Paranapiacaba (Santo André). Os arquivos GeoJSON em public/data/ são
+// gerados pelo pipeline em scripts/ (ver scripts/build_data.py).
+//
+// Campos: id, label, file, group, type, color, weight, fillOpacity, minZoom,
+//         visible, cluster (agrupar pontos), popupFields, description, available.
 
 export const LAYERS = [
-  // GRUPO "Território"
+  // ============ FERROVIA SPR (JUNDIAÍ–SANTOS) — eixo do projeto ============
+  {
+    id: "ferrovia_corredor",
+    label: "Corredor Ferroviário Jundiaí–Santos",
+    file: "ferrovia_corredor.geojson",
+    group: "Ferrovia SPR (Jundiaí–Santos)",
+    type: "line",
+    color: "#1E293B",
+    weight: 3,
+    minZoom: 8,
+    visible: true,
+    popupFields: [],
+    description: "Malha ferroviária histórica da São Paulo Railway (1867) e sucessoras, de Jundiaí à Baixada Santista, base IBGE (BaseFerro). Estilizada por situação operacional.",
+    available: true
+  },
+  {
+    id: "estacoes",
+    label: "Estações Ferroviárias",
+    file: "estacoes.geojson",
+    group: "Ferrovia SPR (Jundiaí–Santos)",
+    type: "point",
+    color: "#0EA5E9",
+    minZoom: 9,
+    visible: true,
+    cluster: true,
+    popupFields: [],
+    description: "Estações ao longo do corredor Jundiaí–Santos (base IBGE), incluindo Paranapiacaba.",
+    available: true
+  },
+  {
+    id: "ferrovia_local",
+    label: "Leito Ferroviário (Vila)",
+    file: "ferrovia_local.geojson",
+    group: "Ferrovia SPR (Jundiaí–Santos)",
+    type: "line",
+    color: "#6D6875",
+    weight: 2,
+    minZoom: 14,
+    visible: false,
+    popupFields: [],
+    description: "Traçado detalhado dos trilhos no núcleo da Vila de Paranapiacaba (cadastro georreferenciado).",
+    available: true
+  },
+  {
+    id: "funicular",
+    label: "Leito do Funicular",
+    file: "funicular.geojson",
+    group: "Ferrovia SPR (Jundiaí–Santos)",
+    type: "line",
+    color: "#B5838D",
+    weight: 2,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Leito inclinado do Funicular da Serra do Mar (Serra Velha de 1867 e Serra Nova de 1901) — sítio histórico-industrial sob interdição.",
+    available: true
+  },
+  {
+    id: "patrimonio_ferroviario",
+    label: "Ruínas / Patrimônio Ferroviário",
+    file: "patrimonio_ferroviario.geojson",
+    group: "Ferrovia SPR (Jundiaí–Santos)",
+    type: "polygon",
+    color: "#BC6C25",
+    weight: 1,
+    fillOpacity: 0.4,
+    minZoom: 14,
+    visible: false,
+    popupFields: [],
+    description: "Ruínas e estruturas remanescentes do complexo ferroviário da Vila.",
+    available: true
+  },
+
+  // ====================== TERRITÓRIO ======================
   {
     id: "limite_sitio",
-    label: "Limite do Sítio UNESCO",
+    label: "Limite do Sítio (Alto da Serra)",
     file: "limite_sitio.geojson",
     group: "Território",
     type: "polygon",
     color: "#E63946",
     weight: 2.5,
     fillOpacity: 0.05,
-    minZoom: 10,
+    minZoom: 11,
     visible: true,
     popupFields: [],
-    description: "Perímetro oficial do Sítio UNESCO de Paranapiacaba, conforme delimitação do IPHAN.",
+    description: "Perímetro de estudo do Alto da Serra / Paranapiacaba (delimitação FAPESP).",
     available: true
   },
   {
     id: "limite_vila",
-    label: "Perímetro da Vila",
+    label: "ZEIP Paranapiacaba (Vila)",
     file: "limite_vila.geojson",
     group: "Território",
     type: "polygon",
     color: "#E63946",
     weight: 1.5,
     fillOpacity: 0.08,
-    minZoom: 12,
-    visible: true,
+    minZoom: 13,
+    visible: false,
     popupFields: [],
-    description: "Perímetro do núcleo histórico da Vila ferroviária, fundada em 1867 pela São Paulo Railway.",
+    description: "Zona Especial de Interesse do Patrimônio (ZEIP) da Vila ferroviária, fundada em 1867 pela São Paulo Railway.",
     available: true
   },
   {
-    id: "ucs",
-    label: "Unidades de Conservação",
-    file: "ucs.geojson",
+    id: "municipios_corredor",
+    label: "Municípios do Corredor",
+    file: "municipios_corredor.geojson",
     group: "Território",
     type: "polygon",
-    color: "#2D6A4F",
-    weight: 1.5,
-    fillOpacity: 0.15,
-    minZoom: 10,
-    visible: true,
+    color: "#64748B",
+    weight: 1,
+    fillOpacity: 0.04,
+    minZoom: 8,
+    visible: false,
     popupFields: [],
-    description: "Unidades de Conservação: PESM Núcleo Itutinga-Pilões, REBio Alto da Serra e Parque Natural Municipal.",
+    description: "Municípios atravessados pelo corredor ferroviário Jundiaí–Santos (IBGE 2024).",
     available: true
   },
 
-  // GRUPO "Patrimônio"
+  // ====================== PATRIMÔNIO ======================
   {
     id: "patrimonio_tombados",
     label: "Bens Tombados",
@@ -60,15 +137,15 @@ export const LAYERS = [
     color: "#E9C46A",
     weight: 1,
     fillOpacity: 0.4,
-    minZoom: 14,
-    visible: true,
+    minZoom: 11,
+    visible: false,
     popupFields: [],
-    description: "Bens tombados nas instâncias federal (IPHAN), estadual (CONDEPHAAT) e municipal (COMDEPHAAPASA).",
+    description: "Bens tombados nas instâncias federal (IPHAN), estadual (CONDEPHAAT) e municipal (COMDEPHAAPASA), por instância.",
     available: true
   },
   {
     id: "edificacoes_vila",
-    label: "Edificações da Vila",
+    label: "Edificações da Vila (por uso)",
     file: "edificacoes_vila.geojson",
     group: "Patrimônio",
     type: "polygon",
@@ -78,38 +155,53 @@ export const LAYERS = [
     minZoom: 15,
     visible: false,
     popupFields: [],
-    description: "Edificações inventariadas da Vila ferroviária de Paranapiacaba.",
+    description: "Edificações inventariadas da Vila, classificadas por uso (residencial, comercial, hotelaria, público, etc.).",
     available: true
   },
   {
     id: "pac_lotes",
-    label: "Lotes PAC (Restauro)",
+    label: "Lotes / Cadastro da Vila",
     file: "pac_lotes.geojson",
     group: "Patrimônio",
     type: "polygon",
     color: "#E76F51",
     weight: 1,
-    fillOpacity: 0.45,
+    fillOpacity: 0.35,
     minZoom: 15,
     visible: false,
     popupFields: [],
-    description: "Lotes beneficiados pelas obras do PAC Cidades Históricas (Restauro e Conservação).",
+    description: "Lotes do cadastro georreferenciado da Vila ferroviária (base para o PAC Cidades Históricas).",
     available: true
   },
 
-  // GRUPO "Meio Ambiente"
+  // ====================== MEIO AMBIENTE ======================
+  {
+    id: "ucs",
+    label: "Unidades de Conservação",
+    file: "ucs.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#2D6A4F",
+    weight: 1.5,
+    fillOpacity: 0.15,
+    minZoom: 9,
+    visible: false,
+    popupFields: [],
+    description: "Unidades de Conservação estaduais e municipais (PESM Núcleo Itutinga-Pilões, Alto da Serra e outras).",
+    available: true
+  },
   {
     id: "hidrografia",
-    label: "Hidrografia",
+    label: "Hidrografia (Córregos)",
     file: "hidrografia.geojson",
     group: "Meio Ambiente",
     type: "line",
     color: "#4895EF",
     weight: 1.5,
-    minZoom: 11,
-    visible: true,
+    minZoom: 13,
+    visible: false,
     popupFields: [],
-    description: "Rede de drenagem com nascentes e canais principais, incluindo divisor Cubatão/Tietê.",
+    description: "Rede de drenagem da Vila — divisor de águas Cubatão (vertente sul) / Tietê (vertente norte).",
     available: true
   },
   {
@@ -118,26 +210,26 @@ export const LAYERS = [
     file: "nascentes.geojson",
     group: "Meio Ambiente",
     type: "point",
-    color: "#4895EF",
-    minZoom: 13,
+    color: "#52B788",
+    minZoom: 14,
     visible: false,
     popupFields: [],
-    description: "Pontos de surgência de água mapeados, fundamentais para a bacia hidrográfica local.",
+    description: "Pontos de surgência mapeados, fundamentais para a bacia hidrográfica local.",
     available: true
   },
   {
     id: "app_buffers",
-    label: "APPs (buffer 30m)",
+    label: "APPs (corpos hídricos)",
     file: "app_buffers.geojson",
     group: "Meio Ambiente",
     type: "polygon",
     color: "#4CC9F0",
     weight: 0.5,
     fillOpacity: 0.2,
-    minZoom: 13,
+    minZoom: 14,
     visible: false,
     popupFields: [],
-    description: "Áreas de Preservação Permanente (APPs) geradas com buffer de 30 metros ao redor dos corpos hídricos.",
+    description: "Áreas de Preservação Permanente ao redor de córregos e nascentes.",
     available: true
   },
   {
@@ -152,87 +244,58 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: [],
-    description: "Classes de declividade do terreno expressas em porcentagem, auxiliando na análise de relevo.",
-    available: true
+    description: "Classes de declividade da escarpa (em breve — derivação a partir de MDT).",
+    available: false
   },
 
-  // GRUPO "Turismo e Trilhas"
+  // ====================== TURISMO E TRILHAS ======================
   {
     id: "trilhas",
-    label: "Rede de Trilhas",
+    label: "Trilhas e Caminhos",
     file: "trilhas.geojson",
     group: "Turismo e Trilhas",
     type: "line",
     color: "#FB5607",
     weight: 2,
-    minZoom: 11,
-    visible: true,
+    minZoom: 12,
+    visible: false,
     popupFields: [],
-    description: "45 trilhas mapeadas via GPS Wikiloc (~763 km total), categorizadas por região, tipo e dificuldade.",
+    description: "Trilhas e caminhos mapeados na região da Vila e da Serra.",
     available: true
   },
   {
     id: "atrativos",
-    label: "Atrativos Naturais (331)",
+    label: "Atrativos Naturais",
     file: "atrativos.geojson",
     group: "Turismo e Trilhas",
     type: "point",
     color: "#FF9F1C",
     minZoom: 12,
-    visible: true,
+    visible: false,
+    cluster: true,
     popupFields: [],
-    description: "331 atrativos naturais classificados: 145 cachoeiras, 64 poços, 60 mirantes, 42 pedras, 7 nascentes, 9 ruínas e 4 grutas.",
-    available: true
+    description: "Atrativos naturais (cachoeiras, poços, mirantes, etc.) — em breve, a partir dos inventários Wikiloc.",
+    available: false
   },
   {
     id: "circuitos",
     label: "Circuitos Turísticos",
     file: "circuitos.geojson",
     group: "Turismo e Trilhas",
-    type: "line",
+    type: "point",
     color: "#FFBF69",
-    weight: 2.5,
-    minZoom: 12,
-    visible: false,
-    popupFields: [],
-    description: "Circuitos de caminhada e turismo auto-guiados ou com monitoria na região.",
-    available: true
-  },
-
-  // GRUPO "Infraestrutura"
-  {
-    id: "ferrovia",
-    label: "Ferrovia Histórica",
-    file: "ferrovia.geojson",
-    group: "Infraestrutura",
-    type: "line",
-    color: "#6D6875",
-    weight: 2,
-    minZoom: 11,
-    visible: true,
-    popupFields: [],
-    description: "Leito ferroviário histórico da São Paulo Railway (1867), atual CPTM Linha 10-Turquesa.",
-    available: true
-  },
-  {
-    id: "funicular",
-    label: "Leito do Funicular",
-    file: "funicular.geojson",
-    group: "Infraestrutura",
-    type: "line",
-    color: "#B5838D",
-    weight: 1.5,
     minZoom: 13,
     visible: false,
+    cluster: true,
     popupFields: [],
-    description: "Leito inclinado do antigo Funicular da Serra do Mar (Serra Velha de 1867 e Serra Nova de 1901).",
+    description: "Pontos dos circuitos turísticos de Santo André (city tour histórico, arte e arquitetura, etc.).",
     available: true
   },
 
-  // GRUPO "Socioeconomia"
+  // ====================== SOCIOECONOMIA ======================
   {
     id: "censo_setores",
-    label: "Setores Censitários 2022",
+    label: "Setores Censitários (Paranapiacaba)",
     file: "censo_setores.geojson",
     group: "Socioeconomia",
     type: "polygon",
@@ -242,7 +305,7 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: [],
-    description: "Setores censitários do Censo IBGE 2022 recortados para o distrito de Paranapiacaba.",
+    description: "Setores censitários do distrito de Paranapiacaba (IBGE).",
     available: true
   },
   {
@@ -257,10 +320,54 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: [],
-    description: "Densidade demográfica obtida por setor censitário no distrito de Paranapiacaba.",
+    description: "Densidade demográfica (hab/ha) por setor censitário no distrito de Paranapiacaba.",
+    available: true
+  },
+
+  // ====================== EQUIPAMENTOS URBANOS ======================
+  {
+    id: "saude",
+    label: "Saúde",
+    file: "saude.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#EF4444",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Equipamentos de saúde (UBS, UPA, hospitais, SAMU, CAPS) no corredor.",
+    available: true
+  },
+  {
+    id: "educacao",
+    label: "Educação",
+    file: "educacao.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#3B82F6",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Equipamentos de educação (creches, EMEI/EMEIEF, escolas estaduais, ensino superior) no corredor.",
+    available: true
+  },
+  {
+    id: "seguranca",
+    label: "Segurança",
+    file: "seguranca.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#6366F1",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Equipamentos de segurança (GCM, polícia, bombeiros) no corredor.",
     available: true
   }
 ];
 
-// Auxiliar para agrupar as camadas por grupo
+// Auxiliar para agrupar as camadas por grupo (preserva a ordem de declaração)
 export const GROUPS = [...new Set(LAYERS.map(layer => layer.group))];
