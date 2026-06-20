@@ -323,6 +323,21 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "subbacias",
+    label: "Sub-bacias (divisor de águas)",
+    file: "subbacias.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#0E7490",
+    weight: 1.5,
+    fillOpacity: 0.12,
+    minZoom: 10,
+    visible: false,
+    popupFields: [],
+    description: "Sub-bacias ao redor da Vila — divisor de águas entre o Alto Tietê (UGRHI 6) e a Baixada Santista/Rio Cubatão (UGRHI 7).",
+    available: true
+  },
+  {
     id: "hidrografia",
     label: "Hidrografia (Córregos)",
     file: "hidrografia.geojson",

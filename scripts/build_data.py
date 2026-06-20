@@ -30,9 +30,15 @@ def vila_mask():
 MASKS = {}
 
 
+def serra_mask():
+    g = lib.to_wgs84(lib.read_vector(C.VILA_MASK_SRC))
+    return g.geometry.unary_union.buffer(C.SERRA_BUFFER_DEG)
+
+
 def get_mask(name):
     if name not in MASKS:
-        MASKS[name] = corridor_mask() if name == "corridor" else vila_mask()
+        MASKS[name] = {"corridor": corridor_mask, "serra": serra_mask}.get(
+            name, vila_mask)()
     return MASKS[name]
 
 

@@ -30,6 +30,7 @@ CORRIDOR_BBOX = (-47.05, -24.10, -46.15, -23.05)
 VILA_MASK_SRC = src("01_LIMITES_ADMINISTRATIVOS", "ALTO_DA_SERRA",
                     "FAPESP_Alto_da_Serra_Delimitacao.shp")
 VILA_BUFFER_DEG = 0.006  # ~650 m so edge features are not clipped off
+SERRA_BUFFER_DEG = 0.05  # ~5.5 km around the vila (sub-basins / divisor de águas)
 
 # Georeferencing nudge for the Vila CAD layers (houses + lots + local rail share
 # one CAD georef). Measured against OSM/Esri building footprints: the CAD sits
@@ -129,6 +130,13 @@ JOBS = [
         "out": "app_buffers.geojson", "aoi": "vila", "simplify": 2e-5,
         "src": ["02_HIDROGRAFIA/APPs_Hidrografia.shp",
                 "02_HIDROGRAFIA/APPs_Nascentes.shp"], "name_auto": True,
+    },
+    {
+        # Sub-bacias ao redor da Vila — divisor de águas Alto Tietê (UGRHI 6) /
+        # Baixada Santista (UGRHI 7).
+        "out": "subbacias.geojson", "aoi": "serra", "simplify": 1e-4,
+        "src": ["02_HIDROGRAFIA/MA_subbacias.shp"],
+        "keep": {"DSUBBC1": "nome", "NUGRHI0": "ugrhi"}, "mapshaper": "20%",
     },
 
     # ---- Patrimônio ----------------------------------------------------------

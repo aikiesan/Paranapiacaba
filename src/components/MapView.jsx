@@ -5,6 +5,7 @@ import { LAYERS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
 import { PALETTE } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
+import { RasterControl } from './RasterControl';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster';
@@ -316,6 +317,9 @@ export function MapView({
 
         {/* Barra de Ferramentas Flutuante */}
         <MapToolbar />
+
+        {/* Controle de camadas raster (MapBiomas / Declividade) */}
+        <RasterControl />
 
         {/* Captura de mudanças do zoom */}
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
