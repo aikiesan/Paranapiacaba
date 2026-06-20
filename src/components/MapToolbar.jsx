@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { exportMapImage } from '../utils/exportImage';
 
 // Área geodésica (m²) de um anel de latlngs — fórmula esférica (igual Leaflet.Draw)
 function geodesicArea(latlngs) {
@@ -27,6 +28,24 @@ export const VILA_CENTER = [-23.778, -46.305];
 export function MapToolbar() {
   const map = useMap();
   const [copied, setCopied] = useState(false);
+
+  // --- Exportação de mapa (PNG) ---
+  const [showExport, setShowExport] = useState(false);
+  const [exportTitle, setExportTitle] = useState('');
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      await exportMapImage(map.getContainer(), { title: exportTitle.trim() });
+      setShowExport(false);
+    } catch (e) {
+      console.warn('Erro ao exportar mapa:', e);
+      alert('Não foi possível exportar o mapa: ' + e.message);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // --- Ferramenta de medição (distância / área) ---
   const [measuring, setMeasuring] = useState(false);
@@ -112,7 +131,7 @@ export function MapToolbar() {
   };
 
   return (
-    <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-lg border border-slate-200 shadow-md">
+    <div className="export-hide absolute top-4 right-4 z-[1000] flex flex-col gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-lg border border-slate-200 shadow-md">
       {/* Botão Corredor Ferroviário Jundiaí–Santos */}
       <button
         onClick={handleGoCorridor}
@@ -208,6 +227,50 @@ export function MapToolbar() {
           {copied ? 'Link Copiado!' : 'Copiar Link do Mapa'}
         </span>
       </button>
+
+      {/* Botão Exportar Mapa (PNG) */}
+      <button
+        onClick={() => setShowExport((v) => !v)}
+        className={`p-2 rounded-md transition-all relative group ${
+          showExport ? 'bg-emerald-600 text-white' : 'text-slate-650 hover:text-slate-900 hover:bg-slate-100'
+        }`}
+        title="Exportar mapa (PNG)"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 3v12m0 0l-4-4m4 4l4-4" />
+        </svg>
+        {!showExport && (
+          <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+            Exportar mapa (PNG)
+          </span>
+        )}
+      </button>
+
+      {/* Popover de exportação (título opcional + botão) */}
+      {showExport && (
+        <div className="absolute right-12 bottom-0 w-60 bg-white/97 backdrop-blur border border-slate-200 rounded-lg shadow-xl p-3 space-y-2">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Exportar mapa para PNG
+          </div>
+          <input
+            type="text"
+            value={exportTitle}
+            onChange={(e) => setExportTitle(e.target.value)}
+            placeholder="Título do mapa (opcional)"
+            className="w-full bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+          />
+          <p className="text-[10px] text-slate-400 leading-snug">
+            Captura a vista atual com a legenda, a escala e os créditos.
+          </p>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 rounded transition-colors"
+          >
+            {exporting ? 'Gerando…' : 'Exportar PNG'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

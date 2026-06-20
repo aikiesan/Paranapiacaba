@@ -29,7 +29,7 @@ export const BASEMAPS = [
 
 export function BasemapSelector({ selectedBasemap, onChange }) {
   return (
-    <div className="absolute bottom-4 right-4 z-[1000] flex bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
+    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
       {BASEMAPS.map((basemap) => {
         const isActive = selectedBasemap === basemap.id;
         return (

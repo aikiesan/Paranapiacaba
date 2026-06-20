@@ -1,26 +1,65 @@
 import React, { useState } from 'react';
 import { LAYERS, GROUPS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
-import { PALETTE } from '../config/styleGuide';
+import { groupMeta, getLayerSymbol } from '../config/styleGuide';
+import { PRESETS } from '../config/presets';
+
+// "Swatch" que espelha como a camada é desenhada no mapa (linha / polígono / ponto).
+function LayerSwatch({ layer }) {
+  const s = getLayerSymbol(layer);
+  if (s.emoji) {
+    return (
+      <span className="w-4 h-4 flex items-center justify-center text-[11px] flex-shrink-0" aria-hidden>
+        {s.emoji}
+      </span>
+    );
+  }
+  if (s.kind === 'line') {
+    return (
+      <span className="w-4 h-4 flex items-center justify-center flex-shrink-0" aria-hidden>
+        <span className="block w-4 h-[3px] rounded-full" style={{ backgroundColor: s.color }} />
+      </span>
+    );
+  }
+  if (s.kind === 'point') {
+    return (
+      <span className="w-4 h-4 flex items-center justify-center flex-shrink-0" aria-hidden>
+        <span className="block w-2.5 h-2.5 rounded-full border border-slate-900/30" style={{ backgroundColor: s.color }} />
+      </span>
+    );
+  }
+  // Polígono
+  return (
+    <span
+      className="w-4 h-4 rounded-[3px] flex-shrink-0 border"
+      style={{ backgroundColor: `${s.color}55`, borderColor: s.color }}
+      aria-hidden
+    />
+  );
+}
 
 // Componente para item de camada individual, lidando com seu próprio hook de dados
-function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, onOpenTable }) {
+function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, onOpenTable, onZoomToLayer }) {
   // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
   const shouldLoad = isGroupExpanded || isActive;
   const { loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
-  
+
   const [showDescription, setShowDescription] = useState(false);
   const isZoomRestricted = currentZoom < layer.minZoom;
 
   return (
-    <div className="flex flex-col border-b border-slate-200/60 last:border-b-0 py-1.5 px-2">
+    <div
+      className={`flex flex-col rounded-md transition-colors ${
+        isActive ? 'bg-emerald-50/80 ring-1 ring-emerald-200' : 'hover:bg-slate-50'
+      } py-1.5 px-2`}
+    >
       <div className={`group/layer flex items-center justify-between transition-opacity ${
         isZoomRestricted ? 'opacity-50' : 'opacity-100'
       }`}>
         <div className="flex items-center space-x-2.5 flex-1 min-w-0">
-          {/* Spinner de Loading */}
+          {/* Spinner de Loading ou Checkbox */}
           {loading ? (
-            <div className="w-3.5 h-3.5 flex items-center justify-center">
+            <div className="w-4 h-4 flex items-center justify-center">
               <div className="w-2.5 h-2.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
@@ -28,19 +67,20 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
               type="checkbox"
               checked={isActive}
               onChange={() => onToggle(layer.id)}
-              className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer"
+              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer"
             />
           )}
 
-          {/* Bullet colorido */}
-          <span 
-            className="w-3 h-3 rounded-sm flex-shrink-0 border border-slate-900/10"
-            style={{ backgroundColor: layer.color || '#ccc' }}
-          />
+          {/* Símbolo da camada (espelha o mapa) */}
+          <LayerSwatch layer={layer} />
 
-          <span 
+          <span
             onClick={() => onToggle(layer.id)}
-            className="text-xs font-semibold text-slate-600 group-hover/layer:text-slate-900 transition-colors truncate cursor-pointer select-none"
+            className={`text-xs truncate cursor-pointer select-none transition-colors ${
+              isActive
+                ? 'font-bold text-slate-900'
+                : 'font-semibold text-slate-600 group-hover/layer:text-slate-900'
+            }`}
             title={layer.label}
           >
             {layer.label}
@@ -54,8 +94,21 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           )}
         </div>
 
-        {/* Controles de Info, Restrição de Zoom e Erro */}
-        <div className="flex items-center space-x-1.5 ml-2">
+        {/* Controles de Zoom, Tabela, Info, Restrição de Zoom e Erro */}
+        <div className="flex items-center space-x-1 ml-2">
+          {/* Botão Zoom para a camada */}
+          {layer.available !== false && !error && onZoomToLayer && (
+            <button
+              onClick={() => onZoomToLayer(layer.id)}
+              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              title="Aproximar na extensão da camada"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 15l6 6m-11-4a7 7 0 110-14 7 7 0 010 14zm0-10v3m0 0v3m0-3h3m-3 0H7" />
+              </svg>
+            </button>
+          )}
+
           {/* Botão de Tabela de Atributos */}
           {layer.available !== false && !error && onOpenTable && (
             <button
@@ -120,15 +173,17 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
   );
 }
 
-export function LayerPanel({ 
-  activeLayers, 
-  onToggle, 
-  currentZoom, 
-  groupOpacities, 
+export function LayerPanel({
+  activeLayers,
+  onToggle,
+  currentZoom,
+  groupOpacities,
   onGroupOpacityChange,
   onToggleAllInGroup,
   onOpenAbout,
-  onOpenTable
+  onOpenTable,
+  onZoomToLayer,
+  onApplyPreset
 }) {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -160,7 +215,7 @@ export function LayerPanel({
 
   // Filtragem das camadas
   const isSearching = searchQuery.trim() !== '';
-  const filteredLayers = LAYERS.filter(layer => 
+  const filteredLayers = LAYERS.filter(layer =>
     layer.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -196,7 +251,7 @@ export function LayerPanel({
                 Paranapiacaba WebGIS
               </h1>
             </div>
-            
+
             {/* Botão de recolher */}
             <button
               onClick={() => setIsPanelOpen(false)}
@@ -213,7 +268,7 @@ export function LayerPanel({
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
               {activeCount} camadas ativas
             </span>
-            <button 
+            <button
               onClick={onOpenAbout}
               className="text-slate-450 hover:text-slate-800 hover:underline uppercase tracking-wider"
             >
@@ -221,6 +276,28 @@ export function LayerPanel({
             </button>
           </div>
         </div>
+
+        {/* Predefinições temáticas (mapas prontos) */}
+        {onApplyPreset && (
+          <div className="px-3 py-2.5 bg-slate-50 border-b border-slate-200">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Mapas temáticos
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {PRESETS.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => onApplyPreset(p)}
+                  title={p.description}
+                  className="flex items-center gap-1 px-2 py-1 rounded-full border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 text-[10px] font-bold text-slate-600 hover:text-emerald-700 transition-colors"
+                >
+                  <span aria-hidden>{p.icon}</span>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Barra de Busca */}
         <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 relative">
@@ -270,6 +347,7 @@ export function LayerPanel({
                     currentZoom={currentZoom}
                     isGroupExpanded={true}
                     onOpenTable={onOpenTable}
+                    onZoomToLayer={onZoomToLayer}
                   />
                 ))
               )}
@@ -280,37 +358,51 @@ export function LayerPanel({
               const isExpanded = !!expandedGroups[group];
               const groupLayers = LAYERS.filter(layer => layer.group === group);
               const opacity = groupOpacities[group] !== undefined ? groupOpacities[group] : 100;
+              const meta = groupMeta(group);
 
-              // Verifica se o grupo tem camadas ativas
-              const hasActiveLayers = groupLayers.some(layer => activeLayers.has(layer.id));
+              // Contagem de camadas ativas no grupo
+              const activeInGroup = groupLayers.filter(layer => activeLayers.has(layer.id)).length;
+              const hasActiveLayers = activeInGroup > 0;
 
               return (
-                <div 
-                  key={group} 
-                  className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50/20"
+                <div
+                  key={group}
+                  className="border border-slate-200 border-l-4 rounded-lg overflow-hidden bg-slate-50/20"
+                  style={{ borderLeftColor: meta.accent }}
                 >
                   {/* Header do Grupo */}
                   <div className="group/header w-full flex flex-col px-3 py-2 bg-slate-100/50 hover:bg-slate-100/80 transition-colors">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <button
                         onClick={() => toggleGroup(group)}
                         className="flex items-center gap-1.5 text-left flex-1 min-w-0"
                       >
                         <svg
-                          className={`w-3.5 h-3.5 text-slate-400 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                          className={`w-3.5 h-3.5 text-slate-400 transform transition-transform duration-200 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                        <span className="text-[11px] font-bold text-slate-600 tracking-wider uppercase truncate">
+                        <span className="text-sm flex-shrink-0" aria-hidden>{meta.icon}</span>
+                        <span
+                          className="text-[11px] font-bold tracking-wide uppercase truncate"
+                          style={{ color: meta.accent }}
+                        >
                           {group}
+                        </span>
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border flex-shrink-0 ${
+                          hasActiveLayers
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-slate-100 text-slate-400 border-slate-200'
+                        }`}>
+                          {activeInGroup}/{groupLayers.length}
                         </span>
                       </button>
 
-                      {/* Botões de Ação Rápida (Ativar / Desativar tudo) - Visíveis apenas no hover */}
-                      <div className="hidden group-hover/header:flex items-center space-x-2 text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      {/* Botões de Ação Rápida (Ativar / Limpar) — sempre visíveis */}
+                      <div className="flex items-center space-x-1.5 text-[9px] font-bold uppercase tracking-wider text-slate-400 flex-shrink-0">
                         <button
                           onClick={() => onToggleAllInGroup(group, true)}
                           className="hover:text-emerald-600 transition-colors"
@@ -318,7 +410,7 @@ export function LayerPanel({
                         >
                           Ativar
                         </button>
-                        <span>|</span>
+                        <span className="text-slate-300">|</span>
                         <button
                           onClick={() => onToggleAllInGroup(group, false)}
                           className="hover:text-rose-600 transition-colors"
@@ -331,7 +423,7 @@ export function LayerPanel({
 
                     {/* Slider de Opacidade - Visível apenas se houver camadas ativas no grupo */}
                     {hasActiveLayers && (
-                      <div 
+                      <div
                         className="mt-2 flex items-center space-x-2 bg-white p-1.5 rounded border border-slate-200 animate-fade-in"
                         onClick={(e) => e.stopPropagation()} // Impede que o clique no controle recolha o accordion
                       >
@@ -365,6 +457,7 @@ export function LayerPanel({
                           currentZoom={currentZoom}
                           isGroupExpanded={isExpanded}
                           onOpenTable={onOpenTable}
+                          onZoomToLayer={onZoomToLayer}
                         />
                       ))}
                     </div>

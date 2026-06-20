@@ -35,6 +35,9 @@ export default function App() {
   const [tableLayerId, setTableLayerId] = useState(null);
   const [focusFeature, setFocusFeature] = useState(null);
 
+  // Camada a enquadrar no mapa (botão "zoom para a camada" do painel)
+  const [focusLayer, setFocusLayer] = useState(null);
+
   // Abre a tabela de uma camada e garante que ela esteja ativa no mapa
   const handleOpenTable = (layerId) => {
     setTableLayerId(layerId);
@@ -72,6 +75,20 @@ export default function App() {
     }));
   };
 
+  // Enquadra o mapa na extensão de uma camada (e garante que ela esteja ativa)
+  const handleZoomToLayer = (layerId) => {
+    setActiveLayers((prev) => new Set(prev).add(layerId));
+    setFocusLayer({ layerId, ts: Date.now() });
+  };
+
+  // Aplica uma predefinição temática: troca o conjunto de camadas e o basemap
+  const handleApplyPreset = (preset) => {
+    if (!preset) return;
+    setActiveLayers(new Set(preset.layers));
+    if (preset.basemap) setSelectedBasemap(preset.basemap);
+    setActiveFeature(null);
+  };
+
   // Ativar ou desativar todas as camadas de um grupo específico
   const handleToggleAllInGroup = (group, enable) => {
     setActiveLayers(prevActive => {
@@ -106,6 +123,8 @@ export default function App() {
         onToggleAllInGroup={handleToggleAllInGroup}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenTable={handleOpenTable}
+        onZoomToLayer={handleZoomToLayer}
+        onApplyPreset={handleApplyPreset}
       />
 
       {/* Área Principal (Mapa) */}
@@ -119,6 +138,7 @@ export default function App() {
           onFeatureClick={setActiveFeature}
           onMapClick={() => setActiveFeature(null)} // Fecha o painel ao clicar em área vazia do mapa
           focusFeature={focusFeature}
+          focusLayer={focusLayer}
         >
           {/* Pills de seleção do basemap (canto inferior direito) */}
           <BasemapSelector
