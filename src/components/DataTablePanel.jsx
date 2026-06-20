@@ -35,9 +35,9 @@ export function DataTablePanel({ layerId, onClose, onSelectFeature }) {
   if (!layer) return null;
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-[1015] h-[42vh] bg-white border-t border-slate-300 shadow-2xl flex flex-col animate-slide-up">
+    <div className="absolute bottom-0 left-0 right-0 z-[1015] h-[60vh] md:h-[42vh] bg-white border-t border-slate-300 shadow-2xl flex flex-col animate-slide-up">
       {/* Cabeçalho */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-slate-50 gap-3">
+      <div className="flex items-center justify-between flex-wrap px-3 md:px-4 py-2 border-b border-slate-200 bg-slate-50 gap-2 md:gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className="w-3 h-3 rounded-sm flex-shrink-0 border border-slate-900/10" style={{ backgroundColor: layer.color }} />
           <span className="text-xs font-bold text-slate-700 truncate">{layer.label}</span>
@@ -46,13 +46,13 @@ export function DataTablePanel({ layerId, onClose, onSelectFeature }) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-1 md:flex-none min-w-0 justify-end">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Filtrar…"
-            className="bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-2.5 py-1 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 w-40"
+            className="bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-2.5 py-1.5 md:py-1 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 flex-1 min-w-0 md:flex-none md:w-40"
           />
           <button
             onClick={() => downloadCSV(layer.id, data)}

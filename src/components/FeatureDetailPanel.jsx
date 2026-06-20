@@ -1,6 +1,7 @@
 import React from 'react';
 import { LAYERS } from '../config/layers';
 import { PALETTE } from '../config/styleGuide';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 // Helper simples para calcular o centroide aproximado de qualquer geometria
 function getCentroid(feature) {
@@ -77,6 +78,7 @@ function formatKey(key) {
 }
 
 export function FeatureDetailPanel({ activeFeature, onClose }) {
+  const isMobile = useIsMobile();
   if (!activeFeature) return null;
 
   const { feature, layerId } = activeFeature;
@@ -390,7 +392,16 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
   };
 
   return (
-    <div className="absolute top-0 right-0 h-full w-[320px] bg-white/95 backdrop-blur border-l border-slate-200 shadow-2xl flex flex-col z-[1010] transform transition-transform duration-300 animate-slide-in">
+    <div
+      className={`fixed bottom-0 left-0 right-0 w-full max-h-[70vh] rounded-t-2xl border-t md:absolute md:inset-auto md:top-0 md:right-0 md:h-full md:w-[320px] md:max-h-none md:rounded-none md:border-t-0 md:border-l bg-white/95 backdrop-blur border-slate-200 shadow-2xl flex flex-col z-[1010] transform transition-transform duration-300 ${
+        isMobile ? 'animate-slide-up' : 'animate-slide-in'
+      }`}
+    >
+      {/* Alça de arraste (somente mobile, indica que é uma "folha" arrastável) */}
+      <div className="md:hidden flex justify-center pt-2 pb-1">
+        <span className="w-10 h-1.5 rounded-full bg-slate-300" />
+      </div>
+
       {/* Header do Painel */}
       <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-2">

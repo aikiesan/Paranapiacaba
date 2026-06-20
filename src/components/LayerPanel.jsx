@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LAYERS, GROUPS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { groupMeta, getLayerSymbol } from '../config/styleGuide';
 import { PRESETS } from '../config/presets';
 import { downloadGeoJSON } from '../utils/exportData';
@@ -101,7 +102,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           {layer.available !== false && !error && onZoomToLayer && (
             <button
               onClick={() => onZoomToLayer(layer.id)}
-              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
               title="Aproximar na extensão da camada"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +115,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           {layer.available !== false && !error && onOpenTable && (
             <button
               onClick={() => onOpenTable(layer.id)}
-              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
               title="Tabela de atributos / exportar"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +128,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           {layer.available !== false && !error && data && (
             <button
               onClick={() => downloadGeoJSON(layer.id, data)}
-              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
               title="Baixar camada (GeoJSON)"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +141,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           {layer.description && (
             <button
               onClick={() => setShowDescription(!showDescription)}
-              className={`p-0.5 rounded text-slate-400 hover:text-slate-700 transition-colors ${
+              className={`p-1.5 md:p-0.5 rounded text-slate-400 hover:text-slate-700 transition-colors ${
                 showDescription ? 'text-slate-800 bg-slate-100' : ''
               }`}
               title="Informações da camada"
@@ -199,7 +200,9 @@ export function LayerPanel({
   onZoomToLayer,
   onApplyPreset
 }) {
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const isMobile = useIsMobile();
+  // Inicia recolhido no mobile (o mapa ocupa a tela toda) e aberto no desktop
+  const [isPanelOpen, setIsPanelOpen] = useState(() => !isMobile);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Carrega estado do accordion do localStorage (todos abertos por padrão)
@@ -248,10 +251,19 @@ export function LayerPanel({
         </button>
       )}
 
-      {/* Painel Principal */}
+      {/* Backdrop (somente mobile) — toque fecha o painel */}
+      {isPanelOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[1000] md:hidden"
+          onClick={() => setIsPanelOpen(false)}
+          aria-hidden
+        />
+      )}
+
+      {/* Painel Principal — gaveta sobreposta no mobile, barra lateral fixa no desktop */}
       <div
-        className={`bg-white border-r border-slate-200 flex flex-col h-full overflow-hidden transition-all duration-300 shadow-xl relative z-[1001] ${
-          isPanelOpen ? 'w-[300px]' : 'w-0 border-r-0'
+        className={`bg-white border-r border-slate-200 flex flex-col h-full overflow-hidden transition-all duration-300 shadow-xl z-[1001] fixed inset-y-0 left-0 w-[85vw] max-w-[320px] md:relative md:max-w-none ${
+          isPanelOpen ? 'translate-x-0 md:w-[300px]' : '-translate-x-full md:translate-x-0 md:w-0 md:border-r-0'
         }`}
       >
         {/* Cabeçalho */}

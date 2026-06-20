@@ -135,7 +135,7 @@ export function MapToolbar() {
       {/* Botão Corredor Ferroviário Jundiaí–Santos */}
       <button
         onClick={handleGoCorridor}
-        className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
         title="Corredor Jundiaí–Santos"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@ export function MapToolbar() {
       {/* Botão Paranapiacaba (Vila) */}
       <button
         onClick={handleGoVila}
-        className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
         title="Vila de Paranapiacaba"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,7 +163,7 @@ export function MapToolbar() {
       {/* Botão Medir (distância / área) */}
       <button
         onClick={toggleMeasure}
-        className={`p-2 rounded-md transition-all relative group ${
+        className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
           measuring ? 'bg-emerald-600 text-white' : 'text-slate-650 hover:text-slate-900 hover:bg-slate-100'
         }`}
         title="Medir distância / área"
@@ -196,7 +196,7 @@ export function MapToolbar() {
       {/* Botão Localização */}
       <button
         onClick={handleLocateUser}
-        className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
         title="Minha Localização"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +211,7 @@ export function MapToolbar() {
       {/* Botão Compartilhar Link */}
       <button
         onClick={handleCopyLink}
-        className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
         title="Compartilhar Mapa"
       >
         {copied ? (
@@ -231,7 +231,7 @@ export function MapToolbar() {
       {/* Botão Exportar Mapa (PNG) */}
       <button
         onClick={() => setShowExport((v) => !v)}
-        className={`p-2 rounded-md transition-all relative group ${
+        className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
           showExport ? 'bg-emerald-600 text-white' : 'text-slate-650 hover:text-slate-900 hover:bg-slate-100'
         }`}
         title="Exportar mapa (PNG)"

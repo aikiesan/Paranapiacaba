@@ -68,7 +68,7 @@ export function RasterControl() {
   const legend = showDecl ? manifest.declividade?.legend : (showCov ? manifest.coverage?.legend : null);
 
   return (
-    <div className="export-hide absolute top-4 left-1/2 -translate-x-1/2 z-[1000] w-[230px] bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden">
+    <div className="export-hide absolute top-3 md:top-4 left-1/2 -translate-x-1/2 z-[1000] w-[230px] max-w-[62vw] md:max-w-none bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-slate-200"

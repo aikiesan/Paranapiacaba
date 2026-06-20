@@ -36,7 +36,7 @@ export function BasemapSelector({ selectedBasemap, onChange }) {
           <button
             key={basemap.id}
             onClick={() => onChange(basemap.id)}
-            className={`px-3 py-1 text-xs font-bold rounded-full transition-all duration-200 ${
+            className={`px-2 md:px-3 py-1 text-[11px] md:text-xs font-bold rounded-full transition-all duration-200 ${
               isActive
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'

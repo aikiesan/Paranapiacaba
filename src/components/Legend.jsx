@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { LAYERS } from '../config/layers';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export function Legend({ activeLayers }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const isMobile = useIsMobile();
+  // Inicia recolhida no mobile para não competir com o mapa/controles inferiores
+  const [isOpen, setIsOpen] = useState(() => !isMobile);
 
   // Filtra as camadas ativas
   const activeList = LAYERS.filter((layer) => activeLayers.has(layer.id));
 
   return (
-    <div className="absolute bottom-4 left-4 z-[1000] w-[220px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
+    <div className="absolute bottom-16 left-4 md:bottom-4 z-[1000] w-[160px] md:w-[220px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
       {/* Cabeçalho com toggle */}
       <div 
         className="flex items-center justify-between px-3 py-2 bg-slate-50 cursor-pointer border-b border-slate-200 select-none"
