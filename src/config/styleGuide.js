@@ -30,11 +30,21 @@ export const PALETTE = {
   tombado_estadual:   '#FB8500',
   tombado_municipal:  '#E76F51',
 
-  // Infraestrutura
+  // Infraestrutura / Ferrovia
   ferrovia:           '#6D6875',
   funicular:          '#B5838D',
   hidrografia:        '#4895EF',
   app_buffer:         '#4CC9F0',
+  // Corredor ferroviário por situação operacional
+  ferrovia_ativa:        '#1E293B',
+  ferrovia_desativada:   '#9CA3AF',
+  ferrovia_planejada:    '#0EA5E9',
+  ferrovia_default:      '#1E293B',
+
+  // Equipamentos urbanos
+  equip_saude:        '#EF4444',
+  equip_educacao:     '#3B82F6',
+  equip_seguranca:    '#6366F1',
 
   // Socioeconomia
   censo:              '#9B5DE5',

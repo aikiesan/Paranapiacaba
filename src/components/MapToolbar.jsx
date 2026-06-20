@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { useMap } from 'react-leaflet';
 
+// Enquadramento do corredor ferroviário Jundiaí–Santos (SW, NE)
+export const CORRIDOR_BOUNDS = [[-24.10, -47.05], [-23.05, -46.15]];
+// Centro da Vila de Paranapiacaba
+export const VILA_CENTER = [-23.778, -46.305];
+
 export function MapToolbar() {
   const map = useMap();
   const [copied, setCopied] = useState(false);
 
-  // Voltar para a extensão inicial do Sítio
-  const handleGoHome = () => {
-    map.setView([-23.773, -46.312], 13);
+  // Enquadrar o corredor ferroviário completo (Jundiaí ↔ Santos)
+  const handleGoCorridor = () => {
+    map.fitBounds(CORRIDOR_BOUNDS, { padding: [30, 30] });
+  };
+
+  // Aproximar na Vila de Paranapiacaba
+  const handleGoVila = () => {
+    map.setView(VILA_CENTER, 16);
   };
 
   // Buscar localização do usuário via GPS do dispositivo
@@ -40,17 +50,31 @@ export function MapToolbar() {
 
   return (
     <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-lg border border-slate-200 shadow-md">
-      {/* Botão Home */}
+      {/* Botão Corredor Ferroviário Jundiaí–Santos */}
       <button
-        onClick={handleGoHome}
+        onClick={handleGoCorridor}
         className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
-        title="Enquadramento Inicial"
+        title="Corredor Jundiaí–Santos"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 15.5V6a2 2 0 012-2h12a2 2 0 012 2v9.5M4 15.5A2.5 2.5 0 006.5 18h11a2.5 2.5 0 002.5-2.5M4 15.5h16M9 4v14m6-14v14M7.5 21l1.5-3m6 3l-1.5-3" />
         </svg>
         <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
-          Enquadramento Inicial
+          Corredor Jundiaí–Santos
+        </span>
+      </button>
+
+      {/* Botão Paranapiacaba (Vila) */}
+      <button
+        onClick={handleGoVila}
+        className="p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        title="Vila de Paranapiacaba"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0H5m0 0H3m6-4h6m-6-4h6m-6-4h6" />
+        </svg>
+        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+          Vila de Paranapiacaba
         </span>
       </button>
 

@@ -40,7 +40,7 @@ export function AboutPanel({ isOpen, onClose }) {
               O Projeto
             </h3>
             <p className="leading-relaxed text-justify text-slate-600">
-              O WebGIS Paranapiacaba consolida o levantamento cartográfico e de campo realizado para subsidiar a salvaguarda e candidatura do Sítio Histórico e Natural à Chancela de Patrimônio Mundial da UNESCO. O distrito, fundado em 1867 pela São Paulo Railway, é um marco único de arquitetura inglesa e engenharia na Serra do Mar paulista.
+              O WebGIS consolida o levantamento cartográfico ao longo do <span className="font-semibold text-slate-750">corredor ferroviário histórico Jundiaí–Santos</span> (São Paulo Railway, 1867), tendo a <span className="font-semibold text-slate-750">Vila de Paranapiacaba</span> (Santo André) como núcleo de detalhe — marco da arquitetura inglesa e da engenharia ferroviária na Serra do Mar, subsídio à salvaguarda e à candidatura do sítio à Chancela de Patrimônio Mundial da UNESCO.
             </p>
           </div>
 
@@ -51,19 +51,19 @@ export function AboutPanel({ isOpen, onClose }) {
             </h3>
             <ul className="space-y-1.5 list-disc list-inside text-slate-600">
               <li>
-                <span className="font-semibold text-slate-750">182 camadas geoespaciais</span> estruturadas sob datum SIRGAS 2000.
+                <span className="font-semibold text-slate-750">Corredor Jundiaí–Santos</span> mapeado a partir da malha ferroviária IBGE (BaseFerro) e suas estações.
               </li>
               <li>
-                <span className="font-semibold text-slate-750">45 trilhas mapeadas</span> representando aproximadamente ~763 km de caminhamento mapeados via GPS.
+                <span className="font-semibold text-slate-750">Patrimônio tombado</span> nas instâncias federal, estadual e municipal, com edificações e lotes da Vila por uso.
               </li>
               <li>
-                <span className="font-semibold text-slate-750">331 atrativos naturais</span> inventariados e classificados por tipo (cachoeiras, poços, mirantes, ruínas, etc.).
+                <span className="font-semibold text-slate-750">Meio ambiente</span>: Unidades de Conservação, hidrografia, nascentes e APPs no divisor Cubatão/Tietê.
               </li>
               <li>
-                <span className="font-semibold text-slate-750">39 pranchas cartográficas</span> de nível profissional prontas em formato A0.
+                <span className="font-semibold text-slate-750">Equipamentos urbanos</span> (saúde, educação, segurança) dos municípios do corredor.
               </li>
               <li>
-                Integração com dados socioeconômicos do <span className="font-semibold text-slate-750">Censo IBGE 2022</span> recortados por setor censitário.
+                Dados socioeconômicos do <span className="font-semibold text-slate-750">Censo IBGE</span> recortados por setor no distrito de Paranapiacaba.
               </li>
             </ul>
           </div>
