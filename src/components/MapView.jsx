@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap, ScaleControl } from 'react-le
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
-import { PALETTE } from '../config/styleGuide';
+import { PALETTE, vegColor, riskColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
 
@@ -141,6 +141,16 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
         strokeColor = cat.includes('INTER')
           ? PALETTE.bus_intermunicipal
           : PALETTE.bus_municipal;
+      }
+
+      // Estilo dinâmico: Vegetação por estágio de sucessão
+      if (layer.id === 'classif_vegetal') {
+        strokeColor = fillColor = vegColor(props.classe);
+      }
+
+      // Estilo dinâmico: Riscos (Defesa Civil) por grau (R2/R3/R4/SM)
+      if (layer.id === 'risco_movmas' || layer.id === 'susc_movmas' || layer.id === 'risco_incendio') {
+        strokeColor = fillColor = riskColor(props.grau);
       }
 
       // Estilo dinâmico: Bens Tombados por Instância

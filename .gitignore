@@ -50,6 +50,7 @@ dist-ssr
 
 # Pastas de dados externos
 /EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/
+/OTHER_SHAPEFILES_SIGA_MAPA/
 
 # Pipeline (Python caches e download OSM)
 scripts/.cache/

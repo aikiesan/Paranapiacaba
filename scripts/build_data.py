@@ -46,10 +46,10 @@ def get_mask(name):
 GEOM_SUFFIXES = ("MPoint", "Point", "MPolygon", "Polygon", "MLine", "Line", "Polyline")
 
 
-def resolve(src_list):
+def resolve(src_list, root=None):
     paths = []
     for s in src_list:
-        full = C.src(*s.split("/"))
+        full = os.path.join(root, *s.split("/")) if root else C.src(*s.split("/"))
         hits = sorted(glob.glob(full))
         paths.extend(hits if hits else [full])
     return paths
@@ -155,7 +155,7 @@ def build_job(job):
         n, size = lib.write_geojson(merged, out_path)
         return out_path, n, size
 
-    paths = resolve(job["src"])
+    paths = resolve(job["src"], job.get("root"))
     parts = []
     for p in paths:
         if not os.path.exists(p):

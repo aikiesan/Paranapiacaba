@@ -3,6 +3,7 @@ import { LAYERS, GROUPS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
 import { groupMeta, getLayerSymbol } from '../config/styleGuide';
 import { PRESETS } from '../config/presets';
+import { downloadGeoJSON } from '../utils/exportData';
 
 // "Swatch" que espelha como a camada é desenhada no mapa (linha / polígono / ponto).
 function LayerSwatch({ layer }) {
@@ -42,7 +43,7 @@ function LayerSwatch({ layer }) {
 function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, onOpenTable, onZoomToLayer }) {
   // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
   const shouldLoad = isGroupExpanded || isActive;
-  const { loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
+  const { data, loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
 
   const [showDescription, setShowDescription] = useState(false);
   const isZoomRestricted = currentZoom < layer.minZoom;
@@ -118,6 +119,19 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M3 14h18M3 6h18M3 18h18" />
+              </svg>
+            </button>
+          )}
+
+          {/* Botão de Download (GeoJSON) */}
+          {layer.available !== false && !error && data && (
+            <button
+              onClick={() => downloadGeoJSON(layer.id, data)}
+              className="p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
+              title="Baixar camada (GeoJSON)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-4-4m4 4l4-4" />
               </svg>
             </button>
           )}

@@ -229,6 +229,21 @@ export const LAYERS = [
     description: "Perímetro do Parque Andreense (Área de Proteção Ambiental municipal).",
     available: true
   },
+  {
+    id: "distritos",
+    label: "Distritos / Subdistritos",
+    file: "distritos.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#475569",
+    weight: 1.5,
+    fillOpacity: 0.04,
+    minZoom: 10,
+    visible: false,
+    popupFields: [],
+    description: "Distritos e subdistritos de Santo André, incluindo o distrito de Paranapiacaba.",
+    available: true
+  },
 
   // ====================== PATRIMÔNIO ======================
   {
@@ -317,6 +332,21 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Área da Associação Brasileira de Preservação Ferroviária (ABPF), ligada à operação histórica da ferrovia.",
+    available: true
+  },
+  {
+    id: "areas_envoltorias",
+    label: "Áreas Envoltórias (entorno tombado)",
+    file: "areas_envoltorias.geojson",
+    group: "Patrimônio",
+    type: "polygon",
+    color: "#B45309",
+    weight: 1.5,
+    fillOpacity: 0.12,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Zonas de entorno (áreas envoltórias) dos bens tombados — inclui o Complexo Ferroviário de Paranapiacaba e a Serra do Mar. Equivalem às zonas de amortecimento para a candidatura UNESCO.",
     available: true
   },
 
@@ -497,6 +527,94 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "classif_vegetal",
+    label: "Vegetação (Mata Atlântica)",
+    file: "classif_vegetal.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#40916C",
+    weight: 0.5,
+    fillOpacity: 0.45,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Cobertura vegetal classificada por estágio de sucessão da Mata Atlântica (pioneiro → secundário avançado).",
+    available: true
+  },
+  {
+    id: "app_sul",
+    label: "APPs (Serra / vertente Sul)",
+    file: "app_sul.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#2A9D8F",
+    weight: 0.8,
+    fillOpacity: 0.22,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Áreas de Preservação Permanente delimitadas no licenciamento da vertente Sul da Serra do Mar.",
+    available: true
+  },
+  {
+    id: "rios_sul",
+    label: "Rios (Serra / vertente Sul)",
+    file: "rios_sul.geojson",
+    group: "Meio Ambiente",
+    type: "line",
+    color: "#1D6FA4",
+    weight: 1.2,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Rede hidrográfica da vertente Sul da Serra do Mar (base de licenciamento).",
+    available: true
+  },
+  {
+    id: "pnm_nascentes",
+    label: "PNM Nascentes de Paranapiacaba",
+    file: "pnm_nascentes.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#1B4332",
+    weight: 1.5,
+    fillOpacity: 0.18,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Parque Natural Municipal Nascentes de Paranapiacaba — unidade de conservação municipal.",
+    available: true
+  },
+  {
+    id: "altimetria_serra",
+    label: "Altimetria da Serra (50 m)",
+    file: "altimetria_serra.geojson",
+    group: "Meio Ambiente",
+    type: "line",
+    color: "#9A6A2F",
+    weight: 0.6,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Curvas-mestras de altitude (a cada 50 m, 500–1150 m) da escarpa da Serra do Mar, com cota.",
+    available: true
+  },
+  {
+    id: "billings_747",
+    label: "Represa Billings (cota 747)",
+    file: "billings_747.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#0EA5E9",
+    weight: 1,
+    fillOpacity: 0.3,
+    minZoom: 10,
+    visible: false,
+    popupFields: [],
+    description: "Espelho d'água da Represa Billings na cota 747 — contexto do manancial regional.",
+    available: true
+  },
+  {
     id: "declividade",
     label: "Classes de Declividade",
     file: "declividade.geojson",
@@ -510,6 +628,53 @@ export const LAYERS = [
     popupFields: [],
     description: "Classes de declividade da escarpa (em breve — derivação a partir de MDT).",
     available: false
+  },
+
+  // ====================== RISCOS (DEFESA CIVIL) ======================
+  {
+    id: "susc_movmas",
+    label: "Suscetibilidade a Deslizamentos (2025)",
+    file: "susc_movmas.geojson",
+    group: "Riscos (Defesa Civil)",
+    type: "polygon",
+    color: "#EF4444",
+    weight: 0.8,
+    fillOpacity: 0.4,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Suscetibilidade a movimentos de massa (deslizamentos) — IPT 2025, por grau (R3 alto, R4 muito alto, SM monitoramento).",
+    available: true
+  },
+  {
+    id: "risco_movmas",
+    label: "Risco de Deslizamento (2014)",
+    file: "risco_movmas.geojson",
+    group: "Riscos (Defesa Civil)",
+    type: "polygon",
+    color: "#DC2626",
+    weight: 0.8,
+    fillOpacity: 0.4,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Setores de risco a movimentos de massa mapeados pelo IPT (2014), por grau (R2–R4).",
+    available: true
+  },
+  {
+    id: "risco_incendio",
+    label: "Risco de Incêndio",
+    file: "risco_incendio.geojson",
+    group: "Riscos (Defesa Civil)",
+    type: "polygon",
+    color: "#EA580C",
+    weight: 0.6,
+    fillOpacity: 0.4,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Áreas classificadas por risco de incêndio (Defesa Civil), por grau (R3, R4, SM).",
+    available: true
   },
 
   // ====================== TURISMO E TRILHAS ======================
@@ -617,6 +782,36 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Densidade demográfica (hab/ha) por setor censitário no distrito de Paranapiacaba.",
+    available: true
+  },
+  {
+    id: "densidade_2022",
+    label: "Densidade Demográfica (2022)",
+    file: "densidade_2022.geojson",
+    group: "Socioeconomia",
+    type: "polygon",
+    color: "#F15BB5",
+    weight: 0.6,
+    fillOpacity: 0.35,
+    minZoom: 10,
+    visible: false,
+    popupFields: [],
+    description: "Densidade demográfica por bairro de Santo André (Censo IBGE 2022).",
+    available: true
+  },
+  {
+    id: "populacao_2022",
+    label: "População (Censo 2022)",
+    file: "populacao_2022.geojson",
+    group: "Socioeconomia",
+    type: "polygon",
+    color: "#C026D3",
+    weight: 0.6,
+    fillOpacity: 0.35,
+    minZoom: 10,
+    visible: false,
+    popupFields: [],
+    description: "População total por bairro de Santo André (Censo IBGE 2022).",
     available: true
   },
 
