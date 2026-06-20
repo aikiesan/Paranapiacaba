@@ -186,4 +186,87 @@ JOBS = [
         "src": ["03_EQUIPAMENTOS/SEGURANCA/SIGA_SEG_*.shp"],
         "family": "categoria", "family_prefix": "SIGA_SEG_", "name_auto": True,
     },
+    {
+        "out": "esporte.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["03_EQUIPAMENTOS/ESPORTE/SIGA_ESP_*.shp"],
+        "family": "categoria", "family_prefix": "SIGA_ESP_", "name_auto": True,
+    },
+    {
+        "out": "assistencia_social.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["03_EQUIPAMENTOS/ASSIST_SOCIAL/SIGA_AS_*Point.shp"],
+        "family": "categoria", "family_prefix": "SIGA_AS_", "name_auto": True,
+    },
+    {
+        "out": "defesa_civil.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["03_EQUIPAMENTOS/DEFESA_CIVIL/SIGA_DCI_*.shp"],
+        "family": "categoria", "family_prefix": "SIGA_DCI_", "name_auto": True,
+    },
+
+    # ---- Mobilidade (rodovias, rail RMSP, ciclovias) -------------------------
+    {
+        "out": "ferrovia_rmsp.geojson", "aoi": "corridor", "simplify": 8e-5,
+        "src": ["04_FERROVIA_MOBILIDADE/FER_L_RMSP_2021_CEM.shp"],
+        "keep": {"NM_FER": "nome", "OPERACAO": "operacao", "TIPO": "tipo",
+                 "EXT_KM": "ext_km"},
+    },
+    {
+        "out": "rodovias.geojson", "aoi": "corridor", "simplify": 1e-4,
+        "src": ["04_FERROVIA_MOBILIDADE/RODO_RMSP_2021_CEM.shp"],
+        "keep": {"OPERACAO": "operacao", "INSTANCIA": "instancia", "EXT_KM": "ext_km"},
+    },
+    {
+        "out": "ciclovias.geojson", "aoi": "corridor", "simplify": 2e-5,
+        "src": ["04_FERROVIA_MOBILIDADE/SIGA_MUR_SIS_CICLOVIARIOLine.shp"],
+        "keep": {"TIPO": "tipo"},
+    },
+
+    # ---- Território (regional) -----------------------------------------------
+    {
+        "out": "grande_abc.geojson", "aoi": None, "simplify": 1e-4,
+        "src": ["01_LIMITES_ADMINISTRATIVOS/GRANDE_ABC.shp"],
+        "keep": {"cidade": "nome"}, "mapshaper": "15%",
+    },
+    {
+        "out": "bairros.geojson", "aoi": "corridor", "simplify": 5e-5,
+        "src": ["01_LIMITES_ADMINISTRATIVOS/SIGA_LIM_BAIRROS_OFICIALPolygon.shp"],
+        "keep": {"NOME": "nome", "AREA": "area", "NUM_LEI": "lei"},
+        "mapshaper": "20%",
+    },
+    {
+        "out": "parque_andreense.geojson", "aoi": None, "simplify": 5e-5,
+        "src": ["01_LIMITES_ADMINISTRATIVOS/SIGA_LIM_PARQUE_ANDREENSEPolygon.shp"],
+        "keep": {"NOME": "nome", "LEGISLACAO": "legislacao"},
+    },
+
+    # ---- Meio Ambiente (reservatórios) ---------------------------------------
+    {
+        "out": "reservatorios.geojson", "aoi": "corridor", "simplify": 4e-4,
+        "src": ["02_HIDROGRAFIA/Reservatorios_RMSP.shp"],
+        "keep": {"NM_MD": "nome", "TIPO_MD": "tipo", "CBHAT": "bacia"},
+    },
+
+    # ---- Patrimônio cultural (registrados, territórios) ----------------------
+    {
+        "out": "bens_registrados.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["05_PATRIMONIO/PATRIMONIO_CULTURAL/SIGA_CUL_BENS_REGISTRADOSPoint.shp"],
+        "keep": {"DSC_DENOMI": "nome", "DSC_ENDERE": "endereco",
+                 "DSC_TIPOLO": "tipologia"},
+    },
+    {
+        "out": "territorios_culturais.geojson", "aoi": "corridor", "simplify": 3e-5,
+        "src": ["05_PATRIMONIO/PATRIMONIO_CULTURAL/SIGA_CUL_TERRITORIOS_CULTURAISPolygon.shp"],
+        "keep": {"NOM_BAIRRO": "nome", "NUM_REGIAO": "regiao"},
+    },
+
+    # ---- Legislação e Planejamento -------------------------------------------
+    {
+        "out": "macrozonas.geojson", "aoi": "corridor", "simplify": 5e-5,
+        "src": ["06_LEGISLACAO_PLANEJAMENTO/LC_1181_2022_MACROZONAS.shp"],
+        "keep": {"DESCRICAO": "nome"}, "mapshaper": "25%",
+    },
+    {
+        "out": "zoneamento_mzpa.geojson", "aoi": "corridor", "simplify": 3e-5,
+        "src": ["06_LEGISLACAO_PLANEJAMENTO/SIGA_PLA_SETORIZACAO_MZPAPolygon.shp"],
+        "keep": {"SETORIZACA": "setor", "URL_LEGISL": "legislacao"},
+    },
 ]

@@ -80,6 +80,50 @@ export const LAYERS = [
     available: true
   },
 
+  // ====================== MOBILIDADE ======================
+  {
+    id: "ferrovia_rmsp",
+    label: "Ferrovias RMSP (CPTM/Metrô)",
+    file: "ferrovia_rmsp.geojson",
+    group: "Mobilidade",
+    type: "line",
+    color: "#0891B2",
+    weight: 2,
+    minZoom: 9,
+    visible: false,
+    popupFields: [],
+    description: "Linhas ferroviárias metropolitanas (CPTM/Metrô) na RMSP — base CEM 2021.",
+    available: true
+  },
+  {
+    id: "rodovias",
+    label: "Rodovias",
+    file: "rodovias.geojson",
+    group: "Mobilidade",
+    type: "line",
+    color: "#CA8A04",
+    weight: 1.5,
+    minZoom: 9,
+    visible: false,
+    popupFields: [],
+    description: "Malha rodoviária estrutural da RMSP (base CEM 2021).",
+    available: true
+  },
+  {
+    id: "ciclovias",
+    label: "Ciclovias",
+    file: "ciclovias.geojson",
+    group: "Mobilidade",
+    type: "line",
+    color: "#16A34A",
+    weight: 2,
+    minZoom: 13,
+    visible: false,
+    popupFields: [],
+    description: "Sistema cicloviário de Santo André.",
+    available: true
+  },
+
   // ====================== TERRITÓRIO ======================
   {
     id: "limite_sitio",
@@ -126,6 +170,51 @@ export const LAYERS = [
     description: "Municípios atravessados pelo corredor ferroviário Jundiaí–Santos (IBGE 2024).",
     available: true
   },
+  {
+    id: "grande_abc",
+    label: "Região do Grande ABC",
+    file: "grande_abc.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#475569",
+    weight: 1.5,
+    fillOpacity: 0.04,
+    minZoom: 8,
+    visible: false,
+    popupFields: [],
+    description: "Municípios da Região do Grande ABC paulista.",
+    available: true
+  },
+  {
+    id: "bairros",
+    label: "Bairros (Santo André)",
+    file: "bairros.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#8B5CF6",
+    weight: 0.8,
+    fillOpacity: 0.06,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Bairros oficiais do município de Santo André.",
+    available: true
+  },
+  {
+    id: "parque_andreense",
+    label: "Parque Andreense",
+    file: "parque_andreense.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#15803D",
+    weight: 1.5,
+    fillOpacity: 0.12,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Perímetro do Parque Andreense (Área de Proteção Ambiental municipal).",
+    available: true
+  },
 
   // ====================== PATRIMÔNIO ======================
   {
@@ -141,6 +230,34 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Bens tombados nas instâncias federal (IPHAN), estadual (CONDEPHAAT) e municipal (COMDEPHAAPASA), por instância.",
+    available: true
+  },
+  {
+    id: "bens_registrados",
+    label: "Bens Registrados (Imaterial)",
+    file: "bens_registrados.geojson",
+    group: "Patrimônio",
+    type: "point",
+    color: "#D97706",
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Bens culturais registrados (patrimônio imaterial) de Santo André.",
+    available: true
+  },
+  {
+    id: "territorios_culturais",
+    label: "Territórios Culturais",
+    file: "territorios_culturais.geojson",
+    group: "Patrimônio",
+    type: "polygon",
+    color: "#A855F7",
+    weight: 1,
+    fillOpacity: 0.2,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Territórios culturais delimitados no município.",
     available: true
   },
   {
@@ -188,6 +305,21 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Unidades de Conservação estaduais e municipais (PESM Núcleo Itutinga-Pilões, Alto da Serra e outras).",
+    available: true
+  },
+  {
+    id: "reservatorios",
+    label: "Reservatórios (RMSP)",
+    file: "reservatorios.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#0EA5E9",
+    weight: 0.8,
+    fillOpacity: 0.4,
+    minZoom: 9,
+    visible: false,
+    popupFields: [],
+    description: "Reservatórios e represas da RMSP (Billings, Guarapiranga e outros).",
     available: true
   },
   {
@@ -292,6 +424,38 @@ export const LAYERS = [
     available: true
   },
 
+  // ====================== LEGISLAÇÃO E PLANEJAMENTO ======================
+  {
+    id: "macrozonas",
+    label: "Macrozonas (LC 1.181/2022)",
+    file: "macrozonas.geojson",
+    group: "Legislação e Planejamento",
+    type: "polygon",
+    color: "#0D9488",
+    weight: 1,
+    fillOpacity: 0.2,
+    minZoom: 11,
+    visible: false,
+    popupFields: [],
+    description: "Macrozonas do Plano Diretor de Santo André (Lei Complementar 1.181/2022).",
+    available: true
+  },
+  {
+    id: "zoneamento_mzpa",
+    label: "Setorização MZPA",
+    file: "zoneamento_mzpa.geojson",
+    group: "Legislação e Planejamento",
+    type: "polygon",
+    color: "#7C3AED",
+    weight: 0.8,
+    fillOpacity: 0.2,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Setorização da Macrozona de Proteção Ambiental (MZPA).",
+    available: true
+  },
+
   // ====================== SOCIOECONOMIA ======================
   {
     id: "censo_setores",
@@ -365,6 +529,48 @@ export const LAYERS = [
     cluster: true,
     popupFields: [],
     description: "Equipamentos de segurança (GCM, polícia, bombeiros) no corredor.",
+    available: true
+  },
+  {
+    id: "esporte",
+    label: "Esporte",
+    file: "esporte.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#10B981",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Equipamentos esportivos e atividades de esporte no corredor.",
+    available: true
+  },
+  {
+    id: "assistencia_social",
+    label: "Assistência Social",
+    file: "assistencia_social.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#EC4899",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Equipamentos de assistência social (CRAS, CREAS, centros de convivência).",
+    available: true
+  },
+  {
+    id: "defesa_civil",
+    label: "Defesa Civil",
+    file: "defesa_civil.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#F97316",
+    minZoom: 10,
+    visible: false,
+    cluster: true,
+    popupFields: [],
+    description: "Abrigos e pluviômetros da Defesa Civil no corredor.",
     available: true
   }
 ];
