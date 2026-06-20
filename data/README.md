@@ -57,3 +57,24 @@ numa única (Multi)geometria, eliminando o overhead por feição no GeoJSON).
 > Nota: não há camada de UCs federais — o único UC federal que intersecta o
 > corredor é a APA Bacia do Paraíba do Sul (região distinta); as UCs relevantes
 > (estaduais/municipais) já estão em `ucs.geojson`.
+
+### Camadas adicionadas (Fase F — lote SIGA_MAPA)
+Origem: `OTHER_SHAPEFILES_SIGA_MAPA/` (EPSG:31983, gitignored; jobs usam
+`"root": SIGA_MAPA`).
+- **Meio Ambiente:** `classif_vegetal` (sucessão da Mata Atlântica), `app_sul`,
+  `rios_sul`, `pnm_nascentes` (PNM Nascentes de Paranapiacaba),
+  `altimetria_serra` (curvas-mestras 50 m), `billings_747`.
+- **Patrimônio:** `areas_envoltorias` (zonas de entorno dos tombados — inclui o
+  Complexo Ferroviário de Paranapiacaba; ≈ zona de amortecimento UNESCO).
+- **Riscos (Defesa Civil):** `susc_movmas` (suscetibilidade a deslizamentos,
+  IPT 2025), `risco_movmas` (risco, IPT 2014), `risco_incendio`.
+- **Território:** `distritos` (distrito de Paranapiacaba).
+- **Socioeconomia:** `densidade_2022`, `populacao_2022` (Censo IBGE 2022).
+
+> Não incluídos (duplicatas ou granularidade municipal grossa): UC estadual Alto
+> Paranapiacaba, bairros, ZEIP, pluviômetros, ferrovia e circuito Paranapiacaba
+> (já presentes); risco de enxurrada (sem feições perto de Paranapiacaba);
+> infraestrutura domiciliar (6×), censo por faixa etária/gênero e densidade 2010.
+
+Cada camada pode ser baixada direto do painel (ícone de download → GeoJSON) ou
+pela tabela de atributos (GeoJSON / CSV).
