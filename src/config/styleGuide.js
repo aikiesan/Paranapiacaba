@@ -48,4 +48,35 @@ export const PALETTE = {
 
   // Socioeconomia
   censo:              '#9B5DE5',
+
+  // Mobilidade urbana (linhas de ônibus por tipo)
+  bus_municipal:      '#0D9488',
+  bus_intermunicipal: '#7C3AED',
 };
+
+// Ícone + cor de destaque por grupo de camadas — dá identidade visual a cada
+// seção do painel lateral (pedido dos pesquisadores: distinguir os grupos).
+export const GROUP_META = {
+  'Ferrovia SPR (Jundiaí–Santos)': { icon: '🚂', accent: '#1E293B' },
+  'Mobilidade':                    { icon: '🚌', accent: '#0891B2' },
+  'Território':                    { icon: '🗺️', accent: '#64748B' },
+  'Patrimônio':                    { icon: '🏛️', accent: '#B45309' },
+  'Morfologia da Vila':            { icon: '🏘️', accent: '#E76F51' },
+  'Meio Ambiente':                 { icon: '🌳', accent: '#2D6A4F' },
+  'Turismo e Trilhas':             { icon: '🥾', accent: '#FB5607' },
+  'Legislação e Planejamento':     { icon: '📐', accent: '#7C3AED' },
+  'Socioeconomia':                 { icon: '📊', accent: '#9B5DE5' },
+  'Equipamentos Urbanos':          { icon: '🏥', accent: '#EF4444' },
+};
+
+export function groupMeta(group) {
+  return GROUP_META[group] || { icon: '📁', accent: '#64748B' };
+}
+
+// Descritor visual de uma camada para o "swatch" do painel — espelha como a
+// feição é desenhada no mapa (linha / polígono / ponto), ajudando a identificá-la.
+export function getLayerSymbol(layer) {
+  const color = layer.color || '#94a3b8';
+  if (layer.id === 'atrativos') return { kind: 'point', color, emoji: '📍' };
+  return { kind: layer.type || 'point', color };
+}

@@ -123,6 +123,20 @@ export const LAYERS = [
     description: "Sistema cicloviário de Santo André.",
     available: true
   },
+  {
+    id: "mobilidade_urbana",
+    label: "Linhas de Ônibus",
+    file: "mobilidade_urbana.geojson",
+    group: "Mobilidade",
+    type: "line",
+    color: "#0D9488",
+    weight: 1.2,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Linhas de ônibus municipais e intermunicipais (base SIGA/MUR), coloridas por tipo.",
+    available: true
+  },
 
   // ====================== TERRITÓRIO ======================
   {
@@ -276,10 +290,98 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "bens_estudo",
+    label: "Bens em Estudo (tombamento)",
+    file: "bens_estudo.geojson",
+    group: "Patrimônio",
+    type: "polygon",
+    color: "#C084FC",
+    weight: 1,
+    fillOpacity: 0.25,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Bens culturais em processo de estudo para tombamento (COMDEPHAAPASA) — etapa anterior ao tombamento formal.",
+    available: true
+  },
+  {
+    id: "abpf",
+    label: "Área ABPF (preservação ferroviária)",
+    file: "abpf.geojson",
+    group: "Patrimônio",
+    type: "polygon",
+    color: "#92400E",
+    weight: 1.5,
+    fillOpacity: 0.18,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Área da Associação Brasileira de Preservação Ferroviária (ABPF), ligada à operação histórica da ferrovia.",
+    available: true
+  },
+
+  // ====================== MORFOLOGIA DA VILA ======================
+  {
+    id: "edificacoes_cad",
+    label: "Edificações — traçado CAD (2025)",
+    file: "edificacoes_cad.geojson",
+    group: "Morfologia da Vila",
+    type: "line",
+    color: "#78716C",
+    weight: 0.8,
+    minZoom: 15,
+    visible: false,
+    popupFields: [],
+    description: "Contorno das edificações da Vila no levantamento CAD oficial (DWG \"Mapa Vila 2025 UNESCO\"), georreferenciado.",
+    available: true
+  },
+  {
+    id: "sistema_viario",
+    label: "Sistema Viário (Vila)",
+    file: "sistema_viario.geojson",
+    group: "Morfologia da Vila",
+    type: "line",
+    color: "#A8A29E",
+    weight: 1.2,
+    minZoom: 15,
+    visible: false,
+    popupFields: [],
+    description: "Traçado das vias do núcleo urbano de Paranapiacaba (levantamento CAD 2025 georreferenciado).",
+    available: true
+  },
+  {
+    id: "caminhos_vila",
+    label: "Caminhos da Vila",
+    file: "caminhos_vila.geojson",
+    group: "Morfologia da Vila",
+    type: "line",
+    color: "#CA8A04",
+    weight: 1.5,
+    minZoom: 15,
+    visible: false,
+    popupFields: [],
+    description: "Caminhos e percursos de pedestres mapeados no núcleo da Vila (base Palazzi).",
+    available: true
+  },
+  {
+    id: "curvas_nivel",
+    label: "Curvas de Nível (Vila)",
+    file: "curvas_nivel.geojson",
+    group: "Morfologia da Vila",
+    type: "line",
+    color: "#B45309",
+    weight: 0.6,
+    minZoom: 15,
+    visible: false,
+    popupFields: [],
+    description: "Curvas de nível detalhadas do núcleo da Vila — base para análise do relevo da escarpa (levantamento CAD 2025).",
+    available: true
+  },
+  {
     id: "pac_lotes",
     label: "Lotes / Cadastro da Vila",
     file: "pac_lotes.geojson",
-    group: "Patrimônio",
+    group: "Morfologia da Vila",
     type: "line",
     color: "#E76F51",
     weight: 1,
@@ -335,6 +437,21 @@ export const LAYERS = [
     visible: false,
     popupFields: [],
     description: "Sub-bacias ao redor da Vila — divisor de águas entre o Alto Tietê (UGRHI 6) e a Baixada Santista/Rio Cubatão (UGRHI 7).",
+    available: true
+  },
+  {
+    id: "regioes_hidrograficas",
+    label: "Regiões Hidrográficas",
+    file: "regioes_hidrograficas.geojson",
+    group: "Meio Ambiente",
+    type: "polygon",
+    color: "#0369A1",
+    weight: 1.5,
+    fillOpacity: 0.08,
+    minZoom: 9,
+    visible: false,
+    popupFields: [],
+    description: "Grandes regiões hidrográficas (ex.: Alto Tietê e Baixada Santista) que se encontram no divisor de águas da Serra do Mar.",
     available: true
   },
   {
@@ -586,6 +703,33 @@ export const LAYERS = [
     cluster: true,
     popupFields: [],
     description: "Abrigos e pluviômetros da Defesa Civil no corredor.",
+    available: true
+  },
+  {
+    id: "feiras_livres",
+    label: "Feiras Livres",
+    file: "feiras_livres.geojson",
+    group: "Equipamentos Urbanos",
+    type: "line",
+    color: "#DB2777",
+    weight: 3,
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Logradouros onde ocorrem feiras livres (base CRAISA), com dia e horário de funcionamento.",
+    available: true
+  },
+  {
+    id: "cemiterio",
+    label: "Cemitérios",
+    file: "cemiterio.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#57534E",
+    minZoom: 12,
+    visible: false,
+    popupFields: [],
+    description: "Cemitérios municipais, incluindo o Cemitério Bom Jesus de Paranapiacaba.",
     available: true
   }
 ];

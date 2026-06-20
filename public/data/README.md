@@ -38,3 +38,22 @@ OSM_FILL=1 python build_data.py ferrovia_corredor.geojson
 ## Mapa fonte → camada
 O mapeamento canônico (camada de saída ↔ shapefile de origem, recorte e
 simplificação) está em [`scripts/config.py`](../../scripts/config.py) na lista `JOBS`.
+
+Opções de `JOBS` relevantes: `aoi` (`corridor`/`vila`/`serra`/`None`), `simplify`,
+`keep` (renomeia colunas), `name_auto`, `family`/`family_prefix` (empilha vários
+shapefiles e marca uma `categoria`), `repair_epsg` + `nudge` (camadas CAD da Vila,
+EPSG:31983), `mapshaper` (simplificação topológica), `filter`, `extra`, e
+**`dissolve`** (funde milhares de segmentos sem atributos — ex.: curvas de nível —
+numa única (Multi)geometria, eliminando o overhead por feição no GeoJSON).
+
+### Camadas adicionadas (Fase E)
+- **Morfologia da Vila:** `edificacoes_cad`, `sistema_viario`, `caminhos_vila`,
+  `curvas_nivel` (CAD georref. 2025) + `pac_lotes`.
+- **Patrimônio:** `bens_estudo` (bens em estudo de tombamento), `abpf`.
+- **Equipamentos Urbanos:** `feiras_livres`, `cemiterio`.
+- **Meio Ambiente:** `regioes_hidrograficas`.
+- **Mobilidade:** `mobilidade_urbana` (linhas de ônibus municipais/intermunicipais).
+
+> Nota: não há camada de UCs federais — o único UC federal que intersecta o
+> corredor é a APA Bacia do Paraíba do Sul (região distinta); as UCs relevantes
+> (estaduais/municipais) já estão em `ucs.geojson`.

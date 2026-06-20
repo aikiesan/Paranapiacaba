@@ -186,6 +186,25 @@ def build_job(job):
     if merged.empty:
         return None, 0, 0
 
+    if job.get("dissolve"):
+        # Collapse many attribute-less segments (e.g. contour lines) into a single
+        # (Multi)geometry feature — kills the per-feature GeoJSON overhead that
+        # dominates file size when there are thousands of tiny parts. For lines we
+        # just flatten into a MultiLineString (no unary_union: that would node at
+        # every crossing and balloon the vertex count).
+        from shapely.geometry import MultiLineString
+        from shapely.ops import unary_union
+        geoms = [g for g in merged.geometry.values if g is not None and not g.is_empty]
+        if geoms and "Line" in geoms[0].geom_type:
+            parts = []
+            for g in geoms:
+                parts.extend(g.geoms if g.geom_type == "MultiLineString" else [g])
+            geom = MultiLineString(parts)
+        else:
+            geom = unary_union(geoms)
+        merged = gpd.GeoDataFrame([{**(job.get("extra") or {}), "geometry": geom}],
+                                  geometry="geometry", crs="EPSG:4326")
+
     if job.get("nudge"):
         dlon, dlat = C.NUDGE_VILA_DEG
         merged["geometry"] = merged.geometry.translate(xoff=dlon, yoff=dlat)

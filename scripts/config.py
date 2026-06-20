@@ -295,4 +295,79 @@ JOBS = [
         "src": ["06_LEGISLACAO_PLANEJAMENTO/SIGA_PLA_SETORIZACAO_MZPAPolygon.shp"],
         "keep": {"SETORIZACA": "setor", "URL_LEGISL": "legislacao"},
     },
+
+    # ---- Morfologia da Vila (cadastro CAD georref. + Palazzi) ----------------
+    # Linework do DWG oficial "MAPA VILA 2025 UNESCO" (EPSG:31983) e Palazzi
+    # (EPSG:4674); ambos recebem o mesmo nudge de alinhamento com a imagem.
+    {
+        "out": "edificacoes_cad.geojson", "aoi": "vila", "simplify": 3e-6,
+        "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_edificacoes_georef.shp"],
+        "repair_epsg": 31983, "extra": {"tipo": "Edificação (CAD 2025)"}, "nudge": True,
+    },
+    {
+        "out": "sistema_viario.geojson", "aoi": "vila", "simplify": 5e-6,
+        "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_sistema_viario_georef.shp"],
+        "repair_epsg": 31983, "extra": {"tipo": "Sistema viário"}, "nudge": True,
+    },
+    {
+        "out": "caminhos_vila.geojson", "aoi": "vila", "simplify": 5e-6,
+        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Caminhos.shp"],
+        "extra": {"tipo": "Caminho"}, "nudge": True,
+    },
+    {
+        # Curvas de nível do núcleo da Vila — base para análise de terreno.
+        "out": "curvas_nivel.geojson", "aoi": "vila", "simplify": 6e-5,
+        "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_curvas_nivel_detalhadas_georef.shp"],
+        "repair_epsg": 31983, "extra": {"tipo": "Curvas de nível (Vila)"},
+        "dissolve": True, "nudge": True,
+    },
+
+    # ---- Patrimônio (bens em estudo, ABPF) -----------------------------------
+    {
+        "out": "bens_estudo.geojson", "aoi": "corridor", "simplify": 3e-5,
+        "src": ["05_PATRIMONIO/PATRIMONIO_CULTURAL/SIGA_CUL_BENS_ESTUDOPolygon.shp"],
+        "keep": {"DSC_DENOMI": "nome", "DSC_ENDERE": "endereco",
+                 "NOM_BAIRRO": "bairro", "DSC_USO_AT": "uso_atual",
+                 "NUM_PROCES": "processo", "NOM_ORGAO": "orgao",
+                 "DSC_STATUS": "status"},
+    },
+    {
+        "out": "abpf.geojson", "aoi": "corridor", "simplify": 1e-5,
+        "src": ["04_FERROVIA_MOBILIDADE/ABPF.shp"],
+        "keep": {"AREA_ABPF": "area"}, "extra": {"nome": "Área ABPF"},
+    },
+
+    # ---- Equipamentos / serviços (feiras livres, cemitérios) -----------------
+    {
+        "out": "feiras_livres.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["07_TURISMO_CIRCUITOS/SIGA_CRA_FEIRAS_LIVRESLine.shp"],
+        "keep": {"DSC_LOGRAD": "nome", "BAIRRO": "bairro", "DSC_DIA": "dia",
+                 "DSC_HORARI": "horario", "QTD_BARRAC": "barracas"},
+    },
+    {
+        "out": "cemiterio.geojson", "aoi": "corridor", "simplify": 0,
+        "src": ["08_SOCIOECONOMICO/SIGA_SFU_CEMITERIOMPoint.shp"],
+        "keep": {"NOME": "nome", "ENDERECO": "endereco", "BAIRRO": "bairro",
+                 "TIPO": "tipo"},
+    },
+
+    # ---- Meio Ambiente (regiões hidrográficas) -------------------------------
+    # Nota: o único UC federal que intersecta o corredor é a APA Bacia do
+    # Paraíba do Sul (região distinta, a NE) — irrelevante para Paranapiacaba,
+    # por isso não há camada de UCs federais. As UCs relevantes (estaduais/
+    # municipais, ex.: PESM) já estão em `ucs.geojson`.
+    {
+        "out": "regioes_hidrograficas.geojson", "aoi": "corridor", "simplify": 1e-4,
+        "src": ["02_HIDROGRAFIA/MA_reghidro.shp"],
+        "keep": {"NOME1": "nome", "REG_HIDR2": "regiao"}, "mapshaper": "20%",
+    },
+
+    # ---- Mobilidade (linhas de ônibus municipais/intermunicipais) ------------
+    {
+        "out": "mobilidade_urbana.geojson", "aoi": "corridor", "simplify": 5e-5,
+        "src": ["04_FERROVIA_MOBILIDADE/SIGA_MUR_BUS_*Line.shp"],
+        "family": "categoria", "family_prefix": "SIGA_MUR_BUS_",
+        "keep": {"LINHA": "nome", "NOME": "nome", "NUMERO": "numero",
+                 "SENTIDO": "sentido"},
+    },
 ]

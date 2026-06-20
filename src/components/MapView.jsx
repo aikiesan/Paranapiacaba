@@ -135,6 +135,14 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
         }
       }
 
+      // Estilo dinâmico: Linhas de ônibus por tipo (municipal / intermunicipal)
+      if (layer.id === 'mobilidade_urbana') {
+        const cat = (props.categoria || '').toUpperCase();
+        strokeColor = cat.includes('INTER')
+          ? PALETTE.bus_intermunicipal
+          : PALETTE.bus_municipal;
+      }
+
       // Estilo dinâmico: Bens Tombados por Instância
       if (layer.id === 'patrimonio_tombados' && props.instancia) {
         const inst = props.instancia.toUpperCase();
@@ -279,6 +287,25 @@ function FlyToFeature({ focusFeature }) {
   return null;
 }
 
+// Enquadra o mapa na extensão completa de uma camada (botão "zoom para a camada")
+function FlyToLayer({ focusLayer }) {
+  const map = useMap();
+  const layer = focusLayer ? LAYERS.find((l) => l.id === focusLayer.layerId) : null;
+  const { data } = useGeoJSON(layer ? layer.file : null, !!layer, layer ? layer.available : true);
+  useEffect(() => {
+    if (!focusLayer || !layer || !data) return;
+    try {
+      const bounds = L.geoJSON(data).getBounds();
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 });
+      }
+    } catch (e) {
+      console.warn('FlyToLayer:', e);
+    }
+  }, [focusLayer, data, layer, map]);
+  return null;
+}
+
 export function MapView({
   activeLayers,
   selectedBasemap,
@@ -288,6 +315,7 @@ export function MapView({
   onFeatureClick,
   onMapClick,
   focusFeature,
+  focusLayer,
   children
 }) {
   const basemapConfig = LAYERS; // Só pra garantir
@@ -307,6 +335,7 @@ export function MapView({
         <TileLayer
           url={currentBasemap.url}
           attribution={currentBasemap.attribution}
+          crossOrigin="anonymous"
         />
 
         {/* Régua de Escala Física */}
@@ -326,6 +355,9 @@ export function MapView({
 
         {/* Centralização em feição selecionada na tabela */}
         <FlyToFeature focusFeature={focusFeature} />
+
+        {/* Enquadramento na extensão de uma camada (zoom para a camada) */}
+        <FlyToLayer focusLayer={focusLayer} />
 
         {/* Renderização individualizada das camadas geográficas */}
         {LAYERS.map((layer) => {

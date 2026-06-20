@@ -156,6 +156,15 @@ body,
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ==================================================== */
+/* EXPORTAÇÃO DE MAPA (PNG) — esconde controles flutuantes */
+/* ==================================================== */
+/* Durante a captura, ocultamos a UI flutuante mas mantemos a legenda, a escala
+   e a atribuição do basemap para que o PNG fique pronto para relatórios. */
+.leaflet-container.exporting .export-hide {
+  display: none !important;
+}
+
 /* Estilos de inputs de range customizados para harmonia light */
 input[type="range"]::-webkit-slider-thumb {
   border: 2px solid #10b981; /* esmeralda */
