@@ -58,25 +58,83 @@ export function MapToolbar() {
     const g = groupRef.current;
     g.clearLayers();
     const pts = ptsRef.current;
-    pts.forEach((ll) => L.circleMarker(ll, {
-      radius: 4, color: '#0f766e', fillColor: '#10b981', fillOpacity: 1, weight: 2,
-    }).addTo(g));
-    if (pts.length >= 2) {
-      L.polyline(pts, { color: '#0f766e', weight: 2.5, dashArray: '5 4' }).addTo(g);
+
+    let accumDist = 0;
+    pts.forEach((ll, idx) => {
+      if (idx > 0) {
+        accumDist += map.distance(pts[idx - 1], ll);
+      }
+
+      // Marcador de vértice com tooltip permanente
+      const marker = L.circleMarker(ll, {
+        radius: 5,
+        color: '#047857',
+        fillColor: '#10b981',
+        fillOpacity: 1,
+        weight: 2,
+      });
+
+      if (idx > 0) {
+        marker.bindTooltip(fmtDist(accumDist), {
+          permanent: true,
+          direction: 'top',
+          className: 'px-1.5 py-0.5 text-[9px] font-bold bg-slate-900 text-white rounded border-0 shadow-md'
+        });
+      }
+      marker.addTo(g);
+    });
+
+    if (pts.length >= 3) {
+      // Polígono preenchido para áreas (lotes, APPs, bairros)
+      L.polygon(pts, {
+        color: '#047857',
+        fillColor: '#34d399',
+        fillOpacity: 0.25,
+        weight: 2,
+        dashArray: '5 4'
+      }).addTo(g);
+    } else if (pts.length === 2) {
+      // Linha tracejada para distâncias
+      L.polyline(pts, {
+        color: '#047857',
+        weight: 2.5,
+        dashArray: '5 4'
+      }).addTo(g);
     }
-    let dist = 0;
-    for (let i = 1; i < pts.length; i++) dist += map.distance(pts[i - 1], pts[i]);
-    setReadout(pts.length >= 2 ? { dist, area: pts.length >= 3 ? geodesicArea(pts) : 0 } : null);
+
+    const areaM2 = pts.length >= 3 ? geodesicArea(pts) : 0;
+    const areaHa = areaM2 / 10000;
+    setReadout(pts.length >= 2 ? {
+      dist: accumDist,
+      area: areaM2,
+      areaHa: areaHa >= 1 ? `${areaHa.toFixed(2)} ha` : null
+    } : null);
   };
 
   useEffect(() => {
     if (!measuring) return;
     if (!groupRef.current) groupRef.current = L.featureGroup().addTo(map);
     map.getContainer().style.cursor = 'crosshair';
-    const onClick = (e) => { ptsRef.current.push(e.latlng); redraw(); };
+
+    const onClick = (e) => {
+      ptsRef.current.push(e.latlng);
+      redraw();
+    };
+
+    const onContextMenu = (e) => {
+      L.DomEvent.preventDefault(e);
+      if (ptsRef.current.length > 0) {
+        ptsRef.current.pop();
+        redraw();
+      }
+    };
+
     map.on('click', onClick);
+    map.on('contextmenu', onContextMenu);
+
     return () => {
       map.off('click', onClick);
+      map.off('contextmenu', onContextMenu);
       if (map.getContainer()) map.getContainer().style.cursor = '';
     };
   }, [measuring, map]);
@@ -88,8 +146,12 @@ export function MapToolbar() {
   };
 
   const toggleMeasure = () => {
-    if (measuring) { clearMeasure(); setMeasuring(false); }
-    else setMeasuring(true);
+    if (measuring) {
+      clearMeasure();
+      setMeasuring(false);
+    } else {
+      setMeasuring(true);
+    }
   };
 
   // Enquadrar o corredor ferroviário completo (Jundiaí ↔ Santos)
