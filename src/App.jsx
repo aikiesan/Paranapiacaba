@@ -87,11 +87,12 @@ export default function App() {
     setFocusLayer({ layerId, ts: Date.now() });
   };
 
-  // Aplica uma predefinição temática: troca o conjunto de camadas e o basemap
+  // Aplica uma predefinição temática: troca o conjunto de camadas, basemap e modo de simbologia
   const handleApplyPreset = (preset) => {
     if (!preset) return;
     setActiveLayers(new Set(preset.layers));
     if (preset.basemap) setSelectedBasemap(preset.basemap);
+    if (preset.buildingMode) setBuildingSymbologyMode(preset.buildingMode);
     setActiveFeature(null);
   };
 
