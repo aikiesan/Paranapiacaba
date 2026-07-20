@@ -41,7 +41,17 @@ function LayerSwatch({ layer }) {
 }
 
 // Componente para item de camada individual, lidando com seu próprio hook de dados
-function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, onOpenTable, onZoomToLayer }) {
+function LayerItem({
+  layer,
+  isActive,
+  onToggle,
+  currentZoom,
+  isGroupExpanded,
+  onOpenTable,
+  onZoomToLayer,
+  buildingSymbologyMode,
+  onBuildingSymbologyChange
+}) {
   // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
   const shouldLoad = isGroupExpanded || isActive;
   const { data, loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
@@ -96,7 +106,7 @@ function LayerItem({ layer, isActive, onToggle, currentZoom, isGroupExpanded, on
           )}
         </div>
 
-        {/* Controles de Zoom, Tabela, Info, Restrição de Zoom e Erro */}
+        {/* Controles de Zoom, Tabela, Info */}
         <div className="flex items-center space-x-1 ml-2">
           {/* Botão Zoom para a camada */}
           {layer.available !== false && !error && onZoomToLayer && (
@@ -198,7 +208,9 @@ export function LayerPanel({
   onOpenAbout,
   onOpenTable,
   onZoomToLayer,
-  onApplyPreset
+  onApplyPreset,
+  buildingSymbologyMode,
+  onBuildingSymbologyChange
 }) {
   const isMobile = useIsMobile();
   // Inicia recolhido no mobile (o mapa ocupa a tela toda) e aberto no desktop
@@ -484,6 +496,8 @@ export function LayerPanel({
                           isGroupExpanded={isExpanded}
                           onOpenTable={onOpenTable}
                           onZoomToLayer={onZoomToLayer}
+                          buildingSymbologyMode={buildingSymbologyMode}
+                          onBuildingSymbologyChange={onBuildingSymbologyChange}
                         />
                       ))}
                     </div>
