@@ -17,6 +17,9 @@ export default function App() {
     return new Set(LAYERS.filter((layer) => layer.visible).map((layer) => layer.id));
   });
 
+  // Modo de simbologia das edificações da Vila: 'conservacao' (Semáforo) ou 'uso' (Uso do Solo IBGE)
+  const [buildingSymbologyMode, setBuildingSymbologyMode] = useState('conservacao');
+
   // Estado do basemap selecionado (default 'osm')
   const [selectedBasemap, setSelectedBasemap] = useState('osm');
 
@@ -51,8 +54,6 @@ export default function App() {
   const handleSelectFromTable = (feature) => {
     setActiveFeature({ feature, layerId: tableLayerId });
     setFocusFeature({ feature, ts: Date.now() });
-    // No mobile a tabela e o painel de detalhes são ambos "folhas" inferiores;
-    // fecha a tabela para que os detalhes da feição fiquem visíveis.
     if (isMobile) setTableLayerId(null);
   };
 
@@ -62,7 +63,6 @@ export default function App() {
       const nextActive = new Set(prevActive);
       if (nextActive.has(layerId)) {
         nextActive.delete(layerId);
-        // Se a feição selecionada for dessa camada que foi desligada, fecha o painel
         if (activeFeature && activeFeature.layerId === layerId) {
           setActiveFeature(null);
         }
@@ -81,7 +81,7 @@ export default function App() {
     }));
   };
 
-  // Enquadra o mapa na extensão de uma camada (e garante que ela esteja ativa)
+  // Enquadra o mapa na extensão de uma camada
   const handleZoomToLayer = (layerId) => {
     setActiveLayers((prev) => new Set(prev).add(layerId));
     setFocusLayer({ layerId, ts: Date.now() });
@@ -106,7 +106,6 @@ export default function App() {
           nextActive.add(layer.id);
         } else {
           nextActive.delete(layer.id);
-          // Fecha o painel de detalhes se a feição selecionada pertencer a essa camada sendo desligada
           if (activeFeature && activeFeature.layerId === layer.id) {
             setActiveFeature(null);
           }
@@ -131,9 +130,11 @@ export default function App() {
         onOpenTable={handleOpenTable}
         onZoomToLayer={handleZoomToLayer}
         onApplyPreset={handleApplyPreset}
+        buildingSymbologyMode={buildingSymbologyMode}
+        onBuildingSymbologyChange={setBuildingSymbologyMode}
       />
 
-      {/* Área Principal (Mapa) — min-w-0 evita que o flex item ultrapasse a viewport no mobile */}
+      {/* Área Principal (Mapa) */}
       <div className="relative flex-1 h-full min-w-0">
         <MapView
           activeLayers={activeLayers}
@@ -142,18 +143,19 @@ export default function App() {
           onZoomChange={setCurrentZoom}
           groupOpacities={groupOpacities}
           onFeatureClick={setActiveFeature}
-          onMapClick={() => setActiveFeature(null)} // Fecha o painel ao clicar em área vazia do mapa
+          onMapClick={() => setActiveFeature(null)}
           focusFeature={focusFeature}
           focusLayer={focusLayer}
+          buildingSymbologyMode={buildingSymbologyMode}
         >
-          {/* Pills de seleção do basemap (canto inferior direito) */}
+          {/* Pills de seleção do basemap */}
           <BasemapSelector
             selectedBasemap={selectedBasemap}
             onChange={setSelectedBasemap}
           />
 
-          {/* Legenda Dinâmica baseada em camadas ativas (canto inferior esquerdo) */}
-          <Legend activeLayers={activeLayers} />
+          {/* Legenda Dinâmica baseada em camadas ativas */}
+          <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
         </MapView>
 
         {/* Painel Lateral Direito (Detalhes da Feição Selecionada) */}
@@ -165,7 +167,7 @@ export default function App() {
         )}
       </div>
 
-      {/* Tabela de Atributos (gaveta inferior) */}
+      {/* Tabela de Atributos */}
       {tableLayerId && (
         <DataTablePanel
           layerId={tableLayerId}
@@ -182,3 +184,4 @@ export default function App() {
     </div>
   );
 }
+

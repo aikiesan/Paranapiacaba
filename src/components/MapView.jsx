@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap, ScaleControl } from 'react-le
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
-import { PALETTE, vegColor, riskColor } from '../config/styleGuide';
+import { PALETTE, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
 
@@ -94,16 +94,13 @@ function getAtrativoIcon(feature) {
 }
 
 // Componente para carregar, simplificar e renderizar dados GeoJSON
-function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick }) {
+function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, buildingSymbologyMode }) {
   const { data } = useGeoJSON(layer.file, isVisible, layer.available);
   const map = useMap();
 
   useEffect(() => {
     if (!isVisible || !data) return;
 
-    // Os arquivos já são simplificados no pipeline (scripts/build_data.py),
-    // então renderizamos as geometrias como vêm (sem re-simplificar no cliente,
-    // o que destruiria feições pequenas como edificações).
     const processedData = data;
 
     // Estilo dinâmico/estático dependendo do tipo da camada e feição
@@ -114,12 +111,27 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
       // Cor base padrão
       let strokeColor = layer.color;
       let fillColor = layer.color;
+      let weight = layer.weight || 1;
+      let fillOpacity = layer.fillOpacity !== undefined ? layer.fillOpacity : 0.4;
       dashArray = undefined;
 
-      // Estilo dinâmico: Trilhas por Região
-      if (layer.id === 'trilhas' && props.regiao) {
-        const regiaoKey = `trilha_${props.regiao.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-        strokeColor = PALETTE[regiaoKey] || PALETTE.trilha_default;
+      // Estilo dinâmico: Trilhas por Tipologia (Oficial / Wikiloc / Técnica) ou Região
+      if (layer.id === 'trilhas') {
+        const tipo = (props.tipo || props.tipologia || '').toLowerCase();
+        if (tipo.includes('oficial') || tipo.includes('subprefeitura')) {
+          strokeColor = PALETTE.trilha_oficial;
+          weight = 2.5;
+        } else if (tipo.includes('tecnica') || tipo.includes('ferrovia')) {
+          strokeColor = PALETTE.trilha_tecnica;
+          weight = 1.5;
+        } else if (props.regiao) {
+          const regiaoKey = `trilha_${props.regiao.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+          strokeColor = PALETTE[regiaoKey] || PALETTE.trilha_wikiloc;
+          dashArray = '5 4';
+        } else {
+          strokeColor = PALETTE.trilha_wikiloc;
+          dashArray = '5 4';
+        }
       }
 
       // Estilo dinâmico: Corredor ferroviário por situação operacional
@@ -135,7 +147,14 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
         }
       }
 
-      // Estilo dinâmico: Linhas de ônibus por tipo (municipal / intermunicipal)
+      // Estilo dinâmico: Rede de Eletricidade (Linha tracejada Vermelho Vivo)
+      if (layer.id === 'rede_eletrica') {
+        strokeColor = PALETTE.rede_eletrica;
+        dashArray = '6 4';
+        weight = 1.8;
+      }
+
+      // Estilo dinâmico: Linhas de ônibus por tipo
       if (layer.id === 'mobilidade_urbana') {
         const cat = (props.categoria || '').toUpperCase();
         strokeColor = cat.includes('INTER')
@@ -143,40 +162,75 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
           : PALETTE.bus_municipal;
       }
 
-      // Estilo dinâmico: Vegetação por estágio de sucessão
+      // Estilo dinâmico: Vegetação por estágio de sucessão (IBGE)
       if (layer.id === 'classif_vegetal') {
         strokeColor = fillColor = vegColor(props.classe);
       }
 
-      // Estilo dinâmico: Riscos (Defesa Civil) por grau (R2/R3/R4/SM)
+      // Estilo dinâmico: Riscos (Defesa Civil) por grau
       if (layer.id === 'risco_movmas' || layer.id === 'susc_movmas' || layer.id === 'risco_incendio') {
         strokeColor = fillColor = riskColor(props.grau);
       }
 
-      // Estilo dinâmico: Bens Tombados por Instância
-      if (layer.id === 'patrimonio_tombados' && props.instancia) {
-        const inst = props.instancia.toUpperCase();
+      // Estilo dinâmico: Bens Tombados por Instância (IBGE: Polígonos Vazios)
+      if (layer.id === 'patrimonio_tombados') {
+        const inst = (props.instancia || '').toUpperCase();
+        fillOpacity = 0; // Borda vazia conforme norma IBGE
         if (inst.includes('FEDERAL') || inst.includes('IPHAN')) {
-          strokeColor = fillColor = PALETTE.tombado_federal;
+          strokeColor = PALETTE.tombado_federal.stroke;
+          weight = PALETTE.tombado_federal.weight;
         } else if (inst.includes('ESTADUAL') || inst.includes('CONDEPHAAT')) {
-          strokeColor = fillColor = PALETTE.tombado_estadual;
+          strokeColor = PALETTE.tombado_estadual.stroke;
+          weight = PALETTE.tombado_estadual.weight;
         } else if (inst.includes('MUNICIPAL') || inst.includes('COMDEPHAAPASA')) {
-          strokeColor = fillColor = PALETTE.tombado_municipal;
+          strokeColor = PALETTE.tombado_municipal.stroke;
+          weight = PALETTE.tombado_municipal.weight;
+        } else {
+          strokeColor = PALETTE.tombado_federal.stroke;
+          weight = 2;
         }
+      }
+
+      // Estilo dinâmico: Edificações da Vila (Alternador: Conservação Semáforo vs Uso do Solo IBGE)
+      if (layer.id === 'edificacoes_vila') {
+        if (buildingSymbologyMode === 'uso') {
+          const uso = (props.uso || props.categoria || '').toLowerCase();
+          if (uso.includes('residenc') || uso.includes('habit')) fillColor = PALETTE.uso_residencial;
+          else if (uso.includes('servico') || uso.includes('public') || uso.includes('equip')) fillColor = PALETTE.uso_servicos;
+          else if (uso.includes('turis') || uso.includes('cultur') || uso.includes('museu')) fillColor = PALETTE.uso_turismo_cultura;
+          else if (uso.includes('ferrov') || uso.includes('operac')) fillColor = PALETTE.uso_ferrovia;
+          else fillColor = PALETTE.uso_solo_exposto;
+          strokeColor = '#B45309';
+        } else {
+          // Default: Estado de Conservação (Escala Semáforo IBGE)
+          const estado = props.estado_conservacao || props.conservacao || props.estado;
+          const style = conservationColor(estado);
+          fillColor = style.fill;
+          strokeColor = style.stroke;
+        }
+        fillOpacity = 0.65;
+      }
+
+      // Estilo dinâmico: Áreas Envoltórias (UNESCO)
+      if (layer.id === 'areas_envoltorias') {
+        strokeColor = PALETTE.area_unesco.stroke;
+        weight = PALETTE.area_unesco.weight;
+        dashArray = PALETTE.area_unesco.dashArray;
+        fillOpacity = 0;
       }
 
       if (layer.type === 'polygon') {
         return {
           color: strokeColor,
-          weight: layer.weight,
+          weight: weight,
           opacity: groupOpacity,
           fillColor: fillColor,
-          fillOpacity: layer.fillOpacity * groupOpacity
+          fillOpacity: fillOpacity * groupOpacity
         };
       } else if (layer.type === 'line') {
         return {
           color: strokeColor,
-          weight: layer.weight,
+          weight: weight,
           opacity: groupOpacity,
           dashArray,
           fillColor: 'transparent'
@@ -194,7 +248,6 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
         });
       }
       
-      // Default Point -> CircleMarker
       return L.circleMarker(latlng, {
         radius: 6,
         fillColor: layer.color,
@@ -207,7 +260,6 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
 
     // 4. Integração de eventos (clique para detalhes e hover)
     const onEachFeature = (feature, leafletLayer) => {
-      // Evento de clique: abre o painel lateral deslizante
       leafletLayer.on({
         click: (e) => {
           onFeatureClick({ feature, layerId: layer.id });
@@ -232,7 +284,7 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
       });
     };
 
-    // 5. Renderização — camadas de pontos densas usam clusterização
+    // 5. Renderização
     let geoJsonLayer;
     if (layer.cluster && layer.type === 'point') {
       const clusterColor = layer.color || '#475569';
@@ -270,7 +322,7 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick })
     return () => {
       map.removeLayer(geoJsonLayer);
     };
-  }, [data, isVisible, groupOpacity, map, layer, onFeatureClick]);
+  }, [data, isVisible, groupOpacity, map, layer, onFeatureClick, buildingSymbologyMode]);
 
   return null;
 }
@@ -326,50 +378,45 @@ export function MapView({
   onMapClick,
   focusFeature,
   focusLayer,
+  buildingSymbologyMode,
   children
 }) {
-  const basemapConfig = LAYERS; // Só pra garantir
+  const basemapConfig = LAYERS;
   const activeBasemap = selectedBasemap;
 
   // Encontra as configurações do basemap selecionado
   const currentBasemap = BASEMAPS.find(b => b.id === activeBasemap) || BASEMAPS[0];
 
   return (
-    <div className="relative w-full h-full flex-1">
+    <div className="w-full h-full relative">
       <MapContainer
-        center={[-23.773, -46.312]}
+        center={[-23.778, -46.305]}
         zoom={13}
-        className={`w-full h-full z-0 leaflet-zoom-${currentZoom}`}
+        className="w-full h-full z-0"
         zoomControl={false}
       >
-        <TileLayer
-          url={currentBasemap.url}
-          attribution={currentBasemap.attribution}
-          crossOrigin="anonymous"
-        />
-
-        {/* Régua de Escala Física */}
-        <ScaleControl position="bottomleft" imperial={false} />
-
-        {/* Manipulador do URL Hash (#13/-23.773/-46.312) */}
         <MapHashHandler />
 
-        {/* Barra de Ferramentas Flutuante */}
+        <TileLayer
+          key={currentBasemap.id}
+          url={currentBasemap.url}
+          attribution={currentBasemap.attribution}
+          subdomains={currentBasemap.subdomains || 'abc'}
+          maxZoom={currentBasemap.maxZoom || 19}
+        />
+
+        <ScaleControl position="bottomleft" imperial={false} />
+
         <MapToolbar />
 
-        {/* Controle de camadas raster (MapBiomas / Declividade) */}
         <RasterControl />
 
-        {/* Captura de mudanças do zoom */}
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
 
-        {/* Centralização em feição selecionada na tabela */}
         <FlyToFeature focusFeature={focusFeature} />
 
-        {/* Enquadramento na extensão de uma camada (zoom para a camada) */}
         <FlyToLayer focusLayer={focusLayer} />
 
-        {/* Renderização individualizada das camadas geográficas */}
         {LAYERS.map((layer) => {
           const isVisible = activeLayers.has(layer.id) && currentZoom >= layer.minZoom;
           const opacity = (groupOpacities[layer.group] !== undefined ? groupOpacities[layer.group] : 100) / 100;
@@ -380,11 +427,11 @@ export function MapView({
               isVisible={isVisible}
               groupOpacity={opacity}
               onFeatureClick={onFeatureClick}
+              buildingSymbologyMode={buildingSymbologyMode}
             />
           );
         })}
 
-        {/* Controles de pills/basemap injetados */}
         {children}
       </MapContainer>
     </div>
