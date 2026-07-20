@@ -180,24 +180,34 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* ==================================================== */
-/* AJUSTES PARA TOQUE (MOBILE < 768px)                  */
+/* IMPRESSÃO / EXPORTAÇÃO EM PDF (A4 LANDSCAPE)         */
 /* ==================================================== */
-@media (max-width: 767px) {
-  /* Scrollbar mais larga para facilitar o arraste com o dedo */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
   }
 
-  /* Thumb do range maior — alvo de toque mais confortável */
-  input[type="range"]::-webkit-slider-thumb {
-    height: 18px;
-    width: 18px;
-    margin-top: -7px;
+  body, html, #root {
+    overflow: visible !important;
+    height: 100% !important;
+    width: 100% !important;
+    background: white !important;
   }
 
-  /* Atribuição do basemap mais legível em telas pequenas */
-  .leaflet-control-attribution {
-    font-size: 9px;
+  /* Oculta barras de navegação e controles que não pertencem ao mapa impresso */
+  .export-hide,
+  button,
+  input[type="range"] {
+    display: none !important;
+  }
+
+  /* Garante que o container do Leaflet ocupe a página toda com cores preservadas */
+  .leaflet-container {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    border: 1px solid #cbd5e0 !important;
+    border-radius: 8px !important;
   }
 }
+

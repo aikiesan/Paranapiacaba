@@ -246,29 +246,37 @@ export function MapToolbar() {
         )}
       </button>
 
-      {/* Popover de exportação (título opcional + botão) */}
+      {/* Popover de exportação (PNG / PDF) */}
       {showExport && (
-        <div className="absolute right-12 bottom-0 w-60 bg-white/97 backdrop-blur border border-slate-200 rounded-lg shadow-xl p-3 space-y-2">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            Exportar mapa para PNG
+        <div className="absolute right-12 bottom-0 w-64 bg-white/97 backdrop-blur border border-slate-200 rounded-lg shadow-xl p-3 space-y-2.5">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+            <span>📷</span> Exportar / Imprimir Mapa
           </div>
           <input
             type="text"
             value={exportTitle}
             onChange={(e) => setExportTitle(e.target.value)}
-            placeholder="Título do mapa (opcional)"
+            placeholder="Título da Prancha / Mapa (opcional)"
             className="w-full bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
           />
-          <p className="text-[10px] text-slate-400 leading-snug">
-            Captura a vista atual com a legenda, a escala e os créditos.
+          <p className="text-[10px] text-slate-500 leading-snug">
+            Gera o mapa com legenda IBGE, escala e fontes formatadas para relatórios e artigos.
           </p>
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 rounded transition-colors"
-          >
-            {exporting ? 'Gerando…' : 'Exportar PNG'}
-          </button>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+            >
+              {exporting ? 'Gerando…' : '💾 Baixar PNG'}
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+            >
+              🖨️ PDF / Print
+            </button>
+          </div>
         </div>
       )}
     </div>
