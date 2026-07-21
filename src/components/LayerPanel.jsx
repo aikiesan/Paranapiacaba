@@ -54,10 +54,11 @@ function LayerItem({
 }) {
   // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
   const shouldLoad = isGroupExpanded || isActive;
-  const { data, loading, error, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
+  const { data, loading, error, unavailable, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
 
   const [showDescription, setShowDescription] = useState(false);
   const isZoomRestricted = currentZoom < layer.minZoom;
+  const isInteractive = !unavailable && !error;
 
   return (
     <div
@@ -77,9 +78,10 @@ function LayerItem({
           ) : (
             <input
               type="checkbox"
-              checked={isActive}
+              checked={isActive && isInteractive}
+              disabled={!isInteractive}
               onChange={() => onToggle(layer.id)}
-              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer"
+              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
             />
           )}
 
@@ -87,9 +89,11 @@ function LayerItem({
           <LayerSwatch layer={layer} />
 
           <span
-            onClick={() => onToggle(layer.id)}
-            className={`text-xs truncate cursor-pointer select-none transition-colors ${
-              isActive
+            onClick={() => isInteractive && onToggle(layer.id)}
+            className={`text-xs truncate select-none transition-colors ${
+              isInteractive ? 'cursor-pointer' : 'cursor-default'
+            } ${
+              isActive && isInteractive
                 ? 'font-bold text-slate-900'
                 : 'font-semibold text-slate-600 group-hover/layer:text-slate-900'
             }`}
@@ -99,9 +103,16 @@ function LayerItem({
           </span>
 
           {/* Badge de Contagem de Features */}
-          {featureCount !== null && (
+          {featureCount !== null && isInteractive && (
             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50">
               {featureCount}
+            </span>
+          )}
+
+          {/* Badge "Em breve" para camadas ainda não publicadas (roteiro de dados) */}
+          {unavailable && (
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200/70 uppercase tracking-wide flex-shrink-0">
+              Em breve
             </span>
           )}
         </div>
@@ -175,7 +186,7 @@ function LayerItem({
           )}
 
           {/* Restrição de Zoom */}
-          {isZoomRestricted && !error && (
+          {isZoomRestricted && isInteractive && (
             <div className="relative flex items-center group/tooltip">
               <svg className="w-3.5 h-3.5 text-amber-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />

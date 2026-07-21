@@ -855,8 +855,8 @@ export const LAYERS = [
     minZoom: 13,
     visible: false,
     popupFields: [],
-    description: "Infraestrutura de energia elétrica em linha tracejada Vermelho Vivo (#FF0000).",
-    available: true
+    description: "Infraestrutura de energia elétrica em linha tracejada Vermelho Vivo (#FF0000) — em breve.",
+    available: false
   },
   {
     id: "seguranca",

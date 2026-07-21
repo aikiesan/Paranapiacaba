@@ -8,18 +8,21 @@ const globalCountCache = {};
  * Hook para carregar arquivos GeoJSON de forma lazy e cacheá-los globalmente.
  * @param {string} fileName - Nome do arquivo GeoJSON (ex: "limite_sitio.geojson")
  * @param {boolean} enabled - Se true ou preload for true, inicia o carregamento do arquivo
- * @param {boolean} available - Se false, aborta o fetch e retorna erro "Arquivo não encontrado" imediatamente
- * @returns {object} { data, loading, error, featureCount }
+ * @param {boolean} available - Se false, a camada é tratada como "em breve" (dado ainda não publicado), sem tentar o fetch
+ * @returns {object} { data, loading, error, unavailable, featureCount }
  */
 export function useGeoJSON(fileName, enabled, available = true) {
   const [data, setData] = useState(globalCache[fileName] || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Camada intencionalmente ainda não publicada (roteiro de dados) — não é um erro.
+  const unavailable = available === false;
+
   useEffect(() => {
-    // Se a camada está explicitada como indisponível nas configurações, rejeita imediatamente
+    // Camadas marcadas como "em breve" não disparam fetch nem erro de carregamento.
     if (!available) {
-      setError(new Error('Arquivo não encontrado'));
+      setError(null);
       return;
     }
 
@@ -75,5 +78,5 @@ export function useGeoJSON(fileName, enabled, available = true) {
     ? globalCountCache[fileName]
     : (data?.features?.length || null);
 
-  return { data, loading, error, featureCount };
+  return { data, loading, error, unavailable, featureCount };
 }

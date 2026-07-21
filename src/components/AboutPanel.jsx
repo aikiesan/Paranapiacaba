@@ -1,12 +1,20 @@
 import React from 'react';
+import { useOnEscape } from '../hooks/useOnEscape';
 
 export function AboutPanel({ isOpen, onClose }) {
+  useOnEscape(isOpen, onClose);
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fade-in">
+    <div
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sobre o Projeto"
+    >
       {/* Modal Container */}
-      <div 
+      <div
         className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >

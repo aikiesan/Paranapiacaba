@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
+import { useOnEscape } from '../hooks/useOnEscape';
 import { downloadGeoJSON, downloadCSV } from '../utils/exportData';
 
 // Painel/gaveta inferior com a tabela de atributos de uma camada: busca,
@@ -9,6 +10,7 @@ export function DataTablePanel({ layerId, onClose, onSelectFeature }) {
   const layer = LAYERS.find((l) => l.id === layerId);
   const { data, loading } = useGeoJSON(layer?.file, true, layer?.available);
   const [query, setQuery] = useState('');
+  useOnEscape(true, onClose);
 
   const features = data?.features || [];
 
