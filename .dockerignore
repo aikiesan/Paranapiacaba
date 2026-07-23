@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.claude
+.github
+*.log
+docker-compose*.yml
+Dockerfile
+Dockerfile.*
+README.md
+external_files_details.md
+08_DOCUMENTACAO
+scripts

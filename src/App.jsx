@@ -11,6 +11,7 @@ import { FeatureDetailPanel } from './components/FeatureDetailPanel';
 import { AboutPanel } from './components/AboutPanel';
 import { DataTablePanel } from './components/DataTablePanel';
 import { MemoriaFerroviariaPanel } from './components/MemoriaFerroviariaPanel';
+import { MapGalleryPanel } from './components/MapGalleryPanel';
 
 export default function App() {
   const isMobile = useIsMobile();
@@ -40,8 +41,9 @@ export default function App() {
   // Estado da feição atualmente selecionada
   const [activeFeature, setActiveFeature] = useState(null);
 
-  // Estado de controle do painel "Sobre"
+  // Estado de controle do painel "Sobre" e "Galeria de Pranchas A0"
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   // Tabela de atributos e foco
   const [tableLayerId, setTableLayerId] = useState(null);
@@ -127,6 +129,7 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenGallery={() => setIsGalleryOpen(true)}
       />
 
       {/* Conteúdo do Módulo Selecionado */}
@@ -251,6 +254,12 @@ export default function App() {
       <AboutPanel
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
+      />
+
+      {/* Modal Acervo de Pranchas Cartográficas A0 */}
+      <MapGalleryPanel
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
       />
     </div>
   );

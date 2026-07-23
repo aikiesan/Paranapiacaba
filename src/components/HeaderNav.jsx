@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function HeaderNav({ activeTab, onTabChange, onOpenAbout }) {
+export function HeaderNav({ activeTab, onTabChange, onOpenAbout, onOpenGallery }) {
   const tabs = [
     { id: 'map', label: 'Mapa SIG Interativo', icon: '🗺️' },
     { id: 'ferrovia', label: 'Memória Ferroviária', icon: '🚂' },
@@ -45,8 +45,17 @@ export function HeaderNav({ activeTab, onTabChange, onOpenAbout }) {
         })}
       </nav>
 
-      {/* Botão Sobre */}
+      {/* Botões de Ações (Acervo + Sobre) */}
       <div className="flex items-center space-x-2">
+        <button
+          onClick={onOpenGallery}
+          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-bold text-emerald-300 hover:text-white bg-emerald-950/80 hover:bg-emerald-900 transition-colors border border-emerald-800"
+          title="Ver 26 Pranchas Cartográficas A0 e Relatórios"
+        >
+          <span>📐</span>
+          <span className="hidden sm:inline">Acervo A0</span>
+        </button>
+
         <button
           onClick={onOpenAbout}
           className="hidden md:flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"

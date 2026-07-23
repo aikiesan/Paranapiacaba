@@ -1,0 +1,9 @@
+services:
+  webgis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webgis-paranapiacaba
+    ports:
+      - "8080:80"
+    restart: unless-stopped
