@@ -12,6 +12,9 @@ import { AboutPanel } from './components/AboutPanel';
 import { DataTablePanel } from './components/DataTablePanel';
 import { MemoriaFerroviariaPanel } from './components/MemoriaFerroviariaPanel';
 import { MapGalleryPanel } from './components/MapGalleryPanel';
+import { LevantamentoCampoPanel } from './components/LevantamentoCampoPanel';
+import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
+import { LegislacaoPanel } from './components/LegislacaoPanel';
 
 export default function App() {
   const isMobile = useIsMobile();
@@ -191,53 +194,19 @@ export default function App() {
           />
         )}
 
-        {/* Módulos de Projeto (Estrutura Preparada) */}
+        {/* Módulo: Levantamento de Campo */}
         {activeTab === 'campo' && (
-          <div className="flex-1 p-6 bg-slate-100 overflow-y-auto flex flex-col justify-center items-center text-center space-y-3">
-            <span className="text-4xl">📋</span>
-            <h2 className="text-lg font-bold text-slate-800">Módulo: Levantamento de Campo (Parte Alta & Rabique)</h2>
-            <p className="text-xs text-slate-500 max-w-md">
-              Fichas fotográficas de conservação das edificações, mapeamento de vielas sanitárias e sarjetas históricas da Vila.
-            </p>
-            <button
-              onClick={() => handleNavigateToMapWithPreset('prancha_conservacao')}
-              className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition-colors"
-            >
-              Exibir Prancha de Conservação no Mapa SIG
-            </button>
-          </div>
+          <LevantamentoCampoPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
         )}
 
+        {/* Módulo: Sistema Hidráulico */}
         {activeTab === 'hidraulica' && (
-          <div className="flex-1 p-6 bg-slate-100 overflow-y-auto flex flex-col justify-center items-center text-center space-y-3">
-            <span className="text-4xl">🌊</span>
-            <h2 className="text-lg font-bold text-slate-800">Módulo: Sistema Hidráulico dos Ingleses & Bacias</h2>
-            <p className="text-xs text-slate-500 max-w-md">
-              Engenharia hídrica britânica (captão de nascentes, caixas d'água históricas, aquedutos) e cruzamento com as bacias hidrográficas UGRHI 6 e 7.
-            </p>
-            <button
-              onClick={() => handleNavigateToMapWithPreset('prancha_hidrica_redes')}
-              className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition-colors"
-            >
-              Exibir Rede Hídrica no Mapa SIG
-            </button>
-          </div>
+          <SistemaHidraulicoPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
         )}
 
+        {/* Módulo: Legislação & Planos */}
         {activeTab === 'legislacao' && (
-          <div className="flex-1 p-6 bg-slate-100 overflow-y-auto flex flex-col justify-center items-center text-center space-y-3">
-            <span className="text-4xl">📐</span>
-            <h2 className="text-lg font-bold text-slate-800">Módulo: Legislação & Planos Diretores</h2>
-            <p className="text-xs text-slate-500 max-w-md">
-              Repositório de legislação municipal e decretos patrimoniais (Santo André LC 1.181/2022, Rio Grande da Serra e Ribeirão Pires).
-            </p>
-            <button
-              onClick={() => handleNavigateToMapWithPreset('prancha_tombamentos')}
-              className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition-colors"
-            >
-              Exibir Tombamentos IPHAN/UNESCO no Mapa SIG
-            </button>
-          </div>
+          <LegislacaoPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
         )}
       </div>
 

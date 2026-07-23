@@ -2,6 +2,7 @@ import React from 'react';
 import { LAYERS } from '../config/layers';
 import { PALETTE } from '../config/styleGuide';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useOnEscape } from '../hooks/useOnEscape';
 
 // Helper simples para calcular o centroide aproximado de qualquer geometria
 function getCentroid(feature) {
@@ -160,6 +161,7 @@ function formatKey(key) {
 
 export function FeatureDetailPanel({ activeFeature, onClose }) {
   const isMobile = useIsMobile();
+  useOnEscape(!!activeFeature, onClose);
   if (!activeFeature) return null;
 
   const { feature, layerId } = activeFeature;

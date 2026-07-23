@@ -441,10 +441,23 @@ export function MapView({
 // Sub-componente interno para assistir eventos de zoom e cliques vazios no mapa
 function MapEventsZoomWatcher({ onZoomChange, onMapClick }) {
   const map = useMap();
-  
+
   useEffect(() => {
+    const container = map.getContainer();
+
+    // Mantém uma classe `leaflet-zoom-<n>` no container para que o CSS possa
+    // revelar as etiquetas dos atrativos a partir de um nível de zoom (>= 15).
+    const applyZoomClass = () => {
+      const z = Math.round(map.getZoom());
+      container.classList.forEach((cls) => {
+        if (cls.startsWith('leaflet-zoom-')) container.classList.remove(cls);
+      });
+      container.classList.add(`leaflet-zoom-${z}`);
+    };
+
     const handleZoomEnd = () => {
       onZoomChange(map.getZoom());
+      applyZoomClass();
     };
     const handleMapClick = () => {
       if (onMapClick) onMapClick();
@@ -455,6 +468,7 @@ function MapEventsZoomWatcher({ onZoomChange, onMapClick }) {
 
     // Dispara a leitura do zoom inicial
     onZoomChange(map.getZoom());
+    applyZoomClass();
 
     return () => {
       map.off('zoomend', handleZoomEnd);
