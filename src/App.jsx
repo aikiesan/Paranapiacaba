@@ -12,15 +12,18 @@ import { AboutPanel } from './components/AboutPanel';
 import { DataTablePanel } from './components/DataTablePanel';
 import { MemoriaFerroviariaPanel } from './components/MemoriaFerroviariaPanel';
 import { MapGalleryPanel } from './components/MapGalleryPanel';
+import { PhotoGalleryModal } from './components/PhotoGalleryModal';
 import { LevantamentoCampoPanel } from './components/LevantamentoCampoPanel';
 import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
 import { LegislacaoPanel } from './components/LegislacaoPanel';
+import { HomePage } from './components/HomePage';
+import { TrailsPanel } from './components/TrailsPanel';
 
 export default function App() {
   const isMobile = useIsMobile();
 
-  // Aba ativa do portal: 'map', 'ferrovia', 'campo', 'hidraulica', 'legislacao'
-  const [activeTab, setActiveTab] = useState('map');
+  // Aba ativa do portal: 'home', 'map', 'ferrovia', 'trilhas', 'campo', 'hidraulica', 'legislacao'
+  const [activeTab, setActiveTab] = useState('home');
 
   // Estado das camadas ativas
   const [activeLayers, setActiveLayers] = useState(() => {
@@ -44,9 +47,10 @@ export default function App() {
   // Estado da feição atualmente selecionada
   const [activeFeature, setActiveFeature] = useState(null);
 
-  // Estado de controle do painel "Sobre" e "Galeria de Pranchas A0"
+  // Estado de controle dos painéis modais: Sobre, Galeria A0 e Acervo Fotográfico
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false);
 
   // Tabela de atributos e foco
   const [tableLayerId, setTableLayerId] = useState(null);
@@ -105,6 +109,16 @@ export default function App() {
     setActiveTab('map');
   };
 
+  const handleNavigate = (page) => {
+    if (page === 'gallery') {
+      setIsGalleryOpen(true);
+    } else if (page === 'photo_gallery') {
+      setIsPhotoGalleryOpen(true);
+    } else {
+      setActiveTab(page);
+    }
+  };
+
   const handleToggleAllInGroup = (group, enable) => {
     setActiveLayers(prevActive => {
       const nextActive = new Set(prevActive);
@@ -130,13 +144,22 @@ export default function App() {
       {/* Barra de Navegação Superior do Portal */}
       <HeaderNav
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleNavigate}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenGallery={() => setIsGalleryOpen(true)}
+        onOpenPhotoGallery={() => setIsPhotoGalleryOpen(true)}
       />
 
       {/* Conteúdo do Módulo Selecionado */}
       <div className="flex-1 flex overflow-hidden relative">
+        {activeTab === 'home' && (
+          <HomePage onNavigate={handleNavigate} />
+        )}
+
+        {activeTab === 'trilhas' && (
+          <TrailsPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
+        )}
+
         {activeTab === 'map' && (
           <>
             {/* Painel Lateral Esquerdo (Camadas e Filtros) */}
@@ -229,6 +252,12 @@ export default function App() {
       <MapGalleryPanel
         isOpen={isGalleryOpen}
         onClose={() => setIsGalleryOpen(false)}
+      />
+
+      {/* Modal Acervo Fotográfico de Campo & Iconografia */}
+      <PhotoGalleryModal
+        isOpen={isPhotoGalleryOpen}
+        onClose={() => setIsPhotoGalleryOpen(false)}
       />
     </div>
   );

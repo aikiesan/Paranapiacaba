@@ -68,59 +68,58 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
       desc: 'Fundação do acervo de preservação ferroviária no 5º Patamar pela Associação Brasileira de Preservação Ferroviária.'
     },
     {
-      ano: '2025–2026',
+      ano: '2026',
       titulo: 'Reconhecimento Patrimonial & UNESCO',
       desc: 'Georreferenciamento cartográfico CAD 2025, inventário de conservação e inclusão no Dossiê de Candidatura a Patrimônio Mundial.'
     }
   ];
 
   return (
-    <div className="flex-1 h-full overflow-y-auto bg-slate-100 p-4 md:p-6 custom-scrollbar">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="flex-1 h-full overflow-y-auto bg-[#FAF7F2] text-[#1C1917] p-6 md:p-8 custom-scrollbar font-serif">
+      <div className="max-w-5xl mx-auto space-y-8">
         
-        {/* Cabeçalho do Módulo */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-xl p-6 shadow-lg border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {/* Cabeçalho do Módulo Estilo Acervo Histórico */}
+        <div className="bg-[#F4EFE6] border border-[#E7E0D3] rounded-xl p-6 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-              <span>🚂</span> Dossiê Histórico & Patrimônio Industrial
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#78350F]/10 text-[#78350F] text-xs font-sans font-bold border border-[#78350F]/20">
+              <span>🚂</span> Dossiê Histórico & Exposição Museológica
             </div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1C1917] font-serif">
               Memória Ferroviária da São Paulo Railway
             </h1>
-            <p className="text-slate-300 text-xs md:text-sm max-w-2xl leading-relaxed">
+            <p className="text-[#44403C] text-xs md:text-sm max-w-2xl leading-relaxed font-sans text-justify">
               Resgate histórico e cartográfico da primeira ferrovia de São Paulo (1867), o complexo do Funicular da Serra do Mar e a arquitetura industrial de Paranapiacaba.
             </p>
           </div>
           
           <button
             onClick={() => onNavigateToMapWithPreset('mobilidade')}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-md transition-all whitespace-nowrap"
+            className="flex items-center gap-2 bg-[#78350F] hover:bg-[#451A03] text-[#FAF7F2] text-xs font-sans font-bold px-4 py-2.5 rounded-md shadow-xs transition-all whitespace-nowrap"
           >
-            <span>🗺️</span>
-            <span>Ver no Mapa SIG</span>
+            <span>🗺️ Visualizar no Mapa SIG</span>
           </button>
         </div>
 
         {/* Grid Principal: Linha do Tempo + Sistema Funicular */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-sans">
           
           {/* Coluna 1 & 2: Linha do Tempo Histórica */}
-          <div className="lg:col-span-2 bg-white rounded-xl p-5 shadow-sm border border-slate-200 space-y-4">
-            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
-              <span>⏳</span> Linha do Tempo da São Paulo Railway (1867–2026)
+          <div className="lg:col-span-2 bg-[#F4EFE6] rounded-xl p-6 shadow-xs border border-[#E7E0D3] space-y-5">
+            <h2 className="text-sm font-bold text-[#1C1917] uppercase tracking-wider flex items-center gap-2 border-b border-[#D6CEBE] pb-3 font-serif">
+              <span>⏳</span> Cronologia da São Paulo Railway (1867–2026)
             </h2>
 
-            <div className="relative border-l-2 border-emerald-500/40 ml-3 pl-4 space-y-5 my-2">
+            <div className="relative border-l-2 border-[#78350F]/30 ml-3 pl-5 space-y-5 my-2">
               {timeline.map((item, idx) => (
                 <div key={idx} className="relative group">
-                  <div className="absolute -left-[23px] top-1 w-3.5 h-3.5 rounded-full bg-emerald-600 border-2 border-white shadow-xs group-hover:scale-125 transition-transform" />
+                  <div className="absolute -left-[26px] top-1 w-3.5 h-3.5 rounded-full bg-[#78350F] border-2 border-[#FAF7F2] shadow-xs group-hover:scale-125 transition-transform" />
                   <div className="flex items-baseline gap-2">
-                    <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    <span className="text-xs font-serif font-bold text-[#78350F] bg-[#FAF7F2] px-2.5 py-0.5 rounded border border-[#E7E0D3]">
                       {item.ano}
                     </span>
-                    <span className="text-xs font-bold text-slate-900">{item.titulo}</span>
+                    <span className="text-xs font-serif font-bold text-[#1C1917]">{item.titulo}</span>
                   </div>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                  <p className="text-xs text-[#57534E] mt-1 leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -129,12 +128,12 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
           </div>
 
           {/* Coluna 3: Explorador dos 5 Patamares do Funicular */}
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 space-y-4">
-            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
+          <div className="bg-[#F4EFE6] rounded-xl p-6 shadow-xs border border-[#E7E0D3] space-y-4">
+            <h2 className="text-sm font-bold text-[#1C1917] uppercase tracking-wider flex items-center gap-2 border-b border-[#D6CEBE] pb-3 font-serif">
               <span>⛰️</span> Funicular Serra Nova (5 Patamares)
             </h2>
 
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-[#57534E] leading-relaxed">
               O sistema funicular vence o desnível de 700 metros da escarpa da Serra do Mar através de 5 seções de tração por cabos de aço.
             </p>
 
@@ -144,10 +143,10 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
                 <button
                   key={p.id}
                   onClick={() => setSelectedPatamar(p.id)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-serif font-bold transition-all ${
                     selectedPatamar === p.id
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      ? 'bg-[#78350F] text-[#FAF7F2] shadow-xs'
+                      : 'bg-[#FAF7F2] text-[#44403C] hover:bg-[#EFE9DF] border border-[#E7E0D3]'
                   }`}
                 >
                   {p.id}º Patamar
@@ -159,19 +158,19 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
             {(() => {
               const active = patamares.find(p => p.id === selectedPatamar);
               return (
-                <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2 animate-fade-in">
+                <div className="bg-[#FAF7F2] p-4 rounded-lg border border-[#E7E0D3] space-y-2">
                   <div className="flex justify-between items-baseline">
-                    <span className="text-xs font-bold text-slate-900">{active.nome}</span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                    <span className="text-xs font-serif font-bold text-[#1C1917]">{active.nome}</span>
+                    <span className="text-[10px] font-sans font-bold text-[#78350F] bg-[#FEF3C7] px-2 py-0.5 rounded border border-[#F59E0B]/30">
                       Cota {active.altitude}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-xs text-[#57534E] leading-relaxed">
                     {active.descricao}
                   </p>
-                  <div className="pt-2 border-t border-slate-200/60">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Equipamentos Históricos:</span>
-                    <span className="text-xs text-slate-700">{active.equipamentos}</span>
+                  <div className="pt-2 border-t border-[#E7E0D3]">
+                    <span className="text-[10px] font-sans font-bold text-[#78716C] uppercase block">Equipamentos Históricos:</span>
+                    <span className="text-xs text-[#292524]">{active.equipamentos}</span>
                   </div>
                 </div>
               );
@@ -179,7 +178,7 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
 
             <button
               onClick={() => onNavigateToMapWithPreset('prancha_hipsometria')}
-              className="w-full text-center text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg border border-emerald-200 transition-colors"
+              className="w-full text-center text-xs font-bold text-[#78350F] bg-[#FEF3C7]/60 hover:bg-[#FEF3C7] p-2.5 rounded-md border border-[#F59E0B]/30 transition-colors"
             >
               Exibir Perfil Altimétrico no Mapa SIG &rarr;
             </button>
@@ -187,35 +186,35 @@ export function MemoriaFerroviariaPanel({ onNavigateToMapWithPreset }) {
         </div>
 
         {/* Seção de Patrimônio Edificado e Monumentos */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 space-y-4">
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
+        <div className="bg-[#F4EFE6] rounded-xl p-6 shadow-xs border border-[#E7E0D3] space-y-4 font-sans">
+          <h2 className="text-sm font-bold text-[#1C1917] uppercase tracking-wider flex items-center gap-2 border-b border-[#D6CEBE] pb-3 font-serif">
             <span>🏛️</span> Monumentos Históricos & Infraestrutura Industrial
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-1.5">
-              <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="bg-[#FAF7F2] p-4 rounded-lg border border-[#E7E0D3] space-y-1.5">
+              <div className="text-xs font-serif font-bold text-[#1C1917] flex items-center gap-1.5">
                 <span>🕒</span> Relógio da Estação (1898)
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[#57534E] leading-relaxed">
                 Réplica estilizada do Big Ben de Londres. Controlava pontualmente as composições férreas de passageiros e carga entre Jundiaí e o Porto de Santos.
               </p>
             </div>
 
-            <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-1.5">
-              <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="bg-[#FAF7F2] p-4 rounded-lg border border-[#E7E0D3] space-y-1.5">
+              <div className="text-xs font-serif font-bold text-[#1C1917] flex items-center gap-1.5">
                 <span>🚂</span> Museu Funicular ABPF (5º Patamar)
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[#57534E] leading-relaxed">
                 Acervo de locomotivas a vapor, locobreques de madeira e aço, carretéis de tração e oficinas históricas mantidas pela Associação Brasileira de Preservação Ferroviária.
               </p>
             </div>
 
-            <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-1.5">
-              <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="bg-[#FAF7F2] p-4 rounded-lg border border-[#E7E0D3] space-y-1.5">
+              <div className="text-xs font-serif font-bold text-[#1C1917] flex items-center gap-1.5">
                 <span>🏰</span> Castelinho (Casa do Engenheiro)
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[#57534E] leading-relaxed">
                 Localizado no topo da colina da Parte Alta, oferecia visão privilegiada sobre todo o pátio ferroviário, estação e vila de moradores.
               </p>
             </div>
