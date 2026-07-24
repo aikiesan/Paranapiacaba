@@ -151,7 +151,7 @@ export default function App() {
       />
 
       {/* Conteúdo do Módulo Selecionado */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative min-w-0">
         {activeTab === 'home' && (
           <HomePage onNavigate={handleNavigate} />
         )}
