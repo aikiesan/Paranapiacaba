@@ -4,20 +4,20 @@ export function TrailsPanel({ onNavigateToMapWithPreset }) {
   const [selectedRegion, setSelectedRegion] = useState('Todas');
   const [difficultyFilter, setDifficultyFilter] = useState('Todas');
 
-  const trailRegions = [
-    { name: 'Vale do Quilombo', count: 12, km: 251, color: 'border-[#2D4A3E] text-[#2D4A3E] bg-[#2D4A3E]/10' },
-    { name: 'Cachoeiras (Anhangabaú/Carvoeiros)', count: 11, km: 193, color: 'border-[#1E3A2F] text-[#1E3A2F] bg-[#1E3A2F]/10' },
-    { name: 'Quatinga / Pedra Grande', count: 8, km: 122, color: 'border-[#78350F] text-[#78350F] bg-[#78350F]/10' },
-    { name: 'Rio Mogi / Raiz da Serra', count: 7, km: 116, color: 'border-[#8C5E3C] text-[#8C5E3C] bg-[#8C5E3C]/10' },
-    { name: 'Funicular / Grota Funda', count: 6, km: 73, color: 'border-[#B45309] text-[#B45309] bg-[#B45309]/10' },
+  const trailCategories = [
+    { name: 'Oficiais Subprefeitura', count: 12, km: 68, color: 'border-[#15803D] text-[#15803D] bg-[#15803D]/10', desc: 'Trilhas manejadas e monitoradas pela Subprefeitura de Paranapiacaba.' },
+    { name: 'Registradas (Wikiloc)', count: 18, km: 412, color: 'border-[#EAB308] text-[#78350F] bg-[#FEF3C7]', desc: 'Mapeamento colaborativo de montanhismo e travessias registradas por usuários.' },
+    { name: 'Técnicas da Ferrovia', count: 8, km: 95, color: 'border-[#7E22CE] text-[#7E22CE] bg-[#7E22CE]/10', desc: 'Servidão de manutenção da via permanente, linhas de energia e aquedutos ingleses.' },
+    { name: 'Caminhos Históricos', count: 7, km: 218, color: 'border-[#D97706] text-[#D97706] bg-[#D97706]/10', desc: 'Rotas históricas de tropeiros e conexões intermunicipais (ex: Caminho do Sal).' },
   ];
 
   const highlightedTrails = [
-    { name: 'Trilha do Funicular & Grota Funda', km: 14.2, type: 'Travessia', difficulty: 'Difícil', region: 'Funicular / Grota Funda', desc: 'Descida histórica ao longo dos 5 Planos Inclinados da São Paulo Railway, passando por pontes metálicas e casarões.' },
-    { name: 'Caminho da Pedra Grande & Quatinga', km: 18.5, type: 'Travessia', difficulty: 'Difícil', region: 'Quatinga / Pedra Grande', desc: 'Percurso de crista no divisor de águas da Serra do Mar com vista panorâmica da Baixada Santista.' },
-    { name: 'Circuito Poço Encantado & Anhangabaú', km: 8.4, type: 'Circuito', difficulty: 'Moderada', region: 'Cachoeiras (Anhangabaú/Carvoeiros)', desc: 'Caminho ecológico cortando a vegetação primária da Mata Atlântica com paradas para banho de rio.' },
-    { name: 'Trilha das Nascentes (Parque Municipal)', km: 4.8, type: 'Circuito', difficulty: 'Fácil', region: 'Cachoeiras (Anhangabaú/Carvoeiros)', desc: 'Percurso oficial monitorado dentro do Parque Natural Municipal Nascentes de Paranapiacaba.' },
-    { name: 'Travessia Vale do Quilombo a Cubatão', km: 22.1, type: 'Travessia', difficulty: 'Difícil', region: 'Vale do Quilombo', desc: 'Travessia profunda de serra descendo em direção aos mananciais e à Baixada.' },
+    { name: 'Trilha dos Mirantes & Nascentes', km: 4.8, type: 'Circuito Monitorado', difficulty: 'Fácil', category: 'Oficiais Subprefeitura', desc: 'Percurso oficial monitorado dentro do Parque Natural Municipal Nascentes de Paranapiacaba com mirantes históricos.' },
+    { name: 'Trilha da Pontinha & Poço Formoso', km: 6.2, type: 'Circuito Monitorado', difficulty: 'Moderada', category: 'Oficiais Subprefeitura', desc: 'Percurso guiado pela vegetação primária da Mata Atlântica até poços naturais de banho.' },
+    { name: 'Caminho do Funicular & Grota Funda', km: 14.2, type: 'Servidão Técnica', difficulty: 'Interdito', category: 'Técnicas da Ferrovia', desc: 'Traçado dos 5 Planos Inclinados da São Paulo Railway (1867) — Sítio Histórico Industrial sob Interdição.' },
+    { name: 'Servidão de Aquedutos & Caixas d\'Água', km: 8.5, type: 'Manutenção Hidráulica', difficulty: 'Difícil', category: 'Técnicas da Ferrovia', desc: 'Acesso técnico aos reservatórios e encanamentos de ferro fundido instalados pelos ingleses.' },
+    { name: 'Caminho do Sal (Zanzalá ao Pilar)', km: 53.5, type: 'Caminho Histórico', difficulty: 'Moderada', category: 'Caminhos Históricos', desc: 'Rota quinhentista de tropeiros ligando a Baixada Santista e Paranapiacaba a Ribeirão Pires.' },
+    { name: 'Travessia Mogi-Bertioga (Quatinga)', km: 28.1, type: 'Travessia Wikiloc', difficulty: 'Difícil', category: 'Registradas (Wikiloc)', desc: 'Percurso de crista registrado no Wikiloc ao longo do divisor de águas da Serra do Mar.' },
   ];
 
   const filteredTrails = highlightedTrails.filter((t) => {
@@ -41,23 +41,24 @@ export function TrailsPanel({ onNavigateToMapWithPreset }) {
         </p>
       </div>
 
-      {/* Regiões de Trilhas */}
+      {/* As 4 Categorias Oficiais de Trilhas */}
       <div className="max-w-5xl mx-auto space-y-4 font-sans">
         <h2 className="text-xs font-bold text-[#78716C] uppercase tracking-widest font-serif">
-          Distribuição por Regiões Geográficas (Clusters)
+          Categorias de Trilhas & Servidões Técnicas (Diretriz FAPESP 2026)
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {trailRegions.map((r, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {trailCategories.map((cat, i) => (
             <div
               key={i}
-              onClick={() => setSelectedRegion(selectedRegion === r.name ? 'Todas' : r.name)}
-              className={`p-4 rounded-lg border cursor-pointer transition-all ${r.color} ${
-                selectedRegion === r.name ? 'ring-2 ring-[#2D4A3E] shadow-sm' : 'opacity-90 hover:opacity-100'
+              onClick={() => setSelectedRegion(selectedRegion === cat.name ? 'Todas' : cat.name)}
+              className={`p-4 rounded-xl border cursor-pointer transition-all ${cat.color} ${
+                selectedRegion === cat.name ? 'ring-2 ring-[#78350F] shadow-sm' : 'opacity-90 hover:opacity-100'
               }`}
             >
-              <div className="text-xs font-bold truncate">{r.name}</div>
-              <div className="text-xl font-black font-serif mt-1">{r.count} <span className="text-xs font-sans font-normal">trilhas</span></div>
-              <div className="text-[11px] text-[#57534E] font-mono mt-0.5">{r.km} km totais</div>
+              <div className="text-xs font-bold truncate">{cat.name}</div>
+              <div className="text-2xl font-black font-serif mt-1">{cat.count} <span className="text-xs font-sans font-normal">percursos</span></div>
+              <div className="text-[11px] text-[#57534E] font-mono mt-0.5">{cat.km} km totais</div>
+              <p className="text-[11px] text-[#57534E] mt-2 line-clamp-2 leading-tight">{cat.desc}</p>
             </div>
           ))}
         </div>

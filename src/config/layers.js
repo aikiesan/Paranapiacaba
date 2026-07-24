@@ -140,33 +140,33 @@ export const LAYERS = [
 
   // ====================== TERRITÓRIO ======================
   {
-    id: "limite_sitio",
-    label: "Limite do Sítio (Alto da Serra)",
-    file: "limite_sitio.geojson",
-    group: "Território",
-    type: "polygon",
-    color: "#E63946",
-    weight: 2.5,
-    fillOpacity: 0.05,
-    minZoom: 11,
-    visible: true,
-    popupFields: [],
-    description: "Perímetro de estudo do Alto da Serra / Paranapiacaba (delimitação FAPESP).",
-    available: true
-  },
-  {
     id: "limite_vila",
     label: "ZEIP Paranapiacaba (Vila)",
     file: "limite_vila.geojson",
     group: "Território",
     type: "polygon",
-    color: "#8B4513",
+    color: "#D97706",
     weight: 2,
     fillOpacity: 0.05,
     minZoom: 13,
-    visible: false,
+    visible: true,
     popupFields: [],
     description: "Zona Especial de Interesse do Patrimônio (ZEIP) da Vila ferroviária, fundada em 1867 pela São Paulo Railway.",
+    available: true
+  },
+  {
+    id: "zeip_subdivisoes",
+    label: "ZEIP Subdivisões (4 Zonas Internas)",
+    file: "limite_vila.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#B45309",
+    weight: 1.5,
+    fillOpacity: 0.1,
+    minZoom: 14,
+    visible: false,
+    popupFields: [],
+    description: "As quatro subdivisões internas de regramento da Zona Especial de Interesse do Patrimônio da Vila.",
     available: true
   },
   {

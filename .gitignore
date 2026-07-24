@@ -12,6 +12,7 @@ node_modules
 dist
 dist-ssr
 *.local
+extracted_geo/
 
 # Diretórios de Editores
 .vscode/*

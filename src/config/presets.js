@@ -89,15 +89,52 @@ export const PRESETS = [
     ],
   },
   {
-    id: 'mobilidade',
-    label: 'Mobilidade & Ferrovia',
-    icon: '🚂',
-    basemap: 'osm',
-    description: 'Ferrovia histórica SPR, funicular e redes de transporte.',
+    id: 'escala_1_1000',
+    label: 'Escala 1:1.000 (Vila Completa)',
+    icon: '🔍',
+    basemap: 'satellite',
+    description: 'Escala de detalhamento urbano máximo (1:1.000): Parte Baixa, Parte Alta e Rabique com estado de conservação e uso do solo lote a lote.',
     layers: [
-      'ferrovia_corredor', 'estacoes', 'funicular', 'ferrovia_rmsp',
-      'rodovias', 'mobilidade_urbana',
+      'limite_vila', 'zeip_subdivisoes', 'edificacoes_vila', 'pac_lotes', 'edificacoes_cad', 'sistema_viario', 'caminhos_vila'
     ],
+    targetScale: '1:1.000',
+    zoomLevel: 17.5
   },
+  {
+    id: 'escala_1_5000',
+    label: 'Escala 1:5.000 (Área Intermediária)',
+    icon: '🏙️',
+    basemap: 'satellite',
+    description: 'Escala intermediária (1:5.000): Vila de Paranapiacaba, 5 Planos Inclinados do Funicular e PNM Nascentes.',
+    layers: [
+      'limite_vila', 'patrimonio_ferroviario', 'funicular', 'pnm_nascentes', 'curvas_nivel', 'hidrografia', 'atrativos'
+    ],
+    targetScale: '1:5.000',
+    zoomLevel: 15.5
+  },
+  {
+    id: 'escala_1_20000',
+    label: 'Escala 1:20.000 (Área de Proteção)',
+    icon: '🛡️',
+    basemap: 'terrain',
+    description: 'Escala regional de conservação (1:20.000): Reserva Biológica Alto da Serra, unidades de conservação e sub-bacias hidrográficas.',
+    layers: [
+      'ucs', 'pnm_nascentes', 'subbacias', 'regioes_hidrograficas', 'classif_vegetal', 'trilhas', 'areas_envoltorias'
+    ],
+    targetScale: '1:20.000',
+    zoomLevel: 13.5
+  },
+  {
+    id: 'escala_1_50000',
+    label: 'Escala 1:50.000 (Corredor SPR Santos–Jundiaí)',
+    icon: '🗺️',
+    basemap: 'terrain',
+    description: 'Escala territorial macro (1:50.000): Corredor histórico São Paulo Railway de Santos a Jundiaí (139 km), bacias hidrográficas e conexões regionais.',
+    layers: [
+      'ferrovia_corredor', 'estacoes', 'municipios_corredor', 'grande_abc', 'regioes_hidrograficas', 'reservatorios'
+    ],
+    targetScale: '1:50.000',
+    zoomLevel: 10.5
+  }
 ];
 
