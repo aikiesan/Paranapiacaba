@@ -16,6 +16,17 @@ npm run build      # build de produção em dist/
 npm run preview    # serve o build em http://localhost:4173/Paranapiacaba/
 ```
 
+## Testes
+```bash
+npm test           # suíte completa (Vitest)
+npm run test:watch # modo interativo
+```
+A suíte em [`tests/`](tests/) valida a integridade do catálogo antes da publicação:
+cada camada aponta para um GeoJSON existente e parseável em `public/data/`, os
+presets temáticos só referenciam camadas do catálogo, o acervo fotográfico
+resolve para imagens versionadas e o `base` do Vite continua alinhado ao
+subcaminho do GitHub Pages. Inclui também testes unitários de `src/utils/`.
+
 ## Dados das camadas
 As camadas (`public/data/*.geojson`) são **geradas** pelo pipeline Python em
 [`scripts/`](scripts/) a partir dos shapefiles em
@@ -29,8 +40,17 @@ Mapeamento camada↔fonte em [`scripts/config.py`](scripts/config.py); detalhes 
 [`public/data/README.md`](public/data/README.md).
 
 ## Deploy (GitHub Pages)
-Push na branch `main` dispara `.github/workflows/deploy.yml`, que faz o build do
-Vite e publica `dist/` na branch `gh-pages`. O `base` do Vite é `/Paranapiacaba/`.
+Push na branch `main` dispara `.github/workflows/deploy.yml`, que roda os testes,
+faz o build do Vite e publica `dist/` via as actions oficiais do GitHub Pages
+(`upload-pages-artifact` + `deploy-pages`) — sem branch `gh-pages`. O `base` do
+Vite é `/Paranapiacaba/`. Também é possível republicar manualmente pela aba
+**Actions → Deploy WebGIS to GitHub Pages → Run workflow**.
+
+> **Configuração necessária uma única vez:** em **Settings → Pages**, defina
+> **Source = GitHub Actions**. Sem isso o workflow falha no passo de deploy.
+
+Pull requests rodam `.github/workflows/ci.yml` (testes + build), de modo que uma
+camada quebrada nunca chega à publicação.
 
 ---
 

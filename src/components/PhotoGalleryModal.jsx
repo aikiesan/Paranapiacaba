@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PHOTO_ARCHIVE } from '../data/photoArchiveIndex';
+import { assetUrl } from '../utils/assetUrl';
 
 export function PhotoGalleryModal({ isOpen, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState('Todas');
@@ -74,7 +75,7 @@ export function PhotoGalleryModal({ isOpen, onClose }) {
               >
                 <div className="relative aspect-4/3 overflow-hidden bg-[#EFE9DF]">
                   <img
-                    src={photo.src}
+                    src={assetUrl(photo.src)}
                     alt={photo.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
@@ -119,7 +120,7 @@ export function PhotoGalleryModal({ isOpen, onClose }) {
           <div className="bg-[#FAF7F2] border border-[#E7E0D3] rounded-xl shadow-2xl max-w-3xl w-full overflow-hidden animate-scale-up">
             <div className="relative bg-black flex items-center justify-center max-h-[60vh]">
               <img
-                src={selectedPhoto.src}
+                src={assetUrl(selectedPhoto.src)}
                 alt={selectedPhoto.title}
                 className="max-h-[60vh] w-auto object-contain"
               />

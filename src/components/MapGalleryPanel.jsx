@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CARTOGRAPHIC_MAPS, TECHNICAL_DOCUMENTS } from '../data/mapsIndex';
+import { CARTOGRAPHIC_MAPS, TECHNICAL_DOCUMENTS, MAP_CATEGORIES } from '../data/mapsIndex';
 
 export function MapGalleryPanel({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('maps');
@@ -9,7 +9,6 @@ export function MapGalleryPanel({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const categories = ['Todas', 'Síntese & UNESCO', 'Patrimônio', 'Meio Ambiente', 'Zoneamento & Gestão', 'Mobilidade', 'Trilhas & Turismo', 'Socioeconômico'];
 
   const filteredMaps = CARTOGRAPHIC_MAPS.filter((map) => {
     const matchesCategory = selectedCategory === 'Todas' || map.category === selectedCategory;
@@ -93,7 +92,7 @@ export function MapGalleryPanel({ isOpen, onClose }) {
         {activeTab === 'maps' && (
           <div className="px-6 py-2.5 bg-[#EFE9DF] border-b border-[#E7E0D3] flex items-center gap-1.5 overflow-x-auto custom-scrollbar text-xs font-sans">
             <span className="text-[11px] font-semibold text-[#78716C] uppercase mr-1">Categoria:</span>
-            {categories.map((cat) => (
+            {MAP_CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}

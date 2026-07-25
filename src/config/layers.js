@@ -140,6 +140,21 @@ export const LAYERS = [
 
   // ====================== TERRITÓRIO ======================
   {
+    id: "limite_sitio",
+    label: "Limite do Sítio (Alto da Serra)",
+    file: "limite_sitio.geojson",
+    group: "Território",
+    type: "polygon",
+    color: "#C1121F",
+    weight: 2.5,
+    fillOpacity: 0.04,
+    minZoom: 11,
+    visible: true,
+    popupFields: [],
+    description: "Perímetro de estudo do Alto da Serra / Paranapiacaba (delimitação FAPESP).",
+    available: true
+  },
+  {
     id: "limite_vila",
     label: "ZEIP Paranapiacaba (Vila)",
     file: "limite_vila.geojson",

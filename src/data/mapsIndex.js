@@ -228,3 +228,10 @@ export const TECHNICAL_DOCUMENTS = [
     description: "Catálogo de metadados do Geodatabase canônico EPSG:4674 SIRGAS 2000."
   }
 ];
+
+// Ordem canônica das categorias usada pelo filtro da galeria. Derivada do
+// próprio catálogo para que uma prancha nova nunca fique fora do filtro.
+export const MAP_CATEGORIES = [
+  'Todas',
+  ...Array.from(new Set(CARTOGRAPHIC_MAPS.map((map) => map.category)))
+];
