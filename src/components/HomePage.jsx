@@ -216,10 +216,10 @@ export function HomePage({ onNavigate }) {
           </div>
 
           <p className="text-sm font-sans text-[#44403C] leading-relaxed text-justify">
-            Registros fotográficos das vistorias de campo da equipe <strong className="text-[#1C1917]">FAPESP / PUC-Campinas</strong>, acompanhados pelo acervo histórico da São Paulo Railway, fotos operacionais do Funicular, casarões da Vila de Paranapiacaba e paisagem da Serra do Mar.
+            Registros fotográficos da equipe <strong className="text-[#1C1917]">FAPESP / PUC-Campinas</strong>: acervo histórico da São Paulo Railway, fotos operacionais do Funicular, casarões da Vila de Paranapiacaba e paisagem da Serra do Mar.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-sans">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 font-sans">
             <div 
               onClick={() => onNavigate('photo_gallery')}
               className="group relative aspect-4/3 rounded-lg overflow-hidden border border-[#E7E0D3] cursor-pointer shadow-xs"
@@ -234,19 +234,9 @@ export function HomePage({ onNavigate }) {
               onClick={() => onNavigate('photo_gallery')}
               className="group relative aspect-4/3 rounded-lg overflow-hidden border border-[#E7E0D3] cursor-pointer shadow-xs"
             >
-              <img src="acervo/vila/IMG_3506.JPG" alt="Vila de Paranapiacaba" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <img src={assetUrl('acervo/vila/IMG_3506.JPG')} alt="Vila de Paranapiacaba" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
                 <span className="text-[11px] font-bold text-white">Casarões da Vila</span>
-              </div>
-            </div>
-
-            <div 
-              onClick={() => onNavigate('photo_gallery')}
-              className="group relative aspect-4/3 rounded-lg overflow-hidden border border-[#E7E0D3] cursor-pointer shadow-xs"
-            >
-              <img src="acervo/campo/foto_campo_vistoria_01.jpeg" alt="Visita de Campo" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
-                <span className="text-[11px] font-bold text-white">Vistoria de Campo</span>
               </div>
             </div>
 
