@@ -3,6 +3,48 @@ import { useState, useEffect } from 'react';
 // Cache em memória global para persistir dados entre múltiplos componentes (MapView, LayerPanel, etc.)
 const globalCache = {};
 const globalCountCache = {};
+// Requisições em voo, para que dois componentes montando a mesma camada
+// compartilhem um único fetch em vez de disparar dois.
+const inflight = {};
+
+// Resolve o caminho levando em conta o BASE_URL da hospedagem
+function geoJSONUrl(fileName) {
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  return `${cleanBaseUrl}data/${fileName}`;
+}
+
+/**
+ * Carrega um GeoJSON imperativamente, compartilhando o mesmo cache do hook.
+ * Útil fora do ciclo de render — por exemplo, para medir a extensão de várias
+ * camadas ao aplicar uma predefinição temática.
+ * @param {string} fileName
+ * @returns {Promise<object|null>}
+ */
+export function loadGeoJSON(fileName) {
+  if (!fileName) return Promise.resolve(null);
+  if (globalCache[fileName]) return Promise.resolve(globalCache[fileName]);
+  if (inflight[fileName]) return inflight[fileName];
+
+  const request = fetch(geoJSONUrl(fileName))
+    .then((response) => {
+      if (!response.ok) throw new Error('Arquivo não encontrado');
+      return response.json();
+    })
+    .then((json) => {
+      globalCache[fileName] = json;
+      globalCountCache[fileName] = json.features ? json.features.length : 0;
+      delete inflight[fileName];
+      return json;
+    })
+    .catch((err) => {
+      delete inflight[fileName];
+      throw err;
+    });
+
+  inflight[fileName] = request;
+  return request;
+}
 
 /**
  * Hook para carregar arquivos GeoJSON de forma lazy e cacheá-los globalmente.
@@ -39,22 +81,9 @@ export function useGeoJSON(fileName, enabled, available = true) {
     setLoading(true);
     setError(null);
 
-    // Resolve o caminho levando em conta o BASE_URL da hospedagem
-    const baseUrl = import.meta.env.BASE_URL || '/';
-    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
-    const url = `${cleanBaseUrl}data/${fileName}`;
-
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Arquivo não encontrado');
-        }
-        return response.json();
-      })
+    loadGeoJSON(fileName)
       .then((json) => {
         if (isMounted) {
-          globalCache[fileName] = json;
-          globalCountCache[fileName] = json.features ? json.features.length : 0;
           setData(json);
           setError(null);
           setLoading(false);

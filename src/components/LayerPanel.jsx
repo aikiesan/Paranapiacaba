@@ -3,7 +3,6 @@ import { LAYERS, GROUPS } from '../config/layers';
 import { useGeoJSON } from '../hooks/useGeoJSON';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { groupMeta, getLayerSymbol } from '../config/styleGuide';
-import { PRESETS } from '../config/presets';
 import { downloadGeoJSON } from '../utils/exportData';
 
 // "Swatch" que espelha como a camada é desenhada no mapa (linha / polígono / ponto).
@@ -219,7 +218,6 @@ export function LayerPanel({
   onOpenAbout,
   onOpenTable,
   onZoomToLayer,
-  onApplyPreset,
   buildingSymbologyMode,
   onBuildingSymbologyChange
 }) {
@@ -325,28 +323,6 @@ export function LayerPanel({
             </button>
           </div>
         </div>
-
-        {/* Predefinições temáticas (mapas prontos) */}
-        {onApplyPreset && (
-          <div className="px-3 py-2.5 bg-slate-50 border-b border-slate-200">
-            <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-              Mapas temáticos
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {PRESETS.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => onApplyPreset(p)}
-                  title={p.description}
-                  className="flex items-center gap-1 px-2 py-1 rounded-full border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 text-[10px] font-bold text-slate-600 hover:text-emerald-700 transition-colors"
-                >
-                  <span aria-hidden>{p.icon}</span>
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Barra de Busca */}
         <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 relative">
