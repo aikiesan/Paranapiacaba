@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap, ScaleControl } from 'react-leaflet';
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
-import { useGeoJSON } from '../hooks/useGeoJSON';
+import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
+import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '../utils/mapBounds';
 import { PALETTE, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
@@ -368,6 +369,51 @@ function FlyToLayer({ focusLayer }) {
   return null;
 }
 
+// Enquadra o mapa na extensão somada das camadas de uma predefinição temática.
+// Mede a partir dos próprios GeoJSONs (e não das camadas já desenhadas) porque
+// uma camada só é renderizada acima do seu `minZoom` — do contrário, aproximar
+// dependeria de o mapa já estar no zoom certo, que é justamente o que se quer
+// corrigir.
+function FitToPreset({ focusPreset }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const preset = focusPreset && focusPreset.preset;
+    if (!preset) return;
+
+    const layerIds = focusableLayerIds(preset, LAYERS);
+    if (layerIds.length === 0) return;
+
+    let cancelled = false;
+
+    Promise.all(
+      layerIds.map((id) => {
+        const layer = LAYERS.find((l) => l.id === id);
+        // Uma camada que falhe ao carregar não impede o enquadramento das outras.
+        return loadGeoJSON(layer.file)
+          .then((data) => geoJSONBounds(data))
+          .catch(() => null);
+      })
+    ).then((boundsList) => {
+      if (cancelled) return;
+
+      const bounds = unionBounds(boundsList.filter(Boolean));
+      if (!bounds) return;
+
+      map.fitBounds(L.latLngBounds(bounds), {
+        padding: [40, 40],
+        maxZoom: presetMaxZoom(preset)
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [focusPreset, map]);
+
+  return null;
+}
+
 export function MapView({
   activeLayers,
   selectedBasemap,
@@ -378,6 +424,7 @@ export function MapView({
   onMapClick,
   focusFeature,
   focusLayer,
+  focusPreset,
   buildingSymbologyMode,
   children
 }) {
@@ -416,6 +463,8 @@ export function MapView({
         <FlyToFeature focusFeature={focusFeature} />
 
         <FlyToLayer focusLayer={focusLayer} />
+
+        <FitToPreset focusPreset={focusPreset} />
 
         {LAYERS.map((layer) => {
           const isVisible = activeLayers.has(layer.id) && currentZoom >= layer.minZoom;

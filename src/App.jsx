@@ -17,6 +17,7 @@ import { LevantamentoCampoPanel } from './components/LevantamentoCampoPanel';
 import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
 import { LegislacaoPanel } from './components/LegislacaoPanel';
 import { HomePage } from './components/HomePage';
+import { ThematicPresets } from './components/ThematicPresets';
 import { TrailsPanel } from './components/TrailsPanel';
 
 export default function App() {
@@ -57,6 +58,11 @@ export default function App() {
   const [focusFeature, setFocusFeature] = useState(null);
   const [focusLayer, setFocusLayer] = useState(null);
 
+  // Predefinição temática aplicada no momento, e o pedido de enquadramento
+  // correspondente consumido pelo MapView.
+  const [activePresetId, setActivePresetId] = useState(null);
+  const [focusPreset, setFocusPreset] = useState(null);
+
   const handleOpenTable = (layerId) => {
     setTableLayerId(layerId);
     setActiveLayers((prev) => new Set(prev).add(layerId));
@@ -69,6 +75,9 @@ export default function App() {
   };
 
   const handleToggleLayer = (layerId) => {
+    // Mexer numa camada à mão desfaz a composição: o mapa deixa de ser a
+    // predefinição anunciada no botão flutuante.
+    setActivePresetId(null);
     setActiveLayers((prevActive) => {
       const nextActive = new Set(prevActive);
       if (nextActive.has(layerId)) {
@@ -101,6 +110,10 @@ export default function App() {
     if (preset.basemap) setSelectedBasemap(preset.basemap);
     if (preset.buildingMode) setBuildingSymbologyMode(preset.buildingMode);
     setActiveFeature(null);
+    setActivePresetId(preset.id);
+    // O `ts` faz cada clique valer como um novo pedido de enquadramento,
+    // inclusive ao reaplicar a mesma predefinição depois de navegar o mapa.
+    setFocusPreset({ preset, ts: Date.now() });
   };
 
   const handleNavigateToMapWithPreset = (presetId) => {
@@ -120,6 +133,7 @@ export default function App() {
   };
 
   const handleToggleAllInGroup = (group, enable) => {
+    setActivePresetId(null);
     setActiveLayers(prevActive => {
       const nextActive = new Set(prevActive);
       const groupLayers = LAYERS.filter(layer => layer.group === group);
@@ -173,7 +187,6 @@ export default function App() {
               onOpenAbout={() => setIsAboutOpen(true)}
               onOpenTable={handleOpenTable}
               onZoomToLayer={handleZoomToLayer}
-              onApplyPreset={handleApplyPreset}
               buildingSymbologyMode={buildingSymbologyMode}
               onBuildingSymbologyChange={setBuildingSymbologyMode}
             />
@@ -190,6 +203,7 @@ export default function App() {
                 onMapClick={() => setActiveFeature(null)}
                 focusFeature={focusFeature}
                 focusLayer={focusLayer}
+                focusPreset={focusPreset}
                 buildingSymbologyMode={buildingSymbologyMode}
               >
                 <BasemapSelector
@@ -198,6 +212,11 @@ export default function App() {
                 />
 
                 <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
+
+                <ThematicPresets
+                  activePresetId={activePresetId}
+                  onApplyPreset={handleApplyPreset}
+                />
               </MapView>
 
               {activeFeature && (

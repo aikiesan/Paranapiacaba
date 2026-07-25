@@ -1,10 +1,15 @@
 // Predefinições temáticas — um clique ativa um conjunto curado de camadas e o
 // basemap mais adequado para cada tipo de mapa do dossiê. As camadas referenciam
 // `id`s de src/config/layers.js e o basemap referencia `id`s de BasemapSelector.
+//
+// `family` agrupa as predefinições no painel flutuante de Mapas Temáticos.
+// `zoomLevel`, quando presente, é o zoom máximo do enquadramento automático —
+// é o que materializa a escala anunciada em `targetScale`.
 
 export const PRESETS = [
   {
     id: 'prancha_conservacao',
+    family: 'prancha',
     label: 'Prancha 1: Conservação (Semáforo)',
     icon: '🏢',
     basemap: 'satellite',
@@ -16,6 +21,7 @@ export const PRESETS = [
   },
   {
     id: 'prancha_uso_solo',
+    family: 'prancha',
     label: 'Prancha 2: Uso do Solo (1:1.000 IBGE)',
     icon: '🎨',
     basemap: 'satellite',
@@ -27,6 +33,7 @@ export const PRESETS = [
   },
   {
     id: 'prancha_tombamentos',
+    family: 'prancha',
     label: 'Prancha 3: Tombamentos & UNESCO',
     icon: '🏛️',
     basemap: 'satellite',
@@ -37,6 +44,7 @@ export const PRESETS = [
   },
   {
     id: 'prancha_hidrica_redes',
+    family: 'prancha',
     label: 'Prancha 4: Rede Hídrica & Infraestrutura',
     icon: '💧',
     basemap: 'terrain',
@@ -47,6 +55,7 @@ export const PRESETS = [
   },
   {
     id: 'prancha_hipsometria',
+    family: 'prancha',
     label: 'Prancha 5: Hipsometria & Escarpa',
     icon: '⛰️',
     basemap: 'terrain',
@@ -57,6 +66,7 @@ export const PRESETS = [
   },
   {
     id: 'unesco',
+    family: 'tematico',
     label: 'Síntese UNESCO',
     icon: '🌍',
     basemap: 'satellite',
@@ -68,6 +78,7 @@ export const PRESETS = [
   },
   {
     id: 'ambiente',
+    family: 'tematico',
     label: 'Meio Ambiente & Mata Atlântica',
     icon: '🌳',
     basemap: 'terrain',
@@ -79,6 +90,7 @@ export const PRESETS = [
   },
   {
     id: 'riscos',
+    family: 'tematico',
     label: 'Riscos & Defesa Civil',
     icon: '⚠️',
     basemap: 'terrain',
@@ -90,6 +102,7 @@ export const PRESETS = [
   },
   {
     id: 'escala_1_1000',
+    family: 'escala',
     label: 'Escala 1:1.000 (Vila Completa)',
     icon: '🔍',
     basemap: 'satellite',
@@ -102,6 +115,7 @@ export const PRESETS = [
   },
   {
     id: 'escala_1_5000',
+    family: 'escala',
     label: 'Escala 1:5.000 (Área Intermediária)',
     icon: '🏙️',
     basemap: 'satellite',
@@ -114,6 +128,7 @@ export const PRESETS = [
   },
   {
     id: 'escala_1_20000',
+    family: 'escala',
     label: 'Escala 1:20.000 (Área de Proteção)',
     icon: '🛡️',
     basemap: 'terrain',
@@ -126,6 +141,7 @@ export const PRESETS = [
   },
   {
     id: 'escala_1_50000',
+    family: 'escala',
     label: 'Escala 1:50.000 (Corredor SPR Santos–Jundiaí)',
     icon: '🗺️',
     basemap: 'terrain',
@@ -138,3 +154,13 @@ export const PRESETS = [
   }
 ];
 
+// Famílias exibidas no painel de Mapas Temáticos, na ordem de apresentação.
+export const PRESET_FAMILIES = [
+  { id: 'prancha', label: 'Pranchas do dossiê', hint: 'Composições prontas para impressão A0' },
+  { id: 'tematico', label: 'Sínteses temáticas', hint: 'Recortes por tema de análise' },
+  { id: 'escala', label: 'Por escala', hint: 'Do lote à escala territorial' }
+];
+
+export function presetsByFamily(familyId) {
+  return PRESETS.filter((preset) => preset.family === familyId);
+}
