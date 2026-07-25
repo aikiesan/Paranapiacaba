@@ -97,17 +97,6 @@ export const PHOTO_ARCHIVE = [
     description: "Registros de encaixes de carpintaria e conservação da madeira nos chalés operários."
   },
 
-  // Categoria: Visitas de Campo & Trabalho Científico
-  {
-    id: "c1",
-    category: "Pesquisa de Campo",
-    title: "Vistoria de Campo — Equipe FAPESP / PUC-Campinas",
-    src: "acervo/campo/foto_campo_vistoria_01.jpeg",
-    date: "Junho 2026",
-    location: "Vila de Paranapiacaba & Entorno",
-    description: "Levantamento fotográfico de campo e checagem de feições cartográficas para a elaboração do inventário."
-  },
-
   // Categoria: Trilhas & Natureza
   {
     id: "t1",
@@ -136,4 +125,12 @@ export const PHOTO_ARCHIVE = [
     location: "Parque Municipal Nascentes de Paranapiacaba",
     description: "Afloração de nascentes límpidas e cursos d'água preservados no bioma Mata Atlântica."
   }
+];
+
+// Ordem canônica das categorias usada pelo filtro da galeria. Derivada do
+// próprio acervo para que nenhuma aba fique vazia nem uma foto nova fique
+// inacessível.
+export const PHOTO_CATEGORIES = [
+  'Todas',
+  ...Array.from(new Set(PHOTO_ARCHIVE.map((photo) => photo.category)))
 ];

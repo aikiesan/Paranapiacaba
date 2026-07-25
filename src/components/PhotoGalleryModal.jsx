@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PHOTO_ARCHIVE } from '../data/photoArchiveIndex';
+import { PHOTO_ARCHIVE, PHOTO_CATEGORIES } from '../data/photoArchiveIndex';
 import { assetUrl } from '../utils/assetUrl';
 
 export function PhotoGalleryModal({ isOpen, onClose }) {
@@ -8,7 +8,6 @@ export function PhotoGalleryModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const categories = ['Todas', 'Ferrovia Histórica', 'Vila de Paranapiacaba', 'Pesquisa de Campo', 'Trilhas & Natureza'];
 
   const filteredPhotos = PHOTO_ARCHIVE.filter(
     (p) => selectedCategory === 'Todas' || p.category === selectedCategory
@@ -49,7 +48,7 @@ export function PhotoGalleryModal({ isOpen, onClose }) {
         {/* Categorias de Filtro */}
         <div className="px-6 py-3 bg-[#EFE9DF] border-b border-[#E7E0D3] flex items-center gap-2 overflow-x-auto custom-scrollbar font-sans text-xs">
           <span className="text-[11px] font-semibold text-[#78716C] uppercase mr-1">Filtrar Categoria:</span>
-          {categories.map((cat) => (
+          {PHOTO_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
