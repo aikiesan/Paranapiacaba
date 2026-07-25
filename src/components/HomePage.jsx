@@ -1,4 +1,5 @@
 import React from 'react';
+import { assetUrl } from '../utils/assetUrl';
 
 export function HomePage({ onNavigate }) {
   const timelineEvents = [
@@ -223,7 +224,7 @@ export function HomePage({ onNavigate }) {
               onClick={() => onNavigate('photo_gallery')}
               className="group relative aspect-4/3 rounded-lg overflow-hidden border border-[#E7E0D3] cursor-pointer shadow-xs"
             >
-              <img src="acervo/ferrovia/IMG_20210503_114044.jpg" alt="Ferrovia" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <img src={assetUrl('acervo/ferrovia/IMG_20210503_114044.jpg')} alt="Ferrovia" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
                 <span className="text-[11px] font-bold text-white">Trilhos & Funicular</span>
               </div>
@@ -253,7 +254,7 @@ export function HomePage({ onNavigate }) {
               onClick={() => onNavigate('photo_gallery')}
               className="group relative aspect-4/3 rounded-lg overflow-hidden border border-[#E7E0D3] cursor-pointer shadow-xs"
             >
-              <img src="acervo/trilhas/1_patamar_com_chegada.png" alt="Serra do Mar" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <img src={assetUrl('acervo/trilhas/1_patamar_com_chegada.png')} alt="Serra do Mar" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
                 <span className="text-[11px] font-bold text-white">Paisagem da Serra</span>
               </div>
