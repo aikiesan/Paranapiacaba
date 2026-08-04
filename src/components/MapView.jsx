@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, ImageOverlay, GeoJSON, useMap, ScaleControl } from 'react-leaflet';
+import { MapContainer, TileLayer, ImageOverlay, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
@@ -7,7 +7,6 @@ import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '..
 import { PALETTE, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
-import { MapScaleControl } from './MapScaleControl';
 import { assetUrl } from '../utils/assetUrl';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
@@ -199,19 +198,25 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
         if (buildingSymbologyMode === 'uso') {
           const uso = (props.uso || props.categoria || '').toLowerCase();
           if (uso.includes('residenc') || uso.includes('habit')) fillColor = PALETTE.uso_residencial;
-          else if (uso.includes('servico') || uso.includes('public') || uso.includes('equip')) fillColor = PALETTE.uso_servicos;
-          else if (uso.includes('turis') || uso.includes('cultur') || uso.includes('museu')) fillColor = PALETTE.uso_turismo_cultura;
+          else if (uso.includes('comer') || uso.includes('servi')) fillColor = PALETTE.uso_comercial;
+          else if (uso.includes('public') || uso.includes('equip')) fillColor = PALETTE.uso_servicos;
+          else if (uso.includes('turis') || uso.includes('hotel') || uso.includes('pousad') || uso.includes('cultur') || uso.includes('museu')) fillColor = PALETTE.uso_turismo_cultura;
+          else if (uso.includes('esporte') || uso.includes('lazer')) fillColor = PALETTE.uso_esporte;
+          else if (uso.includes('misto')) fillColor = PALETTE.uso_misto;
           else if (uso.includes('ferrov') || uso.includes('operac')) fillColor = PALETTE.uso_ferrovia;
-          else fillColor = PALETTE.uso_solo_exposto;
-          strokeColor = '#B45309';
+          else fillColor = PALETTE.uso_sem_dados;
+          strokeColor = '#6D28D9';
+          weight = 1.7;
+          fillOpacity = 0.38;
         } else {
           // Default: Estado de Conservação (Escala Semáforo IBGE)
           const estado = props.estado_conservacao || props.conservacao || props.estado;
           const style = conservationColor(estado);
           fillColor = style.fill;
           strokeColor = style.stroke;
+          weight = 1.8;
+          fillOpacity = 0.34;
         }
-        fillOpacity = 0.65;
       }
 
       // Estilo dinâmico: Áreas Envoltórias (UNESCO)
@@ -271,18 +276,16 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
         mouseover: (e) => {
           const target = e.target;
           if (layer.type === 'polygon') {
-            target.setStyle({ fillOpacity: Math.min(layer.fillOpacity * groupOpacity + 0.25, 0.95) });
+            const baseStyle = getStyle(feature);
+            target.setStyle({ fillOpacity: Math.min(baseStyle.fillOpacity + 0.25, 0.95) });
           } else if (layer.type === 'line') {
-            target.setStyle({ weight: layer.weight + 1.5 });
+            const baseStyle = getStyle(feature);
+            target.setStyle({ weight: baseStyle.weight + 1.5 });
           }
         },
         mouseout: (e) => {
           const target = e.target;
-          if (layer.type === 'polygon') {
-            target.setStyle({ fillOpacity: layer.fillOpacity * groupOpacity });
-          } else if (layer.type === 'line') {
-            target.setStyle({ weight: layer.weight });
-          }
+          target.setStyle(getStyle(feature));
         }
       });
     };
@@ -465,6 +468,7 @@ export function MapView({
             url={assetUrl(currentBasemap.url)}
             bounds={currentBasemap.bounds}
             attribution={currentBasemap.attribution}
+            pane="tilePane"
             opacity={1}
             zIndex={1}
           />
@@ -478,10 +482,6 @@ export function MapView({
             maxZoom={21}
           />
         )}
-
-        <ScaleControl position="bottomleft" imperial={false} />
-
-        <MapScaleControl />
 
         <MapToolbar />
 

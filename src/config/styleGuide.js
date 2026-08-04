@@ -6,8 +6,12 @@ export const PALETTE = {
   // --- Uso e Ocupação do Solo (Padrão IBGE - Escala 1:1.000) ---
   uso_residencial:      '#FCE4D6',  // Amarelo / Laranja Claro (Habitação / Residencial)
   uso_residencial_alt:  '#FFC000',  // Amarelo Vivo
+  uso_comercial:        '#38BDF8',  // Azul vivo (Comércio e serviços)
   uso_servicos:         '#BDD7EE',  // Azul Claro (Prédios públicos, subprefeitura)
   uso_turismo_cultura:  '#E1BEE7',  // Roxo Claro / Violeta (ABPF, Funicular, Museus)
+  uso_esporte:          '#A3E635',  // Verde-lima (Esporte e lazer)
+  uso_misto:            '#FB923C',  // Laranja (Uso misto)
+  uso_sem_dados:        '#CBD5E1',  // Cinza claro (Não classificado)
   uso_ferrovia:         '#595959',  // Cinza Escuro / Grafite (Corredores ativos e pátios)
   uso_vegetacao:        '#385723',  // Verde Floresta Escuro (Mata Atlântica)
   uso_solo_exposto:     '#FFF2CC',  // Bege / Areia Claro (Lotes/solo exposto)
@@ -96,11 +100,11 @@ export const PALETTE = {
 
 // --- Escala Coroplética do Estado de Conservação das Edificações (Semáforo IBGE) ---
 export const CONSERVATION_PALETTE = {
-  conservado:         { fill: '#C6EFCE', stroke: '#006100', label: 'Conservado (Estável/Sádio)' },
-  mau_estado:         { fill: '#FFEB9C', stroke: '#9C6500', label: 'Mau Estado (Necessita Manutenção)' },
-  descaracterizado:   { fill: '#F8CBAD', stroke: '#843C0C', label: 'Descaracterizado (Acréscimos Fora de Padrão)' },
-  ruinas:             { fill: '#FFC7CE', stroke: '#9C0006', label: 'Em Ruínas (Alta Vulnerabilidade)' },
-  default:            { fill: '#FCE4D6', stroke: '#D97706', label: 'Não Avaliado / Residencial' }
+  conservado:         { fill: '#22C55E', stroke: '#065F46', label: 'Conservado (Estável/Sadio)' },
+  mau_estado:         { fill: '#FACC15', stroke: '#854D0E', label: 'Mau Estado (Necessita Manutenção)' },
+  descaracterizado:   { fill: '#F97316', stroke: '#9A3412', label: 'Descaracterizado (Acréscimos Fora de Padrão)' },
+  ruinas:             { fill: '#F43F5E', stroke: '#9F1239', label: 'Em Ruínas (Alta Vulnerabilidade)' },
+  default:            { fill: '#FDE047', stroke: '#7C2D12', label: 'Não Avaliado / Residencial' }
 };
 
 // Ícone + cor de destaque por grupo de camadas

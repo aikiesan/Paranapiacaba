@@ -7,6 +7,7 @@ import { LayerPanel } from './components/LayerPanel';
 import { MapView } from './components/MapView';
 import { BasemapSelector } from './components/BasemapSelector';
 import { Legend } from './components/Legend';
+import { MapScaleControl } from './components/MapScaleControl';
 import { FeatureDetailPanel } from './components/FeatureDetailPanel';
 import { AboutPanel } from './components/AboutPanel';
 import { DataTablePanel } from './components/DataTablePanel';
@@ -211,7 +212,13 @@ export default function App() {
                   onChange={setSelectedBasemap}
                 />
 
-                <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
+                <div
+                  className="absolute bottom-16 left-4 z-[1001] flex flex-col items-start gap-2 pointer-events-none md:bottom-4"
+                  data-testid="cartographic-controls"
+                >
+                  <MapScaleControl />
+                  <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
+                </div>
 
                 <ThematicPresets
                   activePresetId={activePresetId}

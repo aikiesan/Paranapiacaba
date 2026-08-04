@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "reference": "Ortofoto Paranapiacaba 2010",
+  "method": "Independent edge-to-image calibration with visual inspection",
+  "legacyNudge": [
+    -3.16e-05,
+    -3.03e-05
+  ],
+  "layers": [
+    {
+      "file": "ferrovia_local.geojson",
+      "calibration": "cad_linework",
+      "translationFromPublished2026": [
+        0.00019,
+        6e-05
+      ],
+      "targetNudgeFromRawSource": [
+        0.0001584,
+        2.97e-05
+      ],
+      "features": 876
+    },
+    {
+      "file": "patrimonio_ferroviario.geojson",
+      "calibration": "palazzi_buildings",
+      "translationFromPublished2026": [
+        -0.00016,
+        -0.0001133333
+      ],
+      "targetNudgeFromRawSource": [
+        -0.0001916,
+        -0.0001436333
+      ],
+      "features": 8
+    },
+    {
+      "file": "hidrografia.geojson",
+      "calibration": "palazzi_buildings",
+      "translationFromPublished2026": [
+        -0.00016,
+        -0.0001133333
+      ],
+      "targetNudgeFromRawSource": [
+        -0.0001916,
+        -0.0001436333
+      ],
+      "features": 207
+    },
+    {
+      "file": "edificacoes_vila.geojson",
+      "calibration": "palazzi_buildings",
+      "translationFromPublished2026": [
+        -0.00016,
+        -0.0001133333
+      ],
+      "targetNudgeFromRawSource": [
+        -0.0001916,
+        -0.0001436333
+      ],
+      "features": 165,
+      "rebuiltFromRawSource": true
+    },
+    {
+      "file": "pac_lotes.geojson",
+      "calibration": "pac_lots",
+      "translationFromPublished2026": [
+        0.00017,
+        8.66667e-05
+      ],
+      "targetNudgeFromRawSource": [
+        0.0001384,
+        5.63667e-05
+      ],
+      "features": 666
+    },
+    {
+      "file": "edificacoes_cad.geojson",
+      "calibration": "cad_linework",
+      "translationFromPublished2026": [
+        0.00019,
+        6e-05
+      ],
+      "targetNudgeFromRawSource": [
+        0.0001584,
+        2.97e-05
+      ],
+      "features": 820
+    },
+    {
+      "file": "sistema_viario.geojson",
+      "calibration": "road_system",
+      "translationFromPublished2026": [
+        0.00017,
+        0.0001133333
+      ],
+      "targetNudgeFromRawSource": [
+        0.0001384,
+        8.30333e-05
+      ],
+      "features": 329
+    },
+    {
+      "file": "caminhos_vila.geojson",
+      "calibration": "palazzi_paths",
+      "translationFromPublished2026": [
+        -0.00018,
+        -3.33333e-05
+      ],
+      "targetNudgeFromRawSource": [
+        -0.0002116,
+        -6.36333e-05
+      ],
+      "features": 92
+    },
+    {
+      "file": "curvas_nivel.geojson",
+      "calibration": "cad_linework",
+      "translationFromPublished2026": [
+        0.00019,
+        6e-05
+      ],
+      "targetNudgeFromRawSource": [
+        0.0001584,
+        2.97e-05
+      ],
+      "features": 1
+    }
+  ]
+}
