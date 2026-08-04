@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap, ScaleControl } from 'react-leaflet';
+import { MapContainer, TileLayer, ImageOverlay, GeoJSON, useMap, ScaleControl } from 'react-leaflet';
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
@@ -7,6 +7,8 @@ import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '..
 import { PALETTE, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
+import { MapScaleControl } from './MapScaleControl';
+import { assetUrl } from '../utils/assetUrl';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster';
@@ -25,7 +27,7 @@ function MapHashHandler() {
     if (hash && hash.startsWith('#')) {
       const parts = hash.substring(1).split('/');
       if (parts.length === 3) {
-        const zoom = parseInt(parts[0], 10);
+        const zoom = parseFloat(parts[0]);
         const lat = parseFloat(parts[1]);
         const lng = parseFloat(parts[2]);
         if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
@@ -381,6 +383,14 @@ function FitToPreset({ focusPreset }) {
     const preset = focusPreset && focusPreset.preset;
     if (!preset) return;
 
+    // Thematic sheets with a declared cartographic scale use an explicit center
+    // and fractional zoom. This avoids distant features pulling the sheet away
+    // from Paranapiacaba and makes reapplying a preset deterministic.
+    if (Array.isArray(preset.center) && Number.isFinite(preset.zoomLevel)) {
+      map.setView(preset.center, preset.zoomLevel, { animate: true });
+      return;
+    }
+
     const layerIds = focusableLayerIds(preset, LAYERS);
     if (layerIds.length === 0) return;
 
@@ -441,18 +451,37 @@ export function MapView({
         zoom={13}
         className="w-full h-full z-0"
         zoomControl={false}
+        minZoom={7}
+        maxZoom={21}
+        zoomSnap={0.25}
+        zoomDelta={0.25}
+        wheelPxPerZoomLevel={90}
       >
         <MapHashHandler />
 
-        <TileLayer
-          key={currentBasemap.id}
-          url={currentBasemap.url}
-          attribution={currentBasemap.attribution}
-          subdomains={currentBasemap.subdomains || 'abc'}
-          maxZoom={currentBasemap.maxZoom || 19}
-        />
+        {currentBasemap.type === 'image' ? (
+          <ImageOverlay
+            key={currentBasemap.id}
+            url={assetUrl(currentBasemap.url)}
+            bounds={currentBasemap.bounds}
+            attribution={currentBasemap.attribution}
+            opacity={1}
+            zIndex={1}
+          />
+        ) : (
+          <TileLayer
+            key={currentBasemap.id}
+            url={currentBasemap.url}
+            attribution={currentBasemap.attribution}
+            subdomains={currentBasemap.subdomains || 'abc'}
+            maxNativeZoom={currentBasemap.maxNativeZoom || 19}
+            maxZoom={21}
+          />
+        )}
 
         <ScaleControl position="bottomleft" imperial={false} />
+
+        <MapScaleControl />
 
         <MapToolbar />
 

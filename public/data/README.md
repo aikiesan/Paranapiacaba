@@ -78,3 +78,23 @@ Origem: `OTHER_SHAPEFILES_SIGA_MAPA/` (EPSG:31983, gitignored; jobs usam
 
 Cada camada pode ser baixada direto do painel (ícone de download → GeoJSON) ou
 pela tabela de atributos (GeoJSON / CSV).
+
+### Camadas adicionadas (Fase G — hidrografia regional completa)
+
+Origem: `Hidrografia_Completa_SP/` (SIRGAS 2000 / UTM 23S, EPSG:31983,
+gitignored), processada por `scripts/build_hydrography.py` para WGS 84
+(EPSG:4326). O recorte regional `(-46.40, -23.86, -46.22, -23.68)` cobre as
+duas vertentes do divisor de águas de Paranapiacaba.
+
+- `hidrografia_regional_completa`: 2.555 trechos integrando APPs/RMSP,
+  Hidrografia UGRHI 6 e Hidrografia Complementar UGRHI 6.
+- `nascentes_regionais`: 745 pontos de nascente.
+- `apps_hidricas_regionais`: APPs hídricas no recorte de análise.
+- `subbacias_ugrhi6_regionais`: duas sub-bacias oficiais intersectantes.
+- `apm_aprm_regionais`: duas áreas de proteção/recuperação de mananciais.
+- `reservatorios_rmsp_completos`: os 17 reservatórios da base RMSP, mantidos
+  completos para análise metropolitana.
+
+O raster `rasters/ortofoto_paranapiacaba_2010.webp` é derivado do GeoTIFF
+EPSG:4674, preserva os 3.000 × 3.000 pixels originais e é descrito em
+`rasters/manifest.json`.

@@ -39,6 +39,36 @@ python build_data.py && python validate_data.py
 Mapeamento camada↔fonte em [`scripts/config.py`](scripts/config.py); detalhes em
 [`public/data/README.md`](public/data/README.md).
 
+### Ortofoto 2010 e hidrografia regional
+
+O seletor de mapas-base inclui a **Ortofoto Paranapiacaba 2010** em resolução
+integral (3.000 × 3.000 pixels). O arquivo web é gerado a partir do GeoTIFF
+SIRGAS 2000 localizado em `Ortofoto_Paranapiacaba_2010/`:
+
+```bash
+python scripts/build_rasters.py
+```
+
+A hidrografia analítica integra as bases APPs/RMSP, Hidrografia UGRHI 6,
+Hidrografia Complementar UGRHI 6, nascentes, APPs, sub-bacias, APMs/APRMs e
+reservatórios. As fontes brutas permanecem fora do Git e os GeoJSONs compactos
+são reconstruídos com:
+
+```bash
+python scripts/build_hydrography.py
+```
+
+O recorte regional de análise cobre as duas vertentes do divisor de águas. A
+**Prancha 4** usa essas camadas regionais completas.
+
+### Escala e zoom
+
+O controle no canto inferior esquerdo permite escolher diretamente 1:1.000,
+1:2.000, 1:5.000, 1:10.000, 1:20.000, 1:50.000 ou 1:100.000, além de ajustes
+finos de zoom em incrementos de 0,25. As pranchas temáticas possuem centro e
+escala explícitos; assim, feições distantes não alteram mais o enquadramento da
+Prancha 3.
+
 ## Deploy (GitHub Pages)
 Push na branch `main` dispara `.github/workflows/deploy.yml`, que roda os testes,
 faz o build do Vite e publica `dist/` via as actions oficiais do GitHub Pages

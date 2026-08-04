@@ -21,6 +21,12 @@ SOURCE_ROOT = os.path.join(
 # para cá via "root": SIGA_MAPA.
 SIGA_MAPA = os.path.join(REPO, "OTHER_SHAPEFILES_SIGA_MAPA")
 
+# Additional source packages supplied for the 2010 orthophoto and the complete
+# Alto Tietê hydrography. They stay outside version control; their optimized
+# web derivatives are published under public/data/.
+ORTHOPHOTO_ROOT = os.path.join(REPO, "Ortofoto_Paranapiacaba_2010")
+HYDROGRAPHY_ROOT = os.path.join(REPO, "Hidrografia_Completa_SP")
+
 
 def src(*parts):
     return os.path.join(SOURCE_ROOT, *parts)
@@ -36,6 +42,11 @@ VILA_MASK_SRC = src("01_LIMITES_ADMINISTRATIVOS", "ALTO_DA_SERRA",
                     "FAPESP_Alto_da_Serra_Delimitacao.shp")
 VILA_BUFFER_DEG = 0.006  # ~650 m so edge features are not clipped off
 SERRA_BUFFER_DEG = 0.05  # ~5.5 km around the vila (sub-basins / divisor de águas)
+
+# Analysis window used by the complete hydrography package. It covers the
+# Paranapiacaba ridge, both sides of the watershed divide and the full area
+# normally used in the regional thematic sheets.
+HYDRO_REGION_BBOX = (-46.40, -23.86, -46.22, -23.68)
 
 # Georeferencing nudge for the Vila CAD layers (houses + lots + local rail share
 # one CAD georef). Measured against OSM/Esri building footprints: the CAD sits

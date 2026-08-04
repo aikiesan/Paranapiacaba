@@ -126,6 +126,10 @@ describe('focusableLayerIds', () => {
     expect(focusableLayerIds({ layers: ['a', 'inexistente'] }, layers)).toEqual(['a']);
   });
 
+  it('usa focusLayers para impedir que camadas distantes alterem o enquadramento', () => {
+    expect(focusableLayerIds({ layers: ['a', 'c'], focusLayers: ['c'] }, layers)).toEqual(['c']);
+  });
+
   it('tolera predefinições vazias', () => {
     expect(focusableLayerIds(null, layers)).toEqual([]);
     expect(focusableLayerIds({}, layers)).toEqual([]);
@@ -146,6 +150,15 @@ describe('enquadramento das predefinições reais', () => {
   it('acompanha todo targetScale de um zoomLevel', () => {
     const incomplete = PRESETS.filter(
       (preset) => preset.targetScale && typeof preset.zoomLevel !== 'number'
+    ).map((preset) => preset.id);
+
+    expect(incomplete).toEqual([]);
+  });
+
+  it('fixa centro e zoom nas pranchas que prometem escala cartográfica', () => {
+    const incomplete = PRESETS.filter(
+      (preset) => preset.family === 'prancha' &&
+        (!preset.targetScale || !Array.isArray(preset.center) || typeof preset.zoomLevel !== 'number')
     ).map((preset) => preset.id);
 
     expect(incomplete).toEqual([]);

@@ -2,6 +2,15 @@ import React from 'react';
 
 export const BASEMAPS = [
   {
+    id: 'ortofoto2010',
+    label: 'Ortofoto 2010',
+    type: 'image',
+    url: 'data/rasters/ortofoto_paranapiacaba_2010.webp',
+    bounds: [[-23.79, -46.32], [-23.77, -46.29]],
+    attribution: 'Ortofoto Paranapiacaba 2010',
+    maxZoom: 21
+  },
+  {
     id: 'osm',
     label: 'Mapa',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -29,13 +38,14 @@ export const BASEMAPS = [
 
 export function BasemapSelector({ selectedBasemap, onChange }) {
   return (
-    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
+    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex max-w-[calc(100vw-2rem)] overflow-x-auto bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
       {BASEMAPS.map((basemap) => {
         const isActive = selectedBasemap === basemap.id;
         return (
           <button
             key={basemap.id}
             onClick={() => onChange(basemap.id)}
+            title={basemap.id === 'ortofoto2010' ? 'Ortofoto georreferenciada de Paranapiacaba, levantamento de 2010' : basemap.label}
             className={`px-2 md:px-3 py-1 text-[11px] md:text-xs font-bold rounded-full transition-all duration-200 ${
               isActive
                 ? 'bg-emerald-600 text-white shadow-sm'

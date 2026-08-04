@@ -52,6 +52,8 @@ extracted_geo/
 # Pastas de dados externos
 /EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/
 /OTHER_SHAPEFILES_SIGA_MAPA/
+/Hidrografia_Completa_SP/
+/Ortofoto_Paranapiacaba_2010/
 
 # Pipeline (Python caches e download OSM)
 scripts/.cache/

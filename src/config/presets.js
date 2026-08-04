@@ -3,8 +3,13 @@
 // `id`s de src/config/layers.js e o basemap referencia `id`s de BasemapSelector.
 //
 // `family` agrupa as predefinições no painel flutuante de Mapas Temáticos.
-// `zoomLevel`, quando presente, é o zoom máximo do enquadramento automático —
-// é o que materializa a escala anunciada em `targetScale`.
+// `center` + `zoomLevel` fixam posição e escala cartográfica de forma
+// determinística; presets sem centro continuam usando a união das extensões.
+
+import { zoomForScale } from '../utils/mapScale';
+
+const VILA_CENTER = [-23.778, -46.3045];
+const REGIONAL_CENTER = [-23.77, -46.31];
 
 export const PRESETS = [
   {
@@ -17,7 +22,10 @@ export const PRESETS = [
     layers: [
       'limite_vila', 'edificacoes_vila', 'patrimonio_ferroviario', 'sistema_viario', 'caminhos_vila'
     ],
-    buildingMode: 'conservacao'
+    buildingMode: 'conservacao',
+    targetScale: '1:1.000',
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(1000, VILA_CENTER[0])
   },
   {
     id: 'prancha_uso_solo',
@@ -29,7 +37,10 @@ export const PRESETS = [
     layers: [
       'limite_vila', 'edificacoes_vila', 'pac_lotes', 'abpf', 'ferrovia_local', 'sistema_viario'
     ],
-    buildingMode: 'uso'
+    buildingMode: 'uso',
+    targetScale: '1:1.000',
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(1000, VILA_CENTER[0])
   },
   {
     id: 'prancha_tombamentos',
@@ -40,18 +51,25 @@ export const PRESETS = [
     description: 'Jurisdições sobrepostas em polígonos vazios (IPHAN Vinho, CONDEPHAAT Carmim, COMDEPHAAPASA Vermelho e Dourado UNESCO).',
     layers: [
       'limite_sitio', 'limite_vila', 'patrimonio_tombados', 'areas_envoltorias', 'bens_estudo', 'ucs'
-    ]
+    ],
+    targetScale: '1:10.000',
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(10000, VILA_CENTER[0])
   },
   {
     id: 'prancha_hidrica_redes',
     family: 'prancha',
-    label: 'Prancha 4: Rede Hídrica & Infraestrutura',
+    label: 'Prancha 4: Hidrografia Regional Completa',
     icon: '💧',
     basemap: 'terrain',
-    description: 'Corpos d\'água em azul exclusivo (#0070C0), APPs verde claro (#A9D08E 40%) e rede de eletricidade tracejada.',
+    description: 'Rede hídrica regional completa, nascentes, APPs, sub-bacias e áreas de proteção e recuperação de mananciais.',
     layers: [
-      'hidrografia', 'nascentes', 'subbacias', 'app_buffers', 'app_sul', 'rios_sul', 'rede_eletrica'
-    ]
+      'hidrografia_regional', 'nascentes_regionais', 'apps_hidricas_regionais',
+      'subbacias_ugrhi6', 'apm_aprm_regionais'
+    ],
+    targetScale: '1:50.000',
+    center: REGIONAL_CENTER,
+    zoomLevel: zoomForScale(50000, REGIONAL_CENTER[0])
   },
   {
     id: 'prancha_hipsometria',
@@ -62,7 +80,10 @@ export const PRESETS = [
     description: 'Estrutura altimétrica com curvas de nível em sépia (#833C0C) e transição sequencial de altitudes.',
     layers: [
       'curvas_nivel', 'altimetria_serra', 'hidrografia', 'limite_vila', 'funicular'
-    ]
+    ],
+    targetScale: '1:20.000',
+    center: REGIONAL_CENTER,
+    zoomLevel: zoomForScale(20000, REGIONAL_CENTER[0])
   },
   {
     id: 'unesco',
@@ -84,8 +105,9 @@ export const PRESETS = [
     basemap: 'terrain',
     description: 'Unidades de conservação, cobertura vegetal (Mata Atlântica #385723), bacias e nascentes.',
     layers: [
-      'ucs', 'pnm_nascentes', 'classif_vegetal', 'app_sul', 'subbacias',
-      'regioes_hidrograficas', 'hidrografia', 'nascentes', 'app_buffers',
+      'ucs', 'pnm_nascentes', 'classif_vegetal', 'apps_hidricas_regionais',
+      'subbacias_ugrhi6', 'regioes_hidrograficas', 'hidrografia_regional',
+      'nascentes_regionais', 'apm_aprm_regionais',
     ],
   },
   {
@@ -111,7 +133,8 @@ export const PRESETS = [
       'limite_vila', 'zeip_subdivisoes', 'edificacoes_vila', 'pac_lotes', 'edificacoes_cad', 'sistema_viario', 'caminhos_vila'
     ],
     targetScale: '1:1.000',
-    zoomLevel: 17.5
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(1000, VILA_CENTER[0])
   },
   {
     id: 'escala_1_5000',
@@ -124,7 +147,23 @@ export const PRESETS = [
       'limite_vila', 'patrimonio_ferroviario', 'funicular', 'pnm_nascentes', 'curvas_nivel', 'hidrografia', 'atrativos'
     ],
     targetScale: '1:5.000',
-    zoomLevel: 15.5
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(5000, VILA_CENTER[0])
+  },
+  {
+    id: 'escala_1_10000',
+    family: 'escala',
+    label: 'Escala 1:10.000 (Sítio de Paranapiacaba)',
+    icon: '🗺️',
+    basemap: 'ortofoto2010',
+    description: 'Escala de contexto do sítio: Vila, patrimônio, funicular, limites de proteção e rede hídrica detalhada.',
+    layers: [
+      'limite_sitio', 'limite_vila', 'patrimonio_ferroviario', 'funicular',
+      'areas_envoltorias', 'hidrografia_regional', 'nascentes_regionais'
+    ],
+    targetScale: '1:10.000',
+    center: VILA_CENTER,
+    zoomLevel: zoomForScale(10000, VILA_CENTER[0])
   },
   {
     id: 'escala_1_20000',
@@ -137,20 +176,23 @@ export const PRESETS = [
       'ucs', 'pnm_nascentes', 'subbacias', 'regioes_hidrograficas', 'classif_vegetal', 'trilhas', 'areas_envoltorias'
     ],
     targetScale: '1:20.000',
-    zoomLevel: 13.5
+    center: REGIONAL_CENTER,
+    zoomLevel: zoomForScale(20000, REGIONAL_CENTER[0])
   },
   {
     id: 'escala_1_50000',
     family: 'escala',
-    label: 'Escala 1:50.000 (Corredor SPR Santos–Jundiaí)',
+    label: 'Escala 1:50.000 (Região de Paranapiacaba)',
     icon: '🗺️',
     basemap: 'terrain',
-    description: 'Escala territorial macro (1:50.000): Corredor histórico São Paulo Railway de Santos a Jundiaí (139 km), bacias hidrográficas e conexões regionais.',
+    description: 'Escala regional (1:50.000): Serra do Mar, rede hidrográfica completa, mananciais, sub-bacias, unidades de conservação e conexões ferroviárias.',
     layers: [
-      'ferrovia_corredor', 'estacoes', 'municipios_corredor', 'grande_abc', 'regioes_hidrograficas', 'reservatorios'
+      'ferrovia_corredor', 'hidrografia_regional', 'nascentes_regionais',
+      'subbacias_ugrhi6', 'apm_aprm_regionais', 'ucs', 'regioes_hidrograficas'
     ],
     targetScale: '1:50.000',
-    zoomLevel: 10.5
+    center: REGIONAL_CENTER,
+    zoomLevel: zoomForScale(50000, REGIONAL_CENTER[0])
   }
 ];
 

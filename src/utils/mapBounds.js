@@ -86,8 +86,9 @@ export function presetMaxZoom(preset) {
 export function focusableLayerIds(preset, layers) {
   if (!preset || !Array.isArray(preset.layers)) return [];
   const byId = new Map((layers || []).map((layer) => [layer.id, layer]));
+  const requested = Array.isArray(preset.focusLayers) ? preset.focusLayers : preset.layers;
 
-  return preset.layers.filter((id) => {
+  return requested.filter((id) => {
     const layer = byId.get(id);
     return Boolean(layer) && layer.available !== false;
   });

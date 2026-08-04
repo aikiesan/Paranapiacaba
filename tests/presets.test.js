@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PRESETS } from '../src/config/presets.js';
 import { LAYERS } from '../src/config/layers.js';
+import { BASEMAPS } from '../src/components/BasemapSelector.jsx';
 
 const layerIds = new Set(LAYERS.map((layer) => layer.id));
 
@@ -42,5 +43,21 @@ describe('presets temáticos', () => {
     ).map((preset) => preset.id);
 
     expect(duplicated).toEqual([]);
+  });
+
+  it('só referencia mapas-base existentes', () => {
+    const basemapIds = new Set(BASEMAPS.map((basemap) => basemap.id));
+    const invalid = PRESETS.filter((preset) => preset.basemap && !basemapIds.has(preset.basemap))
+      .map((preset) => preset.id);
+
+    expect(invalid).toEqual([]);
+  });
+
+  it('mantém a Prancha 4 ligada à hidrografia regional completa', () => {
+    const preset = PRESETS.find((item) => item.id === 'prancha_hidrica_redes');
+    expect(preset.layers).toEqual(expect.arrayContaining([
+      'hidrografia_regional', 'nascentes_regionais', 'apps_hidricas_regionais',
+      'subbacias_ugrhi6', 'apm_aprm_regionais'
+    ]));
   });
 });
