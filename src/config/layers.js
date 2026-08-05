@@ -419,7 +419,7 @@ export const LAYERS = [
     minZoom: 15,
     visible: false,
     popupFields: [],
-    description: "Curvas de nível detalhadas do núcleo da Vila em tom sépia (#833C0C) — exibição em escalas locais (>= 1:5.000).",
+    description: "Curvas da base CAD de 1 m deduplicadas e exibidas em cadência 1:5 (intervalo gráfico nominal de 5 m), em tom sépia (#833C0C).",
     available: true
   },
   {
@@ -449,8 +449,8 @@ export const LAYERS = [
     weight: 1.25,
     minZoom: 11,
     visible: false,
-    popupFields: ["nome", "curso_agua", "manancial", "classe", "fonte"],
-    description: "Rede integrada das APPs da RMSP, Hidrografia UGRHI 6 e base complementar UGRHI 6, recortada para a região de análise de Paranapiacaba.",
+    popupFields: ["codigo", "curso_agua", "manancial", "tipo", "status", "fonte"],
+    description: "Rede hidrográfica das APPs da RMSP conectada diretamente às nascentes regionais. As bases UGRHI deslocadas foram removidas para evitar a duplicação visual dos cursos d'água.",
     available: true
   },
   {

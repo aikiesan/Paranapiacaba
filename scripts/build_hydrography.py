@@ -101,28 +101,25 @@ def compact_geojson(frame: gpd.GeoDataFrame, filename: str) -> None:
 
 
 def build_network() -> None:
-    specs = [
-        (
-            "APPs_Hidrografia.shp",
-            "Hidrografia das APPs da RMSP",
-            {"hid_cd": "codigo", "hid_tp_el": "tipo", "STATUS": "status",
-             "CODCURSOAG": "curso_agua", "Manancial": "manancial", "Niv_1": "nivel"},
-        ),
-        (
-            "17_Hidrografia_Complementar.shp",
-            "Hidrografia complementar UGRHI 6",
-            {"CBHAT": "cbhat", "CLASSE": "classe", "BAT_DS": "subbacia"},
-        ),
-        (
-            "16_Hidrografia.shp",
-            "Hidrografia UGRHI 6",
-            {"NM_CUR": "nome", "CBHAT": "cbhat", "CLASSE": "classe", "Camada": "camada"},
-        ),
-    ]
-    parts = [clip_and_prepare(read_source(name), source=source, fields=fields, simplify_m=1.5)
-             for name, source, fields in specs]
-    compact_geojson(gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), crs=4326),
-                    "hidrografia_regional_completa.geojson")
+    # The APPs hydrography and spring inventories are a matched dataset: every
+    # spring in the regional AOI lies exactly on this network. The two UGRHI 6
+    # packages overlap it with a different positional reference, which rendered
+    # as a false doubled network. Keep this spring-connected network as the
+    # single cartographic authority.
+    network = clip_and_prepare(
+        read_source("APPs_Hidrografia.shp"),
+        source="Hidrografia das APPs da RMSP (conectada às nascentes)",
+        fields={
+            "hid_cd": "codigo",
+            "hid_tp_el": "tipo",
+            "STATUS": "status",
+            "CODCURSOAG": "curso_agua",
+            "Manancial": "manancial",
+            "Niv_1": "nivel",
+        },
+        simplify_m=1.5,
+    )
+    compact_geojson(network, "hidrografia_regional_completa.geojson")
 
 
 def main() -> None:

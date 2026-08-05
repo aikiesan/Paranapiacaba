@@ -213,11 +213,17 @@ export default function App() {
                 />
 
                 <div
-                  className="absolute bottom-16 left-4 z-[1001] flex flex-col items-start gap-2 pointer-events-none md:bottom-4"
-                  data-testid="cartographic-controls"
+                  className="absolute bottom-16 left-4 z-[1001] pointer-events-none md:bottom-4"
+                  data-testid="map-legend-control"
+                >
+                  <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
+                </div>
+
+                <div
+                  className="absolute bottom-[4.75rem] right-4 z-[1001] pointer-events-none"
+                  data-testid="cartographic-scale-control"
                 >
                   <MapScaleControl />
-                  <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
                 </div>
 
                 <ThematicPresets

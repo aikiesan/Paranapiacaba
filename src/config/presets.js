@@ -62,7 +62,7 @@ export const PRESETS = [
     label: 'Prancha 4: Hidrografia Regional Completa',
     icon: '💧',
     basemap: 'terrain',
-    description: 'Rede hídrica regional completa, nascentes, APPs, sub-bacias e áreas de proteção e recuperação de mananciais.',
+    description: 'Rede hídrica regional conectada às nascentes, APPs, sub-bacias e áreas de proteção e recuperação de mananciais.',
     layers: [
       'hidrografia_regional', 'nascentes_regionais', 'apps_hidricas_regionais',
       'subbacias_ugrhi6', 'apm_aprm_regionais'
@@ -77,7 +77,7 @@ export const PRESETS = [
     label: 'Prancha 5: Hipsometria & Escarpa',
     icon: '⛰️',
     basemap: 'terrain',
-    description: 'Estrutura altimétrica com curvas de nível em sépia (#833C0C) e transição sequencial de altitudes.',
+    description: 'Estrutura altimétrica com curvas da Vila em cadência nominal de 5 m, curvas-mestras regionais e transição sequencial de altitudes.',
     layers: [
       'curvas_nivel', 'altimetria_serra', 'hidrografia', 'limite_vila', 'funicular'
     ],
