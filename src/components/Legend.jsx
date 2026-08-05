@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LAYERS } from '../config/layers';
-import { CONSERVATION_PALETTE } from '../config/styleGuide';
+import { CONSERVATION_PALETTE, PALETTE } from '../config/styleGuide';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) {
@@ -12,7 +12,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
   const isEdificacoesActive = activeLayers.has('edificacoes_vila');
 
   return (
-    <div className="absolute bottom-16 left-4 md:bottom-4 z-[1000] w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
+    <div className="pointer-events-auto w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
       {/* Cabeçalho com toggle */}
       <div 
         className="flex items-center justify-between px-3 py-2 bg-slate-50 cursor-pointer border-b border-slate-200 select-none"
@@ -21,7 +21,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
         <span className="text-[10px] font-bold text-slate-700 tracking-wider uppercase flex items-center gap-1">
           <span>🎨</span> Legenda IBGE
         </span>
-        <button className="text-slate-400 hover:text-slate-750 focus:outline-none transition-transform duration-200">
+        <button type="button" aria-label={isOpen ? 'Recolher legenda' : 'Expandir legenda'} className="text-slate-400 hover:text-slate-750 focus:outline-none transition-transform duration-200">
           <svg
             className={`w-4 h-4 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
@@ -88,41 +88,34 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                   </div>
                   {buildingSymbologyMode === 'uso' ? (
                     <div className="grid grid-cols-2 gap-1 text-[10px]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-amber-500 bg-[#FCE4D6]" />
-                        <span className="text-slate-600 truncate">Residencial</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-blue-400 bg-[#BDD7EE]" />
-                        <span className="text-slate-600 truncate">Serviços</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-purple-400 bg-[#E1BEE7]" />
-                        <span className="text-slate-600 truncate">Turismo/Cultura</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-slate-700 bg-[#595959]" />
-                        <span className="text-slate-600 truncate">Ferrovia</span>
-                      </div>
+                      {[
+                        ['Residencial', PALETTE.uso_residencial],
+                        ['Comércio/Serviços', PALETTE.uso_comercial],
+                        ['Público', PALETTE.uso_servicos],
+                        ['Hotelaria/Turismo', PALETTE.uso_turismo_cultura],
+                        ['Esporte', PALETTE.uso_esporte],
+                        ['Uso misto', PALETTE.uso_misto],
+                        ['Sem dados', PALETTE.uso_sem_dados],
+                      ].map(([label, color]) => (
+                        <div key={label} className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-sm border border-slate-700/40" style={{ backgroundColor: color }} />
+                          <span className="text-slate-600 truncate">{label}</span>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-1 text-[10px]">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-emerald-700 bg-[#C6EFCE]" />
-                        <span className="text-slate-600 truncate">Conservado</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-amber-700 bg-[#FFEB9C]" />
-                        <span className="text-slate-600 truncate">Mau Estado</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-orange-800 bg-[#F8CBAD]" />
-                        <span className="text-slate-600 truncate">Descaracteriz.</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-rose-800 bg-[#FFC7CE]" />
-                        <span className="text-slate-600 truncate">Ruínas</span>
-                      </div>
+                      {[
+                        ['Conservado', CONSERVATION_PALETTE.conservado],
+                        ['Mau estado', CONSERVATION_PALETTE.mau_estado],
+                        ['Ruínas/Péssimo', CONSERVATION_PALETTE.ruinas],
+                        ['Não avaliado', CONSERVATION_PALETTE.default],
+                      ].map(([label, style]) => (
+                        <div key={label} className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: style.fill, border: `1px solid ${style.stroke}` }} />
+                          <span className="text-slate-600 truncate">{label}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

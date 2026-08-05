@@ -54,6 +54,8 @@ extracted_geo/
 /OTHER_SHAPEFILES_SIGA_MAPA/
 /Hidrografia_Completa_SP/
 /Ortofoto_Paranapiacaba_2010/
+/Mapas_Layers_Extras/
+/tmp/
 
 # Pipeline (Python caches e download OSM)
 scripts/.cache/

@@ -1,0 +1,841 @@
+{
+  "schemaVersion": 1,
+  "description": "Cartas históricas e anexos cartográficos de legislação, convertidos dos GeoTIFFs georreferenciados fornecidos.",
+  "reference": "Ortofoto Paranapiacaba 2010",
+  "defaultOpacity": 0.72,
+  "blendMode": "multiply",
+  "maps": [
+    {
+      "group": "historical",
+      "municipality": "Paranapiacaba",
+      "label": "Paranapiacaba — Carta histórica 0070",
+      "id": "historico-paranapiacaba-0070",
+      "bounds": [
+        [
+          -23.7821505,
+          -46.30873846
+        ],
+        [
+          -23.77212286,
+          -46.29586175
+        ]
+      ],
+      "width": 2600,
+      "height": 2025,
+      "native": {
+        "width": 4723,
+        "height": 3678,
+        "crs": "EPSG:4674"
+      },
+      "file": "historico-paranapiacaba-0070.webp",
+      "sourceFile": "PANANAPIACABA BR_APESP_IGC_IGG_CAR_I_S_0070_001_001_georref.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "historical",
+      "municipality": "Paranapiacaba",
+      "label": "Paranapiacaba — Carta histórica 0071",
+      "id": "historico-paranapiacaba-0071",
+      "bounds": [
+        [
+          -23.78290969,
+          -46.30809844
+        ],
+        [
+          -23.77462306,
+          -46.29753815
+        ]
+      ],
+      "width": 2600,
+      "height": 2040,
+      "native": {
+        "width": 5829,
+        "height": 4574,
+        "crs": "EPSG:4674"
+      },
+      "file": "historico-paranapiacaba-0071.webp",
+      "sourceFile": "PARANAPIACABA BR_APESP_IGC_IGG_CAR_I_S_0071_001_001_georref.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "historical",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Carta histórica 0075",
+      "id": "historico-ribeirao-pires-0075",
+      "bounds": [
+        [
+          -23.74225267,
+          -46.44585846
+        ],
+        [
+          -23.68619808,
+          -46.39055389
+        ]
+      ],
+      "width": 2565,
+      "height": 2600,
+      "native": {
+        "width": 4203,
+        "height": 4260,
+        "crs": "EPSG:4674"
+      },
+      "file": "historico-ribeirao-pires-0075.webp",
+      "sourceFile": "RIBEIRAO PIRES BR_APESP_IGC_IGG_CAR_I_S_0075_001_001_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Cubatão",
+      "label": "Cubatão — Zoneamento — Anexo I",
+      "id": "legislacao-cubatao-zoneamento-anexo-i",
+      "bounds": [
+        [
+          -23.95425897,
+          -46.50911013
+        ],
+        [
+          -23.76648088,
+          -46.2200307
+        ]
+      ],
+      "width": 2600,
+      "height": 1689,
+      "native": {
+        "width": 4978,
+        "height": 3492,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-cubatao-zoneamento-anexo-i.webp",
+      "sourceFile": "Anexo-I-–-Mapa-de-Zoneamento-2_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 129",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-129",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-129.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-129_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 130",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-130",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-130.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-130_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 131",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-131",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-131.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-131_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 132",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-132",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-132.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-132_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 134",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-134",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-134.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-134_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 135",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-135",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-135.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-135_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 136",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-136",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-136.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-136_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 138",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-138",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-138.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-138_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Mogi das Cruzes",
+      "label": "Mogi das Cruzes — LC 150/2019 — Anexo 139",
+      "id": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-139",
+      "bounds": [
+        [
+          -23.80965911,
+          -46.35084279
+        ],
+        [
+          -23.31599897,
+          -45.94820614
+        ]
+      ],
+      "width": 2121,
+      "height": 2600,
+      "native": {
+        "width": 5322,
+        "height": 7112,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-mogi-das-cruzes-lc-150-2019-anexo-139.webp",
+      "sourceFile": "anexo-lei-complementar-150-2019-mogi-das-cruzes-sp-2-Anexo-139_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo II",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-ii",
+      "bounds": [
+        [
+          -23.79986458,
+          -46.48467111
+        ],
+        [
+          -23.58715434,
+          -46.32119679
+        ]
+      ],
+      "width": 1998,
+      "height": 2600,
+      "native": {
+        "width": 4968,
+        "height": 7069,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-ii.webp",
+      "sourceFile": "Lei 5907_14 - Anexo II_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo III",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-iii",
+      "bounds": [
+        [
+          -23.80108944,
+          -46.48689467
+        ],
+        [
+          -23.58575176,
+          -46.31991341
+        ]
+      ],
+      "width": 2016,
+      "height": 2600,
+      "native": {
+        "width": 4992,
+        "height": 7038,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-iii.webp",
+      "sourceFile": "Lei 5907_14 - Anexo III_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo IX",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-ix",
+      "bounds": [
+        [
+          -23.80108944,
+          -46.48689467
+        ],
+        [
+          -23.58575176,
+          -46.31991341
+        ]
+      ],
+      "width": 2016,
+      "height": 2600,
+      "native": {
+        "width": 4992,
+        "height": 7038,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-ix.webp",
+      "sourceFile": "Lei 5907_14 - Anexo IX_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo VIII",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-viii",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-viii.webp",
+      "sourceFile": "Lei 5907_14 - Anexo VIII_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo X",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-x",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-x.webp",
+      "sourceFile": "Lei 5907_14 - Anexo X_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo XI",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xi",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xi.webp",
+      "sourceFile": "Lei 5907_14 - Anexo XI_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo XII",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xii",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xii.webp",
+      "sourceFile": "Lei 5907_14 - Anexo XII_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo XIII",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xiii",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xiii.webp",
+      "sourceFile": "Lei 5907_14 - Anexo XIII_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Ribeirão Pires",
+      "label": "Ribeirão Pires — Lei 5.907/2014 — Anexo XIV",
+      "id": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xiv",
+      "bounds": [
+        [
+          -23.80198655,
+          -46.48794499
+        ],
+        [
+          -23.58199974,
+          -46.31844644
+        ]
+      ],
+      "width": 2003,
+      "height": 2600,
+      "native": {
+        "width": 4996,
+        "height": 7090,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-ribeirao-pires-lei-5-907-2014-anexo-xiv.webp",
+      "sourceFile": "Lei 5907_14 - Anexo XIV_pdf_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Rio Grande da Serra",
+      "label": "Rio Grande da Serra — Áreas de interesse turístico",
+      "id": "legislacao-rio-grande-da-serra-areas-de-interesse-turistico",
+      "bounds": [
+        [
+          -23.89345659,
+          -46.46154105
+        ],
+        [
+          -23.64282243,
+          -46.27204774
+        ]
+      ],
+      "width": 1311,
+      "height": 1734,
+      "native": {
+        "width": 1223,
+        "height": 1771,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-rio-grande-da-serra-areas-de-interesse-turistico.webp",
+      "sourceFile": "interesse turistico_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Rio Grande da Serra",
+      "label": "Rio Grande da Serra — Movimentos gravitacionais de massa",
+      "id": "legislacao-rio-grande-da-serra-movimentos-gravitacionais-de-massa",
+      "bounds": [
+        [
+          -23.89345659,
+          -46.46154105
+        ],
+        [
+          -23.64282243,
+          -46.27204774
+        ]
+      ],
+      "width": 1311,
+      "height": 1734,
+      "native": {
+        "width": 1223,
+        "height": 1771,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-rio-grande-da-serra-movimentos-gravitacionais-de-massa.webp",
+      "sourceFile": "mov gravt massa_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Rio Grande da Serra",
+      "label": "Rio Grande da Serra — Uso do solo",
+      "id": "legislacao-rio-grande-da-serra-uso-do-solo",
+      "bounds": [
+        [
+          -23.89345659,
+          -46.46154105
+        ],
+        [
+          -23.64282243,
+          -46.27204774
+        ]
+      ],
+      "width": 1311,
+      "height": 1734,
+      "native": {
+        "width": 1223,
+        "height": 1771,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-rio-grande-da-serra-uso-do-solo.webp",
+      "sourceFile": "uso do solo_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Rio Grande da Serra",
+      "label": "Rio Grande da Serra — Vetores de crescimento",
+      "id": "legislacao-rio-grande-da-serra-vetores-de-crescimento",
+      "bounds": [
+        [
+          -23.89345659,
+          -46.46154105
+        ],
+        [
+          -23.64282243,
+          -46.27204774
+        ]
+      ],
+      "width": 1311,
+      "height": 1734,
+      "native": {
+        "width": 1223,
+        "height": 1771,
+        "crs": "EPSG:31983"
+      },
+      "file": "legislacao-rio-grande-da-serra-vetores-de-crescimento.webp",
+      "sourceFile": "crescimento vetores_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Santo André",
+      "label": "Santo André — Zoneamento — Anexo 1",
+      "id": "legislacao-santo-andre-zoneamento-anexo-1",
+      "bounds": [
+        [
+          -23.82117303,
+          -46.58751307
+        ],
+        [
+          -23.60330646,
+          -46.25558124
+        ]
+      ],
+      "width": 2600,
+      "height": 1707,
+      "native": {
+        "width": 5142,
+        "height": 3375,
+        "crs": "EPSG:4674"
+      },
+      "file": "legislacao-santo-andre-zoneamento-anexo-1.webp",
+      "sourceFile": "ANEXO 1. - ZONEAMENTO_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Santos",
+      "label": "Santos — Perímetro urbano — LC 1.314/2025",
+      "id": "legislacao-santos-perimetro-urbano-lc-1-314-2025",
+      "bounds": [
+        [
+          -24.01902074,
+          -46.4157695
+        ],
+        [
+          -23.72381867,
+          -46.16206904
+        ]
+      ],
+      "width": 2234,
+      "height": 2600,
+      "native": {
+        "width": 3025,
+        "height": 3849,
+        "crs": "EPSG:3857"
+      },
+      "file": "legislacao-santos-perimetro-urbano-lc-1-314-2025.webp",
+      "sourceFile": "anexo_i_-_perimetro_urbano_-_alterado_pela_lc_1314_2025_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Santos",
+      "label": "Santos — Zoneamento — LC 1.314/2025",
+      "id": "legislacao-santos-zoneamento-lc-1-314-2025",
+      "bounds": [
+        [
+          -24.01898812,
+          -46.41609413
+        ],
+        [
+          -23.72423844,
+          -46.16211193
+        ]
+      ],
+      "width": 2240,
+      "height": 2600,
+      "native": {
+        "width": 3030,
+        "height": 3846,
+        "crs": "EPSG:3857"
+      },
+      "file": "legislacao-santos-zoneamento-lc-1-314-2025.webp",
+      "sourceFile": "anexo_i_-_zoneamento_-_lc_1314-2025_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Suzano",
+      "label": "Suzano — Macrozoneamento",
+      "id": "legislacao-suzano-macrozoneamento",
+      "bounds": [
+        [
+          -23.77692996,
+          -46.41014225
+        ],
+        [
+          -23.42784752,
+          -46.14407156
+        ]
+      ],
+      "width": 1982,
+      "height": 2600,
+      "native": {
+        "width": 3482,
+        "height": 4985,
+        "crs": "EPSG:3857"
+      },
+      "file": "legislacao-suzano-macrozoneamento.webp",
+      "sourceFile": "macrozoneamento suzano_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Suzano",
+      "label": "Suzano — Zonas Especiais de Interesse Social",
+      "id": "legislacao-suzano-zonas-especiais-de-interesse-social",
+      "bounds": [
+        [
+          -23.77570539,
+          -46.41026956
+        ],
+        [
+          -23.42805808,
+          -46.14371834
+        ]
+      ],
+      "width": 1993,
+      "height": 2600,
+      "native": {
+        "width": 3497,
+        "height": 4977,
+        "crs": "EPSG:3857"
+      },
+      "file": "legislacao-suzano-zonas-especiais-de-interesse-social.webp",
+      "sourceFile": "zonas especiais de interesse social_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    },
+    {
+      "group": "legislation",
+      "municipality": "Suzano",
+      "label": "Suzano — Zonas Especiais de Localidades Urbanas",
+      "id": "legislacao-suzano-zonas-especiais-de-localidades-urbanas",
+      "bounds": [
+        [
+          -23.77692996,
+          -46.41014225
+        ],
+        [
+          -23.42784752,
+          -46.14407156
+        ]
+      ],
+      "width": 1982,
+      "height": 2600,
+      "native": {
+        "width": 3482,
+        "height": 4985,
+        "crs": "EPSG:3857"
+      },
+      "file": "legislacao-suzano-zonas-especiais-de-localidades-urbanas.webp",
+      "sourceFile": "zonas especiais de localidades urbanas_modificado.tif",
+      "sourceNote": "Georreferenciamento herdado do GeoTIFF fornecido; Ortofoto 2010 permanece a referência para a Vila."
+    }
+  ]
+}

@@ -26,6 +26,11 @@ SIGA_MAPA = os.path.join(REPO, "OTHER_SHAPEFILES_SIGA_MAPA")
 # web derivatives are published under public/data/.
 ORTHOPHOTO_ROOT = os.path.join(REPO, "Ortofoto_Paranapiacaba_2010")
 HYDROGRAPHY_ROOT = os.path.join(REPO, "Hidrografia_Completa_SP")
+REFERENCE_MAPS_ROOT = os.path.join(REPO, "Mapas_Layers_Extras")
+PALAZZI_ROOT = os.path.join(
+    REFERENCE_MAPS_ROOT, "drive-download-20260804T221351Z-1-001",
+    "EDIFICACOES_PALAZZI",
+)
 
 
 def src(*parts):
@@ -48,11 +53,21 @@ SERRA_BUFFER_DEG = 0.05  # ~5.5 km around the vila (sub-basins / divisor de águ
 # normally used in the regional thematic sheets.
 HYDRO_REGION_BBOX = (-46.40, -23.86, -46.22, -23.68)
 
-# Georeferencing nudge for the Vila CAD layers (houses + lots + local rail share
-# one CAD georef). Measured against OSM/Esri building footprints: the CAD sits
-# ~3.22 m E and ~3.37 m N of imagery, so shift W/S. Stored in degrees at ~lat -23.78.
-# (dlon, dlat). Tweak here to re-align; re-run build_data.py.
-NUDGE_VILA_DEG = (-0.0000316, -0.0000303)
+# Layer-specific translations calibrated against the georeferenced 2010
+# orthophoto. The source packages do not share one registration: Palazzi, PAC
+# and the 2025 CAD linework each have a different displacement. Values are
+# (longitude, latitude) in degrees after conversion to EPSG:4326.
+#
+# Calibration method: rasterize vector edges on the native 3000 x 3000 image,
+# maximize agreement with roof/road image gradients, then visually inspect the
+# central and peripheral sectors of the Vila.
+VILA_ALIGNMENT_NUDGES_DEG = {
+    "palazzi_buildings": (-0.0001916, -0.0001436333),
+    "cad_linework":      ( 0.0001584,  0.0000297000),
+    "pac_lots":          ( 0.0001384,  0.0000563667),
+    "road_system":       ( 0.0001384,  0.0000830333),
+    "palazzi_paths":     (-0.0002116, -0.0000636333),
+}
 
 # Wikiloc GPS tracks (real trilhas) — 46 KML exports in the raw data tree.
 TRILHAS_KML_DIR = os.path.join(
@@ -89,7 +104,8 @@ JOBS = [
     {
         "out": "ferrovia_local.geojson", "aoi": "vila", "simplify": 5e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_trilhos_ferrovia_georef.shp"],
-        "repair_epsg": 31983, "keep": {"Layer": "elemento"}, "nudge": True,
+        "repair_epsg": 31983, "keep": {"Layer": "elemento"},
+        "nudge": "cad_linework",
     },
     {
         "out": "funicular.geojson", "aoi": None, "simplify": 1e-5,
@@ -98,9 +114,10 @@ JOBS = [
     },
     {
         "out": "patrimonio_ferroviario.geojson", "aoi": "vila", "simplify": 5e-6,
-        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Ruinas.shp"],
+        "src": ["Ruinas.shp"], "root": PALAZZI_ROOT,
         "keep": {"layer": "condicao"}, "extra": {"tipo": "Ruína ferroviária"},
-        "nudge": True,
+        "repair_epsg": 4674,
+        "nudge": "palazzi_buildings",
     },
 
     # ---- Território ----------------------------------------------------------
@@ -135,8 +152,8 @@ JOBS = [
     },
     {
         "out": "hidrografia.geojson", "aoi": "vila", "simplify": 2e-5,
-        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Corregos.shp"],
-        "keep": {"layer": "tipo"}, "nudge": True,
+        "src": ["Corregos.shp"], "root": PALAZZI_ROOT,
+        "keep": {"layer": "tipo"}, "nudge": "palazzi_buildings",
     },
     {
         "out": "nascentes.geojson", "aoi": "vila", "simplify": 0,
@@ -168,13 +185,33 @@ JOBS = [
     },
     {
         "out": "edificacoes_vila.geojson", "aoi": "vila", "simplify": 4e-6,
-        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Edificacoes_*.shp"],
-        "family": "uso", "family_prefix": "Edificacoes_", "nudge": True,
+        "src": ["Edificacoes_sem_dados.shp"], "root": PALAZZI_ROOT,
+        "palazzi_buildings": True,
+        "usage_sources": [
+            ("Edificacoes_comercial.shp", "Comercial", None),
+            ("Edificacoes_duvidas.shp", "A confirmar", None),
+            ("Edificacoes_esporte.shp", "Esporte", None),
+            ("Edificacoes_hotelaria_pousada_airbnb.shp", "Hotelaria / Turismo", None),
+            ("Edificacoes_prestadores_de_servico.shp", "Prestação de serviços", None),
+            ("Edificacoes_publico.shp", "Público", None),
+            ("Edificacoes_publico_nao_ocupado.shp", "Público não ocupado", None),
+            ("Edificacoes_Residencial.shp", "Residencial", None),
+            ("Edificacoes_tempos.shp", "Uso temporário", None),
+            ("Edificacoes_uso_misto.shp", "Uso misto", None),
+        ],
+        "conservation_sources": [
+            ("Perfeitas_ou_boas.shp", "Conservado", None),
+            ("Utilizavel_necessita_intervencoes.shp", "Mau estado — necessita intervenção", None),
+            ("Ruins_ou_pessimas_sem_condicoes_de_uso.shp", "Ruínas / péssimas condições", None),
+            ("Ruinas.shp", "Ruínas", 4674),
+        ],
+        "nudge": "palazzi_buildings",
     },
     {
         "out": "pac_lotes.geojson", "aoi": None, "simplify": 4e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_lotes_georef.shp"],
-        "repair_epsg": 31983, "keep": {"Layer": "lote"}, "nudge": True,
+        "repair_epsg": 31983, "keep": {"Layer": "lote"},
+        "nudge": "pac_lots",
     },
 
     # ---- Turismo e Trilhas ---------------------------------------------------
@@ -314,28 +351,30 @@ JOBS = [
 
     # ---- Morfologia da Vila (cadastro CAD georref. + Palazzi) ----------------
     # Linework do DWG oficial "MAPA VILA 2025 UNESCO" (EPSG:31983) e Palazzi
-    # (EPSG:4674); ambos recebem o mesmo nudge de alinhamento com a imagem.
+    # (EPSG:4674), each calibrated independently against the 2010 orthophoto.
     {
         "out": "edificacoes_cad.geojson", "aoi": "vila", "simplify": 3e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_edificacoes_georef.shp"],
-        "repair_epsg": 31983, "extra": {"tipo": "Edificação (CAD 2025)"}, "nudge": True,
+        "repair_epsg": 31983, "extra": {"tipo": "Edificação (CAD 2025)"},
+        "nudge": "cad_linework",
     },
     {
         "out": "sistema_viario.geojson", "aoi": "vila", "simplify": 5e-6,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_sistema_viario_georef.shp"],
-        "repair_epsg": 31983, "extra": {"tipo": "Sistema viário"}, "nudge": True,
+        "repair_epsg": 31983, "extra": {"tipo": "Sistema viário"},
+        "nudge": "road_system",
     },
     {
         "out": "caminhos_vila.geojson", "aoi": "vila", "simplify": 5e-6,
-        "src": ["05_PATRIMONIO/EDIFICACOES_PALAZZI/Caminhos.shp"],
-        "extra": {"tipo": "Caminho"}, "nudge": True,
+        "src": ["Caminhos.shp"], "root": PALAZZI_ROOT,
+        "extra": {"tipo": "Caminho"}, "nudge": "palazzi_paths",
     },
     {
         # Curvas de nível do núcleo da Vila — base para análise de terreno.
         "out": "curvas_nivel.geojson", "aoi": "vila", "simplify": 6e-5,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_curvas_nivel_detalhadas_georef.shp"],
         "repair_epsg": 31983, "extra": {"tipo": "Curvas de nível (Vila)"},
-        "dissolve": True, "nudge": True,
+        "dissolve": True, "nudge": "cad_linework",
     },
 
     # ---- Patrimônio (bens em estudo, ABPF) -----------------------------------

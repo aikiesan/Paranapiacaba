@@ -5,13 +5,16 @@ With no args, builds every job in config.JOBS. Pass one or more output file
 names (e.g. ``ferrovia_corredor.geojson``) to build just those.
 """
 import glob
+import json
 import os
 import subprocess
 import sys
+from collections import defaultdict
 
 import geopandas as gpd
 import pandas as pd
 from shapely.geometry import box
+from shapely.strtree import STRtree
 
 import config as C
 import lib
@@ -22,8 +25,17 @@ def corridor_mask():
     return box(*[C.CORRIDOR_BBOX[i] for i in (0, 1, 2, 3)])
 
 
+def vila_reference_geometry():
+    source = C.VILA_MASK_SRC
+    if not os.path.exists(source):
+        source = os.path.join(C.OUT_DIR, "limite_sitio.geojson")
+    if not os.path.exists(source):
+        raise FileNotFoundError("Vila mask source and public fallback are both missing")
+    return lib.to_wgs84(lib.read_vector(source))
+
+
 def vila_mask():
-    g = lib.to_wgs84(lib.read_vector(C.VILA_MASK_SRC))
+    g = vila_reference_geometry()
     return g.geometry.unary_union.buffer(C.VILA_BUFFER_DEG)
 
 
@@ -31,7 +43,7 @@ MASKS = {}
 
 
 def serra_mask():
-    g = lib.to_wgs84(lib.read_vector(C.VILA_MASK_SRC))
+    g = vila_reference_geometry()
     return g.geometry.unary_union.buffer(C.SERRA_BUFFER_DEG)
 
 
@@ -139,6 +151,106 @@ def corridor_rail_buffer(deg):
     return RAIL_BUFFER[deg]
 
 
+def read_palazzi_classification(root, filename, repair_epsg=None):
+    path = os.path.join(root, filename)
+    gdf = lib.read_vector(path)
+    if repair_epsg:
+        gdf = lib.repair_crs(gdf, repair_epsg)
+    else:
+        gdf = lib.to_wgs84(gdf)
+    return lib.fix_geometry(gdf)
+
+
+def match_palazzi_categories(base, root, sources, combine=False):
+    """Match Palazzi hatch/footprint polygons back to the common building base."""
+    projected = lib.fix_geometry(base).to_crs(31983)
+    projected_geometries = list(projected.geometry)
+    tree = STRtree(projected_geometries)
+    scores = defaultdict(lambda: defaultdict(float))
+
+    for filename, label, repair_epsg in sources:
+        source = read_palazzi_classification(root, filename, repair_epsg).to_crs(31983)
+        for geometry in source.geometry:
+            candidates = tree.query(geometry)
+            intersections = []
+            for candidate in candidates:
+                index = int(candidate)
+                try:
+                    area = geometry.intersection(projected_geometries[index]).area
+                except Exception:
+                    area = geometry.buffer(0).intersection(projected_geometries[index].buffer(0)).area
+                if area > 0:
+                    intersections.append((area, index))
+            if intersections:
+                area, index = max(intersections)
+                scores[index][label] += area
+
+    values = []
+    for index in range(len(projected)):
+        category_scores = scores.get(index)
+        if not category_scores:
+            values.append(None)
+        elif combine:
+            maximum = max(category_scores.values())
+            labels = sorted(label for label, score in category_scores.items() if score >= maximum * 0.9)
+            values.append(" / ".join(labels))
+        else:
+            values.append(max(category_scores, key=category_scores.get))
+    return values
+
+
+def build_palazzi_buildings(job):
+    base_path = resolve(job["src"], job["root"])[0]
+    base = lib.fix_geometry(lib.to_wgs84(lib.read_vector(base_path))).reset_index(drop=True)
+    result = gpd.GeoDataFrame(
+        {
+            "uso": match_palazzi_categories(base, job["root"], job["usage_sources"], combine=True),
+            "estado_conservacao": match_palazzi_categories(
+                base, job["root"], job["conservation_sources"], combine=False
+            ),
+            "fonte": "Mapas Palazzi (catálogo MAPEAMENTO E SHAPEFILES_R01)",
+        },
+        geometry=base.geometry,
+        crs="EPSG:4326",
+    )
+    result["uso"] = result["uso"].fillna("Sem dados")
+    result["estado_conservacao"] = result["estado_conservacao"].fillna("Não avaliado")
+
+    # The Palazzi common footprint file itself contains a small number of exact
+    # duplicate geometries. Consolidate those records after category matching so
+    # that a classified duplicate enriches the shared footprint instead of
+    # drawing/counting the same building twice.
+    consolidated = {}
+    for row in result.itertuples(index=False):
+        key = row.geometry.wkb
+        if key not in consolidated:
+            consolidated[key] = {
+                "uso": row.uso,
+                "estado_conservacao": row.estado_conservacao,
+                "fonte": row.fonte,
+                "geometry": row.geometry,
+            }
+            continue
+
+        current = consolidated[key]
+        for field, fallback in (("uso", "Sem dados"), ("estado_conservacao", "Não avaliado")):
+            incoming = getattr(row, field)
+            if current[field] == fallback and incoming != fallback:
+                current[field] = incoming
+            elif incoming != fallback and incoming not in current[field].split(" / "):
+                current[field] = f"{current[field]} / {incoming}"
+
+    base_count = len(result)
+    result = gpd.GeoDataFrame(list(consolidated.values()), geometry="geometry", crs="EPSG:4326")
+    print(
+        "      Palazzi: "
+        f"{len(result)} unique footprints ({base_count - len(result)} duplicate base records consolidated); "
+        f"{(result['uso'] != 'Sem dados').sum()} with use; "
+        f"{(result['estado_conservacao'] != 'Não avaliado').sum()} with conservation"
+    )
+    return result
+
+
 def build_job(job):
     # Special case: layers built from Wikiloc KML (tracks or attraction waypoints).
     if job.get("kml_dir"):
@@ -155,21 +267,24 @@ def build_job(job):
         n, size = lib.write_geojson(merged, out_path)
         return out_path, n, size
 
-    paths = resolve(job["src"], job.get("root"))
-    parts = []
-    for p in paths:
-        if not os.path.exists(p):
-            print(f"      ! missing source: {os.path.relpath(p, C.SOURCE_ROOT)}")
-            continue
-        gdf = lib.read_vector(p)
-        if gdf.empty:
-            continue
-        cat = category_from_filename(p, job.get("family_prefix", "")) if job.get("family") else None
-        parts.append(process(gdf, job, category=cat))
+    if job.get("palazzi_buildings"):
+        merged = build_palazzi_buildings(job)
+    else:
+        paths = resolve(job["src"], job.get("root"))
+        parts = []
+        for p in paths:
+            if not os.path.exists(p):
+                print(f"      ! missing source: {os.path.relpath(p, C.SOURCE_ROOT)}")
+                continue
+            gdf = lib.read_vector(p)
+            if gdf.empty:
+                continue
+            cat = category_from_filename(p, job.get("family_prefix", "")) if job.get("family") else None
+            parts.append(process(gdf, job, category=cat))
 
-    if not parts:
-        return None, 0, 0
-    merged = gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), crs="EPSG:4326")
+        if not parts:
+            return None, 0, 0
+        merged = gpd.GeoDataFrame(pd.concat(parts, ignore_index=True), crs="EPSG:4326")
 
     mask = get_mask(job["aoi"]) if job.get("aoi") else None
     if mask is not None:
@@ -206,7 +321,10 @@ def build_job(job):
                                   geometry="geometry", crs="EPSG:4326")
 
     if job.get("nudge"):
-        dlon, dlat = C.NUDGE_VILA_DEG
+        nudge_name = job["nudge"]
+        if nudge_name not in C.VILA_ALIGNMENT_NUDGES_DEG:
+            raise ValueError(f"Unknown Vila alignment calibration: {nudge_name}")
+        dlon, dlat = C.VILA_ALIGNMENT_NUDGES_DEG[nudge_name]
         merged["geometry"] = merged.geometry.translate(xoff=dlon, yoff=dlat)
 
     out_path = os.path.join(C.OUT_DIR, job["out"])
