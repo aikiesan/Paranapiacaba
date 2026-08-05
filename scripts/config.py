@@ -374,6 +374,9 @@ JOBS = [
         "out": "curvas_nivel.geojson", "aoi": "vila", "simplify": 6e-5,
         "src": ["11_CADASTRO_VILA_GEOREF/paranapiacaba_curvas_nivel_detalhadas_georef.shp"],
         "repair_epsg": 31983, "extra": {"tipo": "Curvas de nível (Vila)"},
+        # The CAD source is 1 m and contains direction-reversed duplicates.
+        # A 1:5 display cadence provides a readable nominal 5 m interval.
+        "deduplicate_geometry": True, "feature_stride": 5,
         "dissolve": True, "nudge": "cad_linework",
     },
 

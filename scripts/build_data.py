@@ -297,6 +297,18 @@ def build_job(job):
     if job.get("osm_rail_fill"):
         merged = add_osm_rail(merged, mask)
 
+    if job.get("deduplicate_geometry"):
+        # ``normalize`` makes reversed line strings comparable as the same
+        # geometry, which is important for duplicated CAD exports.
+        geometry_keys = merged.geometry.normalize().to_wkb()
+        merged = merged.loc[~geometry_keys.duplicated()].reset_index(drop=True)
+
+    feature_stride = job.get("feature_stride")
+    if feature_stride:
+        if not isinstance(feature_stride, int) or feature_stride < 2:
+            raise ValueError("feature_stride must be an integer >= 2")
+        merged = merged.iloc[::feature_stride].reset_index(drop=True)
+
     merged = lib.simplify_geom(merged, job.get("simplify", 0))
     if merged.empty:
         return None, 0, 0

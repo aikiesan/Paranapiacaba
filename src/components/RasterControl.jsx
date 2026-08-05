@@ -178,18 +178,23 @@ export function RasterControl() {
   const isActive = showCov || showDecl || Boolean(selectedReference);
 
   return (
-    <div className="export-hide absolute top-3 md:top-4 left-1/2 -translate-x-1/2 z-[1000] w-[285px] max-w-[68vw] md:max-w-none bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden">
+    <div className="export-hide absolute top-3 md:top-4 left-1/2 -translate-x-1/2 z-[1000] w-[310px] max-w-[74vw] md:max-w-none bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 border-b border-slate-200"
         aria-expanded={open}
       >
-        <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-700 uppercase tracking-wider">
+        <span className="flex min-w-0 items-center gap-1.5 text-[10px] font-bold text-slate-700 uppercase tracking-wider">
           <svg className="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5z M4 9h16 M9 21V9" />
           </svg>
-          Rasters & Cartografia
+          <span className="truncate">Mapas históricos & legislação</span>
+          {referenceManifest?.maps?.length > 0 && (
+            <span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[8px] text-violet-700">
+              {referenceManifest.maps.length}
+            </span>
+          )}
           {isActive && <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />}
         </span>
         <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,6 +204,42 @@ export function RasterControl() {
 
       {open && (
         <div className="p-3 space-y-3 max-h-[68vh] overflow-y-auto custom-scrollbar">
+          {referenceManifest?.maps?.length > 0 && (
+            <div className="space-y-2 rounded-md border border-violet-200 bg-violet-50/70 p-2.5">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-violet-700">
+                  Mapas históricos & legislação municipal
+                </div>
+                <p className="mt-0.5 text-[9px] leading-snug text-slate-600">
+                  Selecione um dos {referenceManifest.maps.length} mapas georreferenciados para sobrepor à Ortofoto 2010.
+                </p>
+              </div>
+              <ReferenceMapSelect maps={referenceManifest.maps} value={referenceId} onChange={setReferenceId} />
+              {selectedReference && (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] uppercase tracking-wide text-slate-400 font-bold">Opac.</span>
+                    <input type="range" min="0" max="100" value={Math.round(referenceOpacity * 100)}
+                      onChange={(event) => setReferenceOpacity(parseInt(event.target.value, 10) / 100)}
+                      className="flex-1 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-violet-500" />
+                    <span className="w-7 text-right text-[9px] text-slate-500">{Math.round(referenceOpacity * 100)}%</span>
+                  </div>
+                  <button type="button" onClick={() => map.fitBounds(selectedReference.bounds, { padding: [24, 24] })}
+                    className="w-full rounded-md border border-violet-200 bg-white px-2 py-1.5 text-[10px] font-semibold text-violet-700 hover:bg-violet-100">
+                    Enquadrar este mapa
+                  </button>
+                  <p className="text-[9px] leading-snug text-slate-500">{selectedReference.sourceNote}</p>
+                </>
+              )}
+            </div>
+          )}
+
+          {(manifest?.coverage || manifest?.declividade) && (
+            <div className="border-t border-slate-200 pt-2 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+              Análises raster
+            </div>
+          )}
+
           {manifest?.coverage && (
             <div className="space-y-1.5">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -248,31 +289,6 @@ export function RasterControl() {
             </div>
           )}
 
-          {referenceManifest?.maps?.length > 0 && (
-            <div className="border-t border-slate-200 pt-3 space-y-2">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-violet-700">Mapas de referência</div>
-                <p className="mt-0.5 text-[9px] leading-snug text-slate-500">Históricos e anexos legais georreferenciados. A Ortofoto 2010 é a referência principal da Vila.</p>
-              </div>
-              <ReferenceMapSelect maps={referenceManifest.maps} value={referenceId} onChange={setReferenceId} />
-              {selectedReference && (
-                <>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] uppercase tracking-wide text-slate-400 font-bold">Opac.</span>
-                    <input type="range" min="0" max="100" value={Math.round(referenceOpacity * 100)}
-                      onChange={(event) => setReferenceOpacity(parseInt(event.target.value, 10) / 100)}
-                      className="flex-1 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-violet-500" />
-                    <span className="w-7 text-right text-[9px] text-slate-500">{Math.round(referenceOpacity * 100)}%</span>
-                  </div>
-                  <button type="button" onClick={() => map.fitBounds(selectedReference.bounds, { padding: [24, 24] })}
-                    className="w-full rounded-md border border-violet-200 bg-violet-50 px-2 py-1.5 text-[10px] font-semibold text-violet-700 hover:bg-violet-100">
-                    Enquadrar este mapa
-                  </button>
-                  <p className="text-[9px] leading-snug text-slate-500">{selectedReference.sourceNote}</p>
-                </>
-              )}
-            </div>
-          )}
         </div>
       )}
     </div>

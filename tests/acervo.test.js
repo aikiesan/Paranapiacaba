@@ -5,6 +5,7 @@ import { PHOTO_ARCHIVE, PHOTO_CATEGORIES } from '../src/data/photoArchiveIndex.j
 import { CARTOGRAPHIC_MAPS, TECHNICAL_DOCUMENTS, MAP_CATEGORIES } from '../src/data/mapsIndex.js';
 
 const PUBLIC_DIR = path.resolve(import.meta.dirname, '../public');
+const REFERENCE_MAP_DIR = path.join(PUBLIC_DIR, 'data/reference_maps');
 
 describe('acervo fotográfico', () => {
   it('define ao menos uma foto', () => {
@@ -87,6 +88,27 @@ describe('índice de pranchas cartográficas', () => {
     );
 
     expect(invalid).toEqual([]);
+  });
+});
+
+describe('mapas históricos e legislação georreferenciada', () => {
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(REFERENCE_MAP_DIR, 'manifest.json'), 'utf8')
+  );
+
+  it('publica as duas famílias de mapas de referência', () => {
+    const groups = new Set(manifest.maps.map((item) => item.group));
+
+    expect(manifest.maps.length).toBeGreaterThanOrEqual(30);
+    expect(groups).toEqual(new Set(['historical', 'legislation']));
+  });
+
+  it('aponta para todas as imagens georreferenciadas do manifesto', () => {
+    const missing = manifest.maps
+      .filter((item) => !fs.existsSync(path.join(REFERENCE_MAP_DIR, item.file)))
+      .map((item) => item.file);
+
+    expect(missing).toEqual([]);
   });
 });
 
