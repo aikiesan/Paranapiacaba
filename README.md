@@ -127,7 +127,7 @@ ArcGIS, scripts e mapas finais) — mantida como referência da fonte dos dados.
 ## Pipeline de mapas (pranchas A0)
 Scripts em `07_ARCGIS_PRO/04_SCRIPTS_TOOLBOX/prancha/`. Os caminhos são centralizados
 em `_paths.py` (GDB, trilhas, cadastro, KMLs, saídas) — não há mais dependência de
-estrutura relativa frágil. Rodar com o **Python do ArcGIS Pro** (o env conda `cp2b`
+estrutura relativa frágil. Rodar com o **Python do ArcGIS Pro** (o env conda
 tem matplotlib quebrado):
 
 ```

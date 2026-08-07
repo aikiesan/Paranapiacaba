@@ -82,8 +82,7 @@ export function AboutPanel({ isOpen, onClose }) {
               Parcerias e Financiamento
             </h3>
             <div className="bg-slate-50 p-2.5 rounded border border-slate-200 space-y-1 text-slate-500">
-              <div><strong className="text-slate-700">Coordenação:</strong> CP2b/NIPE-Unicamp</div>
-              <div><strong className="text-slate-700">Execução Técnica:</strong> PUC-Campinas</div>
+              <div><strong className="text-slate-700">Coordenação e Execução Técnica:</strong> Equipe PUC-Campinas</div>
               <div><strong className="text-slate-700">Fomento:</strong> FAPESP (Fundação de Amparo à Pesquisa do Estado de São Paulo)</div>
             </div>
           </div>

@@ -259,7 +259,7 @@ export function HomePage({ onNavigate }) {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-1">
             <div className="font-bold text-[#1C1917] font-serif text-sm">Estação & Memória Paranapiacaba</div>
-            <div>Projeto FAPESP / PUC-Campinas · CP2b NIPE-Unicamp</div>
+            <div>Projeto FAPESP / Equipe PUC-Campinas</div>
             <div className="text-[11px] text-[#78716C]">Cartografia Georreferenciada EPSG:4674 SIRGAS 2000</div>
           </div>
 

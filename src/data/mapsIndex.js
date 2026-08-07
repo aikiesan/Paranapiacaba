@@ -215,7 +215,7 @@ export const TECHNICAL_DOCUMENTS = [
   },
   {
     title: "Diretrizes para Salvaguarda e Chancela UNESCO",
-    author: "CP2b / NIPE-Unicamp & PUC-Campinas",
+    author: "Equipe PUC-Campinas",
     type: "Dossiê Temático",
     date: "2026",
     description: "Justificativa de Valor Universal Excepcional (VUE) do Corredor Ferroviário Jundiaí-Santos e da Vila de Paranapiacaba."

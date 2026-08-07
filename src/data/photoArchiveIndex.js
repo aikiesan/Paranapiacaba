@@ -1,6 +1,6 @@
 /**
  * Catálogo do Acervo Fotográfico de Campo & Registros Históricos
- * Fonte: Pesquisa FAPESP / PUC-Campinas / CP2b-Unicamp (05_IMAGENS_CAMPO e E_PATRIM. FERROVIARIO)
+ * Fonte: Pesquisa FAPESP / Equipe PUC-Campinas (05_IMAGENS_CAMPO e E_PATRIM. FERROVIARIO)
  */
 export const PHOTO_ARCHIVE = [
   // Categoria: Ferrovia Histórica & Funicular
