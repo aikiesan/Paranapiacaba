@@ -31,6 +31,11 @@ ortofoto 2010). A declividade em 5 classes (0–8, 8–20, 20–30, 30–45, >45
 gerada por `build_declividade.py` a partir do Copernicus DEM GLO-30 (~30 m,
 método de Horn), publicada como `declividade.geojson` e como overlay raster.
 
+Rede de energia: `rede_eletrica.geojson` (linhas de transmissão) e
+`subestacoes.geojson` saem de `build_data.py` a partir dos shapefiles EPE/SIN
+`LT_EXISTENTE` e `SE_EXISTENTE` colocados em `Energia_SIN/` (fora do
+versionamento), recortados ao corredor Jundiaí–Santos.
+
 Opcional — checagem de continuidade do corredor via OpenStreetMap:
 ```bash
 python fetch_osm_railway.py              # baixa malha OSM para scripts/.cache/

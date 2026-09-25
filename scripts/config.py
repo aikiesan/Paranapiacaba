@@ -27,6 +27,9 @@ SIGA_MAPA = os.path.join(REPO, "OTHER_SHAPEFILES_SIGA_MAPA")
 ORTHOPHOTO_ROOT = os.path.join(REPO, "Ortofoto_Paranapiacaba_2010")
 HYDROGRAPHY_ROOT = os.path.join(REPO, "Hidrografia_Completa_SP")
 REFERENCE_MAPS_ROOT = os.path.join(REPO, "Mapas_Layers_Extras")
+# Sistema Interligado Nacional (EPE/ANEEL): existing transmission lines and
+# substations for the whole country, clipped here to the SPR corridor.
+ENERGIA_ROOT = os.path.join(REPO, "Energia_SIN")
 PALAZZI_ROOT = os.path.join(
     REFERENCE_MAPS_ROOT, "drive-download-20260804T221351Z-1-001",
     "EDIFICACOES_PALAZZI",
@@ -118,6 +121,22 @@ JOBS = [
         "keep": {"layer": "condicao"}, "extra": {"tipo": "Ruína ferroviária"},
         "repair_epsg": 4674,
         "nudge": "palazzi_buildings",
+    },
+
+    # ---- Energia (SIN / EPE) --------------------------------------------------
+    {
+        "out": "rede_eletrica.geojson", "root": ENERGIA_ROOT, "aoi": "corridor",
+        "simplify": 2e-5, "src": ["LT_EXISTENTE.shp"],
+        "keep": {"Nome": "nome", "Tensao": "tensao_kv", "Concession": "concessionaria",
+                 "Extensao": "extensao_total_km", "Ano_Opera": "ano_operacao"},
+        "extra": {"fonte": "EPE/SIN — linhas de transmissão existentes"},
+    },
+    {
+        "out": "subestacoes.geojson", "root": ENERGIA_ROOT, "aoi": "corridor",
+        "simplify": 0, "src": ["SE_EXISTENTE.shp"],
+        "keep": {"Nome": "nome", "Tensao": "tensao_kv", "Concession": "concessionaria",
+                 "Ano_Opera": "ano_operacao"},
+        "extra": {"fonte": "EPE/SIN — subestações existentes"},
     },
 
     # ---- Território ----------------------------------------------------------

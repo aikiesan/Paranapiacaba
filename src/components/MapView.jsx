@@ -153,7 +153,8 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
       if (layer.id === 'rede_eletrica') {
         strokeColor = PALETTE.rede_eletrica;
         dashArray = '6 4';
-        weight = 1.8;
+        const kv = Number(props.tensao_kv) || 0;
+        weight = kv >= 700 ? 3 : kv >= 440 ? 2.4 : 1.8;
       }
 
       // Estilo dinâmico: Linhas de ônibus por tipo

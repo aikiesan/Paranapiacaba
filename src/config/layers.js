@@ -934,17 +934,30 @@ export const LAYERS = [
   },
   {
     id: "rede_eletrica",
-    label: "Rede de Eletricidade",
+    label: "Rede de Eletricidade (Transmissão)",
     file: "rede_eletrica.geojson",
     group: "Equipamentos Urbanos",
     type: "line",
     color: "#FF0000",
     weight: 1.5,
-    minZoom: 13,
+    minZoom: 9,
     visible: false,
-    popupFields: [],
-    description: "Infraestrutura de energia elétrica em linha tracejada Vermelho Vivo (#FF0000) — em breve.",
-    available: false
+    popupFields: ["nome", "tensao_kv", "concessionaria", "extensao_total_km", "ano_operacao"],
+    description: "Linhas de transmissão existentes do Sistema Interligado Nacional (EPE) no corredor Jundiaí–Santos, em linha tracejada Vermelho Vivo (#FF0000); espessura proporcional à tensão (230–765 kV).",
+    available: true
+  },
+  {
+    id: "subestacoes",
+    label: "Subestações de Energia",
+    file: "subestacoes.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#B91C1C",
+    minZoom: 9,
+    visible: false,
+    popupFields: ["nome", "tensao_kv", "concessionaria", "ano_operacao"],
+    description: "Subestações existentes do Sistema Interligado Nacional (EPE) no corredor — inclui a SE Henry Borden (Cubatão) e a SE Tijuco Preto.",
+    available: true
   },
   {
     id: "seguranca",
