@@ -2,9 +2,10 @@
 
 1. MapBiomas land-cover (2008–2024): colorize each coverage GeoTIFF to a PNG
    (transparent background) for a year-slider image overlay.
-2. Declividade: interpolate a DEM from the detailed contour lines (which carry
-   an Elevation field), compute slope %, reclassify into 5 classes per the
-   FAPESP proposal, and render to a PNG overlay.
+2. Orthophoto 2010: publish the georeferenced GeoTIFF as a WebP overlay.
+
+Declividade (raster + vector) is built by build_declividade.py from the
+Copernicus DEM GLO-30; the old contour-interpolated DEM produced a single class.
 
 Outputs to public/data/rasters/ + a manifest.json consumed by RasterControl.
 Run:  python build_rasters.py
@@ -15,7 +16,6 @@ import os
 import re
 import warnings
 
-import geopandas as gpd
 import numpy as np
 import rasterio
 from PIL import Image
@@ -40,17 +40,6 @@ MAPBIOMAS = {
     39: ("#f5b3c8", "Soja"),
     41: ("#f54ca9", "Outras Lavouras"),
 }
-
-# Declividade — 5 classes (% slope) and colours (green -> red).
-SLOPE_BREAKS = [8, 20, 30, 45]
-SLOPE_CLASSES = [
-    ("#1a9850", "0–8% (Plano/Suave)"),
-    ("#a6d96a", "8–20% (Moderado)"),
-    ("#fee08b", "20–30% (Forte ondulado)"),
-    ("#fdae61", "30–45% (Declivoso)"),
-    ("#d73027", ">45% (Escarpado)"),
-]
-
 
 def _hex_rgb(h):
     h = h.lstrip("#")
@@ -86,58 +75,6 @@ def build_coverage():
         return None
     print(f"  coverage: {len(years)} years {min(years)}–{max(years)}")
     return {"years": sorted(years), "bounds": bounds, "legend": legend}
-
-
-def build_declividade(res=12.0, max_vertices=120000):
-    cv = glob.glob(C.src("11_CADASTRO_VILA_GEOREF", "*curvas*.shp"))
-    if not cv:
-        print("  declividade: contour shapefile not found, skipping")
-        return None
-    from scipy.interpolate import griddata
-    g = gpd.read_file(cv[0])  # EPSG:31983, has 'Elevation' + Z
-    src_epsg = g.crs.to_epsg() or 31983
-
-    xs, ys, zs = [], [], []
-    for geom, elev in zip(g.geometry, g.get("Elevation", [None] * len(g))):
-        if geom is None or geom.is_empty:
-            continue
-        parts = geom.geoms if geom.geom_type.startswith("Multi") else [geom]
-        for part in parts:
-            for c in part.coords:
-                z = c[2] if (len(c) > 2 and c[2]) else elev
-                if z is None:
-                    continue
-                xs.append(c[0]); ys.append(c[1]); zs.append(float(z))
-    if len(xs) < 100:
-        print("  declividade: not enough elevation points, skipping")
-        return None
-    xs, ys, zs = np.array(xs), np.array(ys), np.array(zs)
-    if len(xs) > max_vertices:                       # downsample for speed
-        idx = np.linspace(0, len(xs) - 1, max_vertices).astype(int)
-        xs, ys, zs = xs[idx], ys[idx], zs[idx]
-
-    xmin, xmax, ymin, ymax = xs.min(), xs.max(), ys.min(), ys.max()
-    gx = np.arange(xmin, xmax, res)
-    gy = np.arange(ymin, ymax, res)
-    GX, GY = np.meshgrid(gx, gy)
-    dem = griddata((xs, ys), zs, (GX, GY), method="linear")
-    dzdy, dzdx = np.gradient(dem, res, res)
-    slope = np.sqrt(dzdx ** 2 + dzdy ** 2) * 100.0
-    klass = np.digitize(slope, SLOPE_BREAKS)          # 0..4
-
-    rgba = np.zeros((*slope.shape, 4), np.uint8)
-    for i, (hexc, _) in enumerate(SLOPE_CLASSES):
-        mask = (klass == i) & np.isfinite(slope)
-        rgba[mask] = (*_hex_rgb(hexc), 200)
-    rgba = np.flipud(rgba)                             # grid is south->north; PNG north on top
-    Image.fromarray(rgba, "RGBA").save(os.path.join(RASTER_OUT, "declividade.png"))
-
-    tr = Transformer.from_crs(src_epsg, 4326, always_xy=True)
-    w, s = tr.transform(xmin, ymin)
-    e, n = tr.transform(xmax, ymax)
-    legend = [{"color": c, "label": l} for c, l in SLOPE_CLASSES]
-    print(f"  declividade: DEM {dem.shape} from {len(xs)} contour vertices")
-    return {"bounds": [[s, w], [n, e]], "legend": legend}
 
 
 def build_orthophoto():
@@ -185,9 +122,6 @@ def main():
     coverage = build_coverage()
     if coverage:
         manifest["coverage"] = coverage
-    decl = build_declividade()
-    if decl:
-        manifest["declividade"] = decl
     orthophoto = build_orthophoto()
     if orthophoto:
         manifest["orthophoto"] = orthophoto

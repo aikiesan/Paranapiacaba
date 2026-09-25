@@ -140,21 +140,6 @@ export const LAYERS = [
 
   // ====================== TERRITÓRIO ======================
   {
-    id: "limite_sitio",
-    label: "Limite do Sítio (Alto da Serra)",
-    file: "limite_sitio.geojson",
-    group: "Território",
-    type: "polygon",
-    color: "#C1121F",
-    weight: 2.5,
-    fillOpacity: 0.04,
-    minZoom: 11,
-    visible: true,
-    popupFields: [],
-    description: "Perímetro de estudo do Alto da Serra / Paranapiacaba (delimitação FAPESP).",
-    available: true
-  },
-  {
     id: "limite_vila",
     label: "ZEIP Paranapiacaba (Vila)",
     file: "limite_vila.geojson",
@@ -723,14 +708,14 @@ export const LAYERS = [
     file: "declividade.geojson",
     group: "Meio Ambiente",
     type: "polygon",
-    color: "#8338EC",
+    color: "#D73027",
     weight: 0,
-    fillOpacity: 0.35,
+    fillOpacity: 0.45,
     minZoom: 12,
     visible: false,
-    popupFields: [],
-    description: "Classes de declividade da escarpa (em breve — derivação a partir de MDT).",
-    available: false
+    popupFields: ["faixa"],
+    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn — leitura da escarpa na escala 1:25.000.",
+    available: true
   },
 
   // ====================== RISCOS (DEFESA CIVIL) ======================
@@ -949,17 +934,30 @@ export const LAYERS = [
   },
   {
     id: "rede_eletrica",
-    label: "Rede de Eletricidade",
+    label: "Rede de Eletricidade (Transmissão)",
     file: "rede_eletrica.geojson",
     group: "Equipamentos Urbanos",
     type: "line",
     color: "#FF0000",
     weight: 1.5,
-    minZoom: 13,
+    minZoom: 9,
     visible: false,
-    popupFields: [],
-    description: "Infraestrutura de energia elétrica em linha tracejada Vermelho Vivo (#FF0000) — em breve.",
-    available: false
+    popupFields: ["nome", "tensao_kv", "concessionaria", "extensao_total_km", "ano_operacao"],
+    description: "Linhas de transmissão existentes do Sistema Interligado Nacional (EPE) no corredor Jundiaí–Santos, em linha tracejada Vermelho Vivo (#FF0000); espessura proporcional à tensão (230–765 kV).",
+    available: true
+  },
+  {
+    id: "subestacoes",
+    label: "Subestações de Energia",
+    file: "subestacoes.geojson",
+    group: "Equipamentos Urbanos",
+    type: "point",
+    color: "#B91C1C",
+    minZoom: 9,
+    visible: false,
+    popupFields: ["nome", "tensao_kv", "concessionaria", "ano_operacao"],
+    description: "Subestações existentes do Sistema Interligado Nacional (EPE) no corredor — inclui a SE Henry Borden (Cubatão) e a SE Tijuco Preto.",
+    available: true
   },
   {
     id: "seguranca",

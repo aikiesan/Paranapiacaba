@@ -21,12 +21,20 @@ pip install -r requirements.txt          # geopandas, shapely, pyogrio, requests
 python build_data.py                     # gera todos os public/data/*.geojson
 python build_data.py ferrovia_corredor.geojson   # ou apenas camadas específicas
 python validate_data.py                  # valida (4326, FeatureCollection, bbox)
-python build_rasters.py                  # overlays raster: MapBiomas 2008–2024 + declividade
+python build_rasters.py                  # overlays raster: MapBiomas 2008–2024 + ortofoto 2010
+python build_declividade.py              # declividade (5 classes) — Copernicus GLO-30
 ```
 
 Os overlays raster (PNGs georreferenciados + `rasters/manifest.json`) são
-gerados por `build_rasters.py`: cobertura MapBiomas colorizada por ano e
-declividade (5 classes) interpolada a partir das curvas de nível.
+gerados por `build_rasters.py` (cobertura MapBiomas colorizada por ano e
+ortofoto 2010). A declividade em 5 classes (0–8, 8–20, 20–30, 30–45, >45%) é
+gerada por `build_declividade.py` a partir do Copernicus DEM GLO-30 (~30 m,
+método de Horn), publicada como `declividade.geojson` e como overlay raster.
+
+Rede de energia: `rede_eletrica.geojson` (linhas de transmissão) e
+`subestacoes.geojson` saem de `build_data.py` a partir dos shapefiles EPE/SIN
+`LT_EXISTENTE` e `SE_EXISTENTE` colocados em `Energia_SIN/` (fora do
+versionamento), recortados ao corredor Jundiaí–Santos.
 
 Opcional — checagem de continuidade do corredor via OpenStreetMap:
 ```bash

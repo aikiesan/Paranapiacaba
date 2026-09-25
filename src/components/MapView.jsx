@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '../utils/mapBounds';
-import { PALETTE, vegColor, riskColor, conservationColor } from '../config/styleGuide';
+import { PALETTE, SLOPE_CLASSES, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { RasterControl } from './RasterControl';
 import { assetUrl } from '../utils/assetUrl';
@@ -153,7 +153,8 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
       if (layer.id === 'rede_eletrica') {
         strokeColor = PALETTE.rede_eletrica;
         dashArray = '6 4';
-        weight = 1.8;
+        const kv = Number(props.tensao_kv) || 0;
+        weight = kv >= 700 ? 3 : kv >= 440 ? 2.4 : 1.8;
       }
 
       // Estilo dinâmico: Linhas de ônibus por tipo
@@ -167,6 +168,11 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
       // Estilo dinâmico: Vegetação por estágio de sucessão (IBGE)
       if (layer.id === 'classif_vegetal') {
         strokeColor = fillColor = vegColor(props.classe);
+      }
+
+      // Estilo dinâmico: Classes de Declividade (1..5)
+      if (layer.id === 'declividade') {
+        strokeColor = fillColor = props.cor || SLOPE_CLASSES[(props.classe || 1) - 1]?.color || layer.color;
       }
 
       // Estilo dinâmico: Riscos (Defesa Civil) por grau

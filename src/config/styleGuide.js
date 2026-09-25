@@ -17,7 +17,6 @@ export const PALETTE = {
   uso_solo_exposto:     '#FFF2CC',  // Bege / Areia Claro (Lotes/solo exposto)
 
   // --- Território e Unidades de Conservação ---
-  limite_sitio:   { stroke: '#C1121F', fill: '#C1121F', fillOpacity: 0.04 },
   limite_vila:    { stroke: '#8B4513', fill: '#8B4513', fillOpacity: 0.05 }, // ZEIP hachura/borda marrom
   ucs:            { stroke: '#4B5320', fill: 'transparent', fillOpacity: 0 },  // Verde Oliva (Rebio/UCs)
 
@@ -135,6 +134,16 @@ export function conservationColor(estado) {
 }
 
 // Cor por estágio de sucessão da vegetação (classif_vegetal).
+// Classes de Declividade (5 faixas FAPESP, verde -> vermelho), iguais às do
+// scripts/build_declividade.py e da legenda do overlay raster.
+export const SLOPE_CLASSES = [
+  { color: '#1a9850', label: '0–8% (Plano/Suave)' },
+  { color: '#a6d96a', label: '8–20% (Moderado)' },
+  { color: '#fee08b', label: '20–30% (Forte ondulado)' },
+  { color: '#fdae61', label: '30–45% (Declivoso)' },
+  { color: '#d73027', label: '>45% (Escarpado)' },
+];
+
 export function vegColor(classe) {
   const c = _norm(classe);
   if (c.includes('avancado')) return PALETTE.veg_avancado;
