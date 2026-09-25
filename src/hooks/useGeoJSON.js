@@ -48,7 +48,7 @@ export function loadGeoJSON(fileName) {
 
 /**
  * Hook para carregar arquivos GeoJSON de forma lazy e cacheá-los globalmente.
- * @param {string} fileName - Nome do arquivo GeoJSON (ex: "limite_sitio.geojson")
+ * @param {string} fileName - Nome do arquivo GeoJSON (ex: "limite_vila.geojson")
  * @param {boolean} enabled - Se true ou preload for true, inicia o carregamento do arquivo
  * @param {boolean} available - Se false, a camada é tratada como "em breve" (dado ainda não publicado), sem tentar o fetch
  * @returns {object} { data, loading, error, unavailable, featureCount }

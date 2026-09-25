@@ -140,21 +140,6 @@ export const LAYERS = [
 
   // ====================== TERRITÓRIO ======================
   {
-    id: "limite_sitio",
-    label: "Limite do Sítio (Alto da Serra)",
-    file: "limite_sitio.geojson",
-    group: "Território",
-    type: "polygon",
-    color: "#C1121F",
-    weight: 2.5,
-    fillOpacity: 0.04,
-    minZoom: 11,
-    visible: true,
-    popupFields: [],
-    description: "Perímetro de estudo do Alto da Serra / Paranapiacaba (delimitação FAPESP).",
-    available: true
-  },
-  {
     id: "limite_vila",
     label: "ZEIP Paranapiacaba (Vila)",
     file: "limite_vila.geojson",
@@ -723,14 +708,14 @@ export const LAYERS = [
     file: "declividade.geojson",
     group: "Meio Ambiente",
     type: "polygon",
-    color: "#8338EC",
+    color: "#D73027",
     weight: 0,
-    fillOpacity: 0.35,
+    fillOpacity: 0.45,
     minZoom: 12,
     visible: false,
-    popupFields: [],
-    description: "Classes de declividade da escarpa (em breve — derivação a partir de MDT).",
-    available: false
+    popupFields: ["faixa"],
+    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn — leitura da escarpa na escala 1:25.000.",
+    available: true
   },
 
   // ====================== RISCOS (DEFESA CIVIL) ======================

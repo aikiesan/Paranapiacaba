@@ -50,7 +50,7 @@ export const PRESETS = [
     basemap: 'satellite',
     description: 'Jurisdições sobrepostas em polígonos vazios (IPHAN Vinho, CONDEPHAAT Carmim, COMDEPHAAPASA Vermelho e Dourado UNESCO).',
     layers: [
-      'limite_sitio', 'limite_vila', 'patrimonio_tombados', 'areas_envoltorias', 'bens_estudo', 'ucs'
+      'limite_vila', 'patrimonio_tombados', 'areas_envoltorias', 'bens_estudo', 'ucs'
     ],
     targetScale: '1:10.000',
     center: VILA_CENTER,
@@ -93,7 +93,7 @@ export const PRESETS = [
     basemap: 'satellite',
     description: 'Visão de síntese para o dossiê: sítio, vila, ferrovia, tombamentos, UCs e atrativos.',
     layers: [
-      'limite_sitio', 'limite_vila', 'ferrovia_corredor', 'estacoes',
+      'limite_vila', 'ferrovia_corredor', 'estacoes',
       'patrimonio_tombados', 'areas_envoltorias', 'edificacoes_vila', 'ucs', 'atrativos',
     ],
   },
@@ -158,7 +158,7 @@ export const PRESETS = [
     basemap: 'ortofoto2010',
     description: 'Escala de contexto do sítio: Vila, patrimônio, funicular, limites de proteção e rede hídrica detalhada.',
     layers: [
-      'limite_sitio', 'limite_vila', 'patrimonio_ferroviario', 'funicular',
+      'limite_vila', 'patrimonio_ferroviario', 'funicular',
       'areas_envoltorias', 'hidrografia_regional', 'nascentes_regionais'
     ],
     targetScale: '1:10.000',

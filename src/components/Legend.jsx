@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LAYERS } from '../config/layers';
-import { CONSERVATION_PALETTE, PALETTE } from '../config/styleGuide';
+import { CONSERVATION_PALETTE, PALETTE, SLOPE_CLASSES } from '../config/styleGuide';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) {
@@ -10,6 +10,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
   // Filtra as camadas ativas
   const activeList = LAYERS.filter((layer) => activeLayers.has(layer.id));
   const isEdificacoesActive = activeLayers.has('edificacoes_vila');
+  const isDeclividadeActive = activeLayers.has('declividade');
 
   return (
     <div className="pointer-events-auto w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
@@ -79,6 +80,23 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                   </div>
                 );
               })}
+
+              {/* Sub-legenda das Classes de Declividade */}
+              {isDeclividadeActive && (
+                <div className="mt-3 pt-2 border-t border-slate-200 space-y-1.5">
+                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    Declividade (5 classes)
+                  </div>
+                  <div className="space-y-1 text-[10px]">
+                    {SLOPE_CLASSES.map(({ label, color }) => (
+                      <div key={label} className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm border border-slate-700/20" style={{ backgroundColor: color }} />
+                        <span className="text-slate-600 truncate">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Sub-legenda dinâmica de Edificações se a camada estiver ativa */}
               {isEdificacoesActive && (
