@@ -10,8 +10,8 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: #f8fafc; /* bg-slate-50 */
-  color: #0f172a; /* text-slate-900 */
+  background-color: #FAF7F2; /* papel */
+  color: #1C1917; /* stone-900 */
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* Remove o flash cinza ao tocar em botões no mobile */
   -webkit-tap-highlight-color: transparent;
@@ -33,7 +33,7 @@ body,
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.6); /* verde esmeralda no hover */
+  background: rgba(45, 74, 62, 0.6); /* verde-mata no hover */
 }
 
 /* Faixa rolável sem barra visível (abas do cabeçalho) */
@@ -48,7 +48,7 @@ body,
 /* Ajustes gerais Leaflet */
 .leaflet-container {
   font-family: inherit !important;
-  background-color: #f1f5f9 !important; /* slate-100 */
+  background-color: #EFE9DF !important; /* papel escuro */
 }
 
 /* Controles de z-index para não sobrepor o LayerPanel (z-[1001]) ou DetailPanel (z-[1010]) */
@@ -178,7 +178,7 @@ body,
 
 /* Estilos de inputs de range customizados para harmonia light */
 input[type="range"]::-webkit-slider-thumb {
-  border: 2px solid #10b981; /* esmeralda */
+  border: 2px solid #355F4D; /* verde-mata */
   height: 12px;
   width: 12px;
   border-radius: 50%;

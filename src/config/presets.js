@@ -10,6 +10,10 @@ import { zoomForScale } from '../utils/mapScale';
 
 const VILA_CENTER = [-23.778, -46.3045];
 const REGIONAL_CENTER = [-23.77, -46.31];
+// Entre a escarpa (Vila) e o Parque Andreense, a oeste.
+const SERRA_CENTER = [-23.775, -46.38];
+// Centro do corredor Jundiaí–Santos (extensão de ferrovia_corredor).
+const CORREDOR_CENTER = [-23.575, -46.6];
 
 export const PRESETS = [
   {
@@ -122,13 +126,16 @@ export const PRESETS = [
       'risco_incendio', 'classif_vegetal', 'altimetria_serra',
     ],
   },
+  // As 4 escalas de navegação combinadas com a equipe (reunião de 25/09/2026),
+  // do lote ao corredor. A escala é a de tela (96 dpi): as duas mais amplas
+  // foram escolhidas para que a área inteira caiba numa tela de notebook.
   {
-    id: 'escala_1_1000',
+    id: 'escala_vila',
     family: 'escala',
-    label: 'Escala 1:1.000 (Vila Completa)',
+    label: '1:1.000 · Vila (lote a lote)',
     icon: '🔍',
     basemap: 'satellite',
-    description: 'Escala de detalhamento urbano máximo (1:1.000): Parte Baixa, Parte Alta e Rabique com estado de conservação e uso do solo lote a lote.',
+    description: 'Detalhe urbano máximo: Parte Baixa, Parte Alta e Rabique com estado de conservação e uso do solo lote a lote.',
     layers: [
       'limite_vila', 'zeip_subdivisoes', 'edificacoes_vila', 'pac_lotes', 'edificacoes_cad', 'sistema_viario', 'caminhos_vila'
     ],
@@ -137,26 +144,12 @@ export const PRESETS = [
     zoomLevel: zoomForScale(1000, VILA_CENTER[0])
   },
   {
-    id: 'escala_1_5000',
+    id: 'escala_sitio',
     family: 'escala',
-    label: 'Escala 1:5.000 (Área Intermediária)',
-    icon: '🏙️',
-    basemap: 'satellite',
-    description: 'Escala intermediária (1:5.000): Vila de Paranapiacaba, 5 Planos Inclinados do Funicular e PNM Nascentes.',
-    layers: [
-      'limite_vila', 'patrimonio_ferroviario', 'funicular', 'pnm_nascentes', 'curvas_nivel', 'hidrografia', 'atrativos'
-    ],
-    targetScale: '1:5.000',
-    center: VILA_CENTER,
-    zoomLevel: zoomForScale(5000, VILA_CENTER[0])
-  },
-  {
-    id: 'escala_1_10000',
-    family: 'escala',
-    label: 'Escala 1:10.000 (Sítio de Paranapiacaba)',
-    icon: '🗺️',
+    label: '1:10.000 · Sítio de Paranapiacaba',
+    icon: '🏘️',
     basemap: 'ortofoto2010',
-    description: 'Escala de contexto do sítio: Vila, patrimônio, funicular, limites de proteção e rede hídrica detalhada.',
+    description: 'Contexto do sítio: Vila, patrimônio ferroviário, Planos Inclinados do Funicular, áreas envoltórias e rede hídrica detalhada.',
     layers: [
       'limite_vila', 'patrimonio_ferroviario', 'funicular',
       'areas_envoltorias', 'hidrografia_regional', 'nascentes_regionais'
@@ -166,33 +159,33 @@ export const PRESETS = [
     zoomLevel: zoomForScale(10000, VILA_CENTER[0])
   },
   {
-    id: 'escala_1_20000',
+    id: 'escala_serra',
     family: 'escala',
-    label: 'Escala 1:20.000 (Área de Proteção)',
-    icon: '🛡️',
+    label: '1:100.000 · Serra do Mar ao Parque Andreense',
+    icon: '⛰️',
     basemap: 'terrain',
-    description: 'Escala regional de conservação (1:20.000): Reserva Biológica Alto da Serra, unidades de conservação e sub-bacias hidrográficas.',
+    description: 'Área de estudo ampliada: escarpa da Serra do Mar, relevo e declividade, unidades de conservação, sub-bacias do divisor de águas e o Parque Andreense.',
     layers: [
-      'ucs', 'pnm_nascentes', 'subbacias', 'regioes_hidrograficas', 'classif_vegetal', 'trilhas', 'areas_envoltorias'
+      'altimetria_serra', 'declividade', 'ucs', 'pnm_nascentes', 'parque_andreense',
+      'subbacias', 'hidrografia_regional', 'limite_vila', 'funicular'
     ],
-    targetScale: '1:20.000',
-    center: REGIONAL_CENTER,
-    zoomLevel: zoomForScale(20000, REGIONAL_CENTER[0])
+    targetScale: '1:100.000',
+    center: SERRA_CENTER,
+    zoomLevel: zoomForScale(100000, SERRA_CENTER[0])
   },
   {
-    id: 'escala_1_50000',
+    id: 'escala_corredor',
     family: 'escala',
-    label: 'Escala 1:50.000 (Região de Paranapiacaba)',
+    label: '1:500.000 · Corredor Jundiaí–Santos',
     icon: '🗺️',
     basemap: 'terrain',
-    description: 'Escala regional (1:50.000): Serra do Mar, rede hidrográfica completa, mananciais, sub-bacias, unidades de conservação e conexões ferroviárias.',
+    description: 'Escala mais ampla: o corredor da São Paulo Railway inteiro sobre as regiões hidrográficas e as sub-bacias do Alto Tietê (UGRHI 6) e da Baixada Santista.',
     layers: [
-      'ferrovia_corredor', 'hidrografia_regional', 'nascentes_regionais',
-      'subbacias_ugrhi6', 'apm_aprm_regionais', 'ucs', 'regioes_hidrograficas'
+      'ferrovia_corredor', 'estacoes', 'regioes_hidrograficas', 'subbacias_ugrhi6', 'municipios_corredor'
     ],
-    targetScale: '1:50.000',
-    center: REGIONAL_CENTER,
-    zoomLevel: zoomForScale(50000, REGIONAL_CENTER[0])
+    targetScale: '1:500.000',
+    center: CORREDOR_CENTER,
+    zoomLevel: zoomForScale(500000, CORREDOR_CENTER[0])
   }
 ];
 

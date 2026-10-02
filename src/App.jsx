@@ -20,15 +20,25 @@ import { LegislacaoPanel } from './components/LegislacaoPanel';
 import { HomePage } from './components/HomePage';
 import { ThematicPresets } from './components/ThematicPresets';
 import { TrailsPanel } from './components/TrailsPanel';
+import { BASEMAPS } from './components/BasemapSelector';
+import { parseShareHash } from './utils/shareState';
+
+// Estado vindo de um link compartilhado (#zoom/lat/lng?camadas=…&base=…), lido
+// uma vez na carga: um link de mapa abre direto na aba do mapa.
+const SHARED = parseShareHash(window.location.hash, {
+  layerIds: LAYERS.map((layer) => layer.id),
+  basemapIds: BASEMAPS.map((basemap) => basemap.id),
+});
 
 export default function App() {
   const isMobile = useIsMobile();
 
   // Aba ativa do portal: 'home', 'map', 'ferrovia', 'trilhas', 'campo', 'hidraulica', 'legislacao'
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState(SHARED.view ? 'map' : 'home');
 
   // Estado das camadas ativas
   const [activeLayers, setActiveLayers] = useState(() => {
+    if (SHARED.layers) return new Set(SHARED.layers);
     return new Set(LAYERS.filter((layer) => layer.visible).map((layer) => layer.id));
   });
 
@@ -36,7 +46,7 @@ export default function App() {
   const [buildingSymbologyMode, setBuildingSymbologyMode] = useState('conservacao');
 
   // Estado do basemap selecionado (default 'osm')
-  const [selectedBasemap, setSelectedBasemap] = useState('osm');
+  const [selectedBasemap, setSelectedBasemap] = useState(SHARED.basemap || 'osm');
 
   // Estado do nível de zoom atual
   const [currentZoom, setCurrentZoom] = useState(13);
@@ -153,8 +163,14 @@ export default function App() {
     });
   };
 
+  const handleClearAllLayers = () => {
+    setActivePresetId(null);
+    setActiveLayers(new Set());
+    setActiveFeature(null);
+  };
+
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-50 relative select-none">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-paper relative select-none">
       
       {/* Barra de Navegação Superior do Portal */}
       <HeaderNav
@@ -185,11 +201,10 @@ export default function App() {
               groupOpacities={groupOpacities}
               onGroupOpacityChange={handleGroupOpacityChange}
               onToggleAllInGroup={handleToggleAllInGroup}
+              onClearAll={handleClearAllLayers}
               onOpenAbout={() => setIsAboutOpen(true)}
               onOpenTable={handleOpenTable}
               onZoomToLayer={handleZoomToLayer}
-              buildingSymbologyMode={buildingSymbologyMode}
-              onBuildingSymbologyChange={setBuildingSymbologyMode}
             />
 
             {/* Área Principal (Mapa) */}

@@ -56,17 +56,17 @@ export function LevantamentoCampoPanel({ onNavigateToMapWithPreset }) {
 
       {/* Escala de conservação (semáforo IBGE) */}
       <ModuleSection icon="🎨" title="Escala de Conservação (Semáforo IBGE)">
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs text-stone-500 leading-relaxed">
           Cada edificação é classificada em campo segundo o seu estado de conservação. A mesma
-          escala cromática alimenta a simbologia da camada <span className="font-semibold text-slate-700">Edificações da Vila</span> no Mapa SIG.
+          escala cromática alimenta a simbologia da camada <span className="font-semibold text-stone-700">Edificações da Vila</span> no Mapa SIG.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {estados.map((e) => (
-            <div key={e.key} className="rounded-lg border border-slate-200 overflow-hidden bg-white">
+            <div key={e.key} className="rounded-lg border border-stone-200 overflow-hidden bg-white">
               <div className="h-8 w-full" style={{ backgroundColor: e.fill, borderBottom: `3px solid ${e.stroke}` }} />
               <div className="p-2.5">
-                <div className="text-xs font-bold text-slate-800">{e.label.split('(')[0].trim()}</div>
-                <div className="text-[10px] text-slate-500 leading-snug mt-0.5">
+                <div className="text-xs font-bold text-stone-800">{e.label.split('(')[0].trim()}</div>
+                <div className="text-[10px] text-stone-500 leading-snug mt-0.5">
                   {e.label.includes('(') ? e.label.split('(')[1].replace(')', '') : ''}
                 </div>
               </div>
@@ -99,7 +99,7 @@ export function LevantamentoCampoPanel({ onNavigateToMapWithPreset }) {
 
       {/* Roteiro de campo */}
       <ModuleSection icon="✅" title="Roteiro da Ficha de Campo">
-        <ol className="space-y-2 text-xs text-slate-600 list-decimal list-inside marker:text-emerald-600 marker:font-bold">
+        <ol className="space-y-2 text-xs text-stone-600 list-decimal list-inside marker:text-forest-600 marker:font-bold">
           <li>Identificação do lote/edificação e vínculo ao cadastro georreferenciado (CAD 2025).</li>
           <li>Registro fotográfico das quatro fachadas e da cobertura.</li>
           <li>Classificação do estado de conservação pela escala-semáforo.</li>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { exportMapImage } from '../utils/exportImage';
+import { SharePopover } from './SharePopover';
 
 // Área geodésica (m²) de um anel de latlngs — fórmula esférica (igual Leaflet.Draw)
 function geodesicArea(latlngs) {
@@ -27,7 +28,7 @@ export const VILA_CENTER = [-23.778, -46.305];
 
 export function MapToolbar() {
   const map = useMap();
-  const [copied, setCopied] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   // --- Exportação de mapa (PNG) ---
   const [showExport, setShowExport] = useState(false);
@@ -68,8 +69,8 @@ export function MapToolbar() {
       // Marcador de vértice com tooltip permanente
       const marker = L.circleMarker(ll, {
         radius: 5,
-        color: '#047857',
-        fillColor: '#10b981',
+        color: '#2D4A3E',
+        fillColor: '#457760',
         fillOpacity: 1,
         weight: 2,
       });
@@ -78,7 +79,7 @@ export function MapToolbar() {
         marker.bindTooltip(fmtDist(accumDist), {
           permanent: true,
           direction: 'top',
-          className: 'px-1.5 py-0.5 text-[9px] font-bold bg-slate-900 text-white rounded border-0 shadow-md'
+          className: 'px-1.5 py-0.5 text-[9px] font-bold bg-stone-900 text-white rounded border-0 shadow-md'
         });
       }
       marker.addTo(g);
@@ -87,8 +88,8 @@ export function MapToolbar() {
     if (pts.length >= 3) {
       // Polígono preenchido para áreas (lotes, APPs, bairros)
       L.polygon(pts, {
-        color: '#047857',
-        fillColor: '#34d399',
+        color: '#2D4A3E',
+        fillColor: '#66937A',
         fillOpacity: 0.25,
         weight: 2,
         dashArray: '5 4'
@@ -96,7 +97,7 @@ export function MapToolbar() {
     } else if (pts.length === 2) {
       // Linha tracejada para distâncias
       L.polyline(pts, {
-        color: '#047857',
+        color: '#2D4A3E',
         weight: 2.5,
         dashArray: '5 4'
       }).addTo(g);
@@ -169,41 +170,18 @@ export function MapToolbar() {
     map.locate({ setView: true, maxZoom: 16 });
   };
 
-  // Copiar link com estado do mapa atual (Zoom/Lat/Lng)
-  const handleCopyLink = () => {
-    const center = map.getCenter();
-    const zoom = map.getZoom();
-    const lat = center.lat.toFixed(5);
-    const lng = center.lng.toFixed(5);
-    const hash = `#${zoom}/${lat}/${lng}`;
-    
-    // Atualiza a URL sem causar reload
-    window.history.pushState(null, null, hash);
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}${hash}`;
-
-    navigator.clipboard.writeText(shareUrl)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(err => {
-        console.warn('Erro ao copiar URL:', err);
-      });
-  };
-
   return (
-    <div className="export-hide absolute top-4 right-4 z-[1000] flex flex-col gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-lg border border-slate-200 shadow-md">
+    <div className="export-hide absolute top-4 right-4 z-[1000] flex flex-col gap-2 bg-paper/95 backdrop-blur-md p-1.5 rounded-lg border border-paper-line shadow-md">
       {/* Botão Corredor Ferroviário Jundiaí–Santos */}
       <button
         onClick={handleGoCorridor}
-        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-md transition-all relative group"
         title="Corredor Jundiaí–Santos"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 15.5V6a2 2 0 012-2h12a2 2 0 012 2v9.5M4 15.5A2.5 2.5 0 006.5 18h11a2.5 2.5 0 002.5-2.5M4 15.5h16M9 4v14m6-14v14M7.5 21l1.5-3m6 3l-1.5-3" />
         </svg>
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
           Corredor Jundiaí–Santos
         </span>
       </button>
@@ -211,13 +189,13 @@ export function MapToolbar() {
       {/* Botão Paranapiacaba (Vila) */}
       <button
         onClick={handleGoVila}
-        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-md transition-all relative group"
         title="Vila de Paranapiacaba"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0H5m0 0H3m6-4h6m-6-4h6m-6-4h6" />
         </svg>
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
           Vila de Paranapiacaba
         </span>
       </button>
@@ -226,28 +204,28 @@ export function MapToolbar() {
       <button
         onClick={toggleMeasure}
         className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
-          measuring ? 'bg-emerald-600 text-white' : 'text-slate-650 hover:text-slate-900 hover:bg-slate-100'
+          measuring ? 'bg-forest-600 text-white' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
         }`}
         title="Medir distância / área"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 17l6-6 4 4 8-8M3 17v4h4M21 7V3h-4" />
         </svg>
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
           {measuring ? 'Medindo — clique no mapa' : 'Medir distância / área'}
         </span>
       </button>
 
       {/* Leitura da medição */}
       {measuring && (
-        <div className="absolute right-12 top-0 bg-white/95 backdrop-blur border border-slate-200 rounded-lg shadow-md px-3 py-2 text-xs whitespace-nowrap">
+        <div className="absolute right-12 top-0 bg-white/95 backdrop-blur border border-stone-200 rounded-lg shadow-md px-3 py-2 text-xs whitespace-nowrap">
           {readout ? (
             <div className="space-y-0.5">
-              <div className="font-bold text-slate-700">Distância: {fmtDist(readout.dist)}</div>
-              {readout.area > 0 && <div className="text-slate-600">Área: {fmtArea(readout.area)}</div>}
+              <div className="font-bold text-stone-700">Distância: {fmtDist(readout.dist)}</div>
+              {readout.area > 0 && <div className="text-stone-600">Área: {fmtArea(readout.area)}</div>}
             </div>
           ) : (
-            <div className="text-slate-500">Clique para adicionar pontos</div>
+            <div className="text-stone-500">Clique para adicionar pontos</div>
           )}
           <button onClick={clearMeasure} className="mt-1 text-[10px] font-bold uppercase tracking-wide text-rose-600 hover:text-rose-700">
             Limpar
@@ -258,43 +236,49 @@ export function MapToolbar() {
       {/* Botão Localização */}
       <button
         onClick={handleLocateUser}
-        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
+        className="p-2.5 md:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-md transition-all relative group"
         title="Minha Localização"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
           Minha Localização
         </span>
       </button>
 
-      {/* Botão Compartilhar Link */}
+      {/* Compartilhar esta vista (link + QR code) */}
       <button
-        onClick={handleCopyLink}
-        className="p-2.5 md:p-2 text-slate-650 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all relative group"
-        title="Compartilhar Mapa"
+        onClick={() => {
+          setShowShare((v) => !v);
+          setShowExport(false);
+        }}
+        aria-expanded={showShare}
+        className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
+          showShare ? 'bg-forest-600 text-white' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+        }`}
+        title="Compartilhar esta vista (link e QR code)"
       >
-        {copied ? (
-          <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-          </svg>
-        ) : (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 10.742l4.739-2.37M8.684 13.257l4.739 2.37M21 8a3 3 0 11-6 0 3 3 0 016 0zm-6 8a3 3 0 11-6 0 3 3 0 016 0zM9 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 10.742l4.739-2.37M8.684 13.257l4.739 2.37M21 8a3 3 0 11-6 0 3 3 0 016 0zm-6 8a3 3 0 11-6 0 3 3 0 016 0zM9 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        {!showShare && (
+          <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
+            Compartilhar esta vista
+          </span>
         )}
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
-          {copied ? 'Link Copiado!' : 'Copiar Link do Mapa'}
-        </span>
       </button>
+      {showShare && <SharePopover onClose={() => setShowShare(false)} />}
 
       {/* Botão Exportar Mapa (PNG) */}
       <button
-        onClick={() => setShowExport((v) => !v)}
+        onClick={() => {
+          setShowExport((v) => !v);
+          setShowShare(false);
+        }}
         className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
-          showExport ? 'bg-emerald-600 text-white' : 'text-slate-650 hover:text-slate-900 hover:bg-slate-100'
+          showExport ? 'bg-forest-600 text-white' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
         }`}
         title="Exportar mapa (PNG)"
       >
@@ -302,7 +286,7 @@ export function MapToolbar() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 3v12m0 0l-4-4m4 4l4-4" />
         </svg>
         {!showExport && (
-          <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-slate-900 text-slate-100 text-[10px] px-2 py-1 rounded border border-slate-800 shadow-md whitespace-nowrap">
+          <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
             Exportar mapa (PNG)
           </span>
         )}
@@ -310,8 +294,8 @@ export function MapToolbar() {
 
       {/* Popover de exportação (PNG / PDF) */}
       {showExport && (
-        <div className="absolute right-12 bottom-0 w-64 bg-white/97 backdrop-blur border border-slate-200 rounded-lg shadow-xl p-3 space-y-2.5">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+        <div className="absolute right-12 bottom-0 w-64 bg-white/97 backdrop-blur border border-stone-200 rounded-lg shadow-xl p-3 space-y-2.5">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1">
             <span>📷</span> Exportar / Imprimir Mapa
           </div>
           <input
@@ -319,22 +303,22 @@ export function MapToolbar() {
             value={exportTitle}
             onChange={(e) => setExportTitle(e.target.value)}
             placeholder="Título da Prancha / Mapa (opcional)"
-            className="w-full bg-white border border-slate-300 text-slate-800 placeholder-slate-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+            className="w-full bg-white border border-stone-300 text-stone-800 placeholder-stone-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600"
           />
-          <p className="text-[10px] text-slate-500 leading-snug">
+          <p className="text-[10px] text-stone-500 leading-snug">
             Gera o mapa com legenda IBGE, escala e fontes formatadas para relatórios e artigos.
           </p>
           <div className="grid grid-cols-2 gap-2 pt-1">
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+              className="flex items-center justify-center gap-1 bg-forest-600 hover:bg-forest-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
             >
               {exporting ? 'Gerando…' : '💾 Baixar PNG'}
             </button>
             <button
               onClick={() => window.print()}
-              className="flex items-center justify-center gap-1 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+              className="flex items-center justify-center gap-1 bg-stone-800 hover:bg-stone-900 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
             >
               🖨️ PDF / Print
             </button>

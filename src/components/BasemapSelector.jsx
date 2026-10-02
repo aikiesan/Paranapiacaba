@@ -38,7 +38,7 @@ export const BASEMAPS = [
 
 export function BasemapSelector({ selectedBasemap, onChange }) {
   return (
-    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex max-w-[calc(100vw-2rem)] overflow-x-auto bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-md transition-all duration-300 hover:border-slate-350">
+    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex max-w-[calc(100vw-2rem)] overflow-x-auto bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-stone-200 shadow-md transition-all duration-300 hover:border-stone-300">
       {BASEMAPS.map((basemap) => {
         const isActive = selectedBasemap === basemap.id;
         return (
@@ -48,8 +48,8 @@ export function BasemapSelector({ selectedBasemap, onChange }) {
             title={basemap.id === 'ortofoto2010' ? 'Ortofoto georreferenciada de Paranapiacaba, levantamento de 2010' : basemap.label}
             className={`px-2 md:px-3 py-1 text-[11px] md:text-xs font-bold rounded-full transition-all duration-200 ${
               isActive
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+                ? 'bg-forest-600 text-white shadow-sm'
+                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100/80'
             }`}
           >
             {basemap.label}

@@ -72,7 +72,7 @@ export function LegislacaoPanel({ onNavigateToMapWithPreset }) {
 
       {/* Instâncias de tombamento */}
       <ModuleSection icon="🏛️" title="Instâncias de Tombamento">
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs text-stone-500 leading-relaxed">
           A Vila é protegida simultaneamente nas três esferas. No Mapa SIG, cada instância
           aparece como polígono de contorno colorido, conforme o padrão IBGE.
         </p>

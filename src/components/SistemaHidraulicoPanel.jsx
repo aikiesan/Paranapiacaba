@@ -26,21 +26,21 @@ export function SistemaHidraulicoPanel({ onNavigateToMapWithPreset }) {
 
       {/* Divisor de águas */}
       <ModuleSection icon="⛰️" title="Divisor de Águas da Serra do Mar">
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-xs text-stone-500 leading-relaxed">
           Paranapiacaba assenta-se sobre o divisor entre duas grandes vertentes. Poucos metros
           definem se a água segue para o interior (Tietê) ou desce a escarpa rumo ao litoral (Cubatão).
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-lg border border-slate-200 border-l-4 border-l-cyan-600 bg-cyan-50/40 p-4 space-y-1">
+          <div className="rounded-lg border border-stone-200 border-l-4 border-l-cyan-600 bg-cyan-50/40 p-4 space-y-1">
             <div className="text-xs font-black text-cyan-800 uppercase tracking-wide">UGRHI 6 — Alto Tietê</div>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               Vertente interior que drena para o sistema Billings e o Tietê. Manancial estratégico
               de abastecimento da Região Metropolitana de São Paulo.
             </p>
           </div>
-          <div className="rounded-lg border border-slate-200 border-l-4 border-l-teal-700 bg-teal-50/40 p-4 space-y-1">
-            <div className="text-xs font-black text-teal-800 uppercase tracking-wide">UGRHI 7 — Baixada Santista</div>
-            <p className="text-xs text-slate-600 leading-relaxed">
+          <div className="rounded-lg border border-stone-200 border-l-4 border-l-forest-700 bg-forest-50/40 p-4 space-y-1">
+            <div className="text-xs font-black text-forest-800 uppercase tracking-wide">UGRHI 7 — Baixada Santista</div>
+            <p className="text-xs text-stone-600 leading-relaxed">
               Vertente marítima que desce a Serra pelo Rio Cubatão até o estuário de Santos —
               trajeto histórico do funicular e das águas da escarpa.
             </p>
@@ -48,7 +48,7 @@ export function SistemaHidraulicoPanel({ onNavigateToMapWithPreset }) {
         </div>
         <button
           onClick={() => onNavigateToMapWithPreset('ambiente')}
-          className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
+          className="text-[11px] font-bold text-forest-700 hover:text-forest-800 hover:underline transition-colors"
         >
           Abrir camadas de sub-bacias e nascentes no mapa &rarr;
         </button>
@@ -67,7 +67,7 @@ export function SistemaHidraulicoPanel({ onNavigateToMapWithPreset }) {
 
       {/* Nota de leitura */}
       <ModuleSection icon="📖" title="Leitura Integrada">
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs text-stone-600 leading-relaxed">
           O abastecimento de Paranapiacaba não foi um sistema isolado: a água movia as máquinas,
           servia à vila e ordenava o traçado urbano pelas cotas do terreno. Reconstituir essa
           rede — nascentes, adutoras, reservatórios e drenagem — é essencial para o diagnóstico
