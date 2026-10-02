@@ -1,79 +1,76 @@
 import React from 'react';
-import { ModulePage, ModuleHeader, ModuleSection, InfoCard } from './moduleUi';
+import { MapButton, ReaderNote, SheetHeader, SheetPage, SheetSection, Term } from './archive';
+import { Entry, EntryGrid } from './moduleUi';
 
-// Módulo: Sistema Hidráulico dos Ingleses & Bacias.
-// Síntese da engenharia hídrica britânica de Paranapiacaba e do seu contexto
-// no divisor de águas da Serra do Mar (UGRHI 6 x UGRHI 7).
+// Folha 05: a engenharia da água em Paranapiacaba e o divisor de águas da
+// Serra do Mar (UGRHI 6 × UGRHI 7).
+const COMPONENTES = [
+  { title: 'Captação de nascentes', accent: '#0070C0', desc: 'Surgências da escarpa canalizadas para abastecer a vila e alimentar as caldeiras a vapor do funicular.' },
+  { title: 'Caixas d’água históricas', accent: '#0EA5E9', desc: 'Reservatórios elevados em alvenaria e ferro que davam pressão e regularidade ao abastecimento da vila.' },
+  { title: 'Aquedutos e adutoras', accent: '#0369A1', desc: 'Condutos que vencem a topografia acidentada, levando a água das cotas altas às áreas construídas.' },
+  { title: 'Manilhas cerâmicas', accent: '#B45309', desc: 'Tubulação em grés e cerâmica da rede original — testemunho material da tecnologia sanitária do século XIX.' },
+  { title: 'Rede de esgotamento', accent: '#64748B', desc: 'Drenagem sanitária pelas vielas dos fundos dos lotes, um saneamento planejado desde a origem da vila.' },
+  { title: 'APPs de córregos e nascentes', accent: '#7FA86A', desc: 'Faixas de preservação que protegem os corpos d’água que estruturam a vila.' },
+];
+
 export function SistemaHidraulicoPanel({ onNavigateToMapWithPreset }) {
-  const componentes = [
-    { icon: '🌿', title: 'Captação de nascentes', accent: '#0070C0', desc: 'Surgências da escarpa canalizadas para abastecer a Vila e alimentar as caldeiras a vapor do sistema funicular.' },
-    { icon: '🛢️', title: 'Caixas d\'água históricas', accent: '#0EA5E9', desc: 'Reservatórios elevados em alvenaria e ferro que garantiam pressão e regularidade ao abastecimento da vila operária.' },
-    { icon: '🌉', title: 'Aquedutos e adutoras', accent: '#0369A1', desc: 'Condutos que transpõem a topografia acidentada, levando a água das cotas altas às áreas edificadas.' },
-    { icon: '🧩', title: 'Manilhas cerâmicas', accent: '#B45309', desc: 'Tubulação em grês e cerâmica da rede original — testemunho material da tecnologia sanitária do século XIX.' },
-    { icon: '🚿', title: 'Rede de esgotamento', accent: '#64748B', desc: 'Drenagem sanitária pelas vielas, precursora do saneamento planejado no Brasil.' },
-    { icon: '💦', title: 'APPs de córregos e nascentes', accent: '#A9D08E', desc: 'Faixas de preservação permanente que protegem os corpos hídricos que estruturam a Vila.' },
-  ];
-
   return (
-    <ModulePage>
-      <ModuleHeader
-        badge="Engenharia Hídrica Britânica & Recursos Hídricos"
-        badgeIcon="🌊"
-        title="Sistema Hidráulico dos Ingleses & Bacias"
-        subtitle="Captação de nascentes, caixas d'água históricas e aquedutos da São Paulo Railway, cruzados com as bacias hidrográficas UGRHI 6 (Alto Tietê) e UGRHI 7 (Baixada Santista)."
-        cta={{ label: 'Ver Rede Hídrica no Mapa SIG', onClick: () => onNavigateToMapWithPreset('prancha_hidrica_redes') }}
-      />
+    <SheetPage sheetId="hidraulica">
+      <SheetHeader
+        sheetId="hidraulica"
+        kicker="Engenharia e recursos hídricos"
+        title="A água e a vila"
+        lede="A água movia as máquinas do funicular, abastecia as casas e ordenava o desenho da vila pelas cotas do terreno. E Paranapiacaba está exatamente onde as águas se dividem."
+        meta={[
+          { label: 'Bacias', value: 'Tietê × litoral' },
+          { label: 'Unidades', value: 'UGRHI 6 e 7' },
+        ]}
+      >
+        <MapButton onClick={() => onNavigateToMapWithPreset('prancha_hidrica_redes')}>Ver a rede hídrica no mapa</MapButton>
+      </SheetHeader>
 
-      {/* Divisor de águas */}
-      <ModuleSection icon="⛰️" title="Divisor de Águas da Serra do Mar">
-        <p className="text-xs text-slate-500 leading-relaxed">
-          Paranapiacaba assenta-se sobre o divisor entre duas grandes vertentes. Poucos metros
-          definem se a água segue para o interior (Tietê) ou desce a escarpa rumo ao litoral (Cubatão).
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-lg border border-slate-200 border-l-4 border-l-cyan-600 bg-cyan-50/40 p-4 space-y-1">
-            <div className="text-xs font-black text-cyan-800 uppercase tracking-wide">UGRHI 6 — Alto Tietê</div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Vertente interior que drena para o sistema Billings e o Tietê. Manancial estratégico
-              de abastecimento da Região Metropolitana de São Paulo.
+      <SheetSection
+        no="1"
+        title="No divisor de águas"
+        intro="Poucos metros decidem o destino de uma gota de chuva em Paranapiacaba: seguir para o interior, pelo Tietê, ou despencar a escarpa rumo ao mar."
+      >
+        <div className="grid md:grid-cols-2 gap-px bg-ink/20 border border-ink/20">
+          <div className="bg-paper p-5">
+            <span className="block w-8 h-[3px] mb-3 bg-sky-700" />
+            <div className="caps text-[9px] text-ink-500"><Term id="ugrhi">UGRHI</Term> 6</div>
+            <h3 className="font-display text-2xl">Alto Tietê</h3>
+            <p className="font-serif text-[0.95rem] leading-relaxed text-ink-600 mt-2">
+              Vertente interior, que drena para o sistema Billings e o Tietê — manancial de abastecimento da Região Metropolitana de São Paulo.
             </p>
           </div>
-          <div className="rounded-lg border border-slate-200 border-l-4 border-l-teal-700 bg-teal-50/40 p-4 space-y-1">
-            <div className="text-xs font-black text-teal-800 uppercase tracking-wide">UGRHI 7 — Baixada Santista</div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Vertente marítima que desce a Serra pelo Rio Cubatão até o estuário de Santos —
-              trajeto histórico do funicular e das águas da escarpa.
+          <div className="bg-paper p-5">
+            <span className="block w-8 h-[3px] mb-3 bg-forest-700" />
+            <div className="caps text-[9px] text-ink-500">UGRHI 7</div>
+            <h3 className="font-display text-2xl">Baixada Santista</h3>
+            <p className="font-serif text-[0.95rem] leading-relaxed text-ink-600 mt-2">
+              Vertente marítima, que desce a Serra pelo Rio Cubatão até o estuário de Santos — o mesmo caminho do funicular.
             </p>
           </div>
         </div>
-        <button
-          onClick={() => onNavigateToMapWithPreset('ambiente')}
-          className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
-        >
-          Abrir camadas de sub-bacias e nascentes no mapa &rarr;
-        </button>
-      </ModuleSection>
+        <ReaderNote>
+          Um <Term id="divisor">divisor de águas</Term> é a linha de cristas que separa duas bacias. No mapa, ligue as sub-bacias para vê-lo passar junto da vila.
+        </ReaderNote>
+        <MapButton size="sm" onClick={() => onNavigateToMapWithPreset('ambiente')}>Ver as sub-bacias e nascentes no mapa</MapButton>
+      </SheetSection>
 
-      {/* Componentes do sistema */}
-      <ModuleSection icon="🔧" title="Componentes do Sistema Hidráulico Histórico">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {componentes.map((c) => (
-            <InfoCard key={c.title} icon={c.icon} title={c.title} accent={c.accent}>
-              {c.desc}
-            </InfoCard>
+      <SheetSection no="2" title="O sistema hidráulico da companhia">
+        <EntryGrid>
+          {COMPONENTES.map((c) => (
+            <Entry key={c.title} title={c.title} accent={c.accent}>{c.desc}</Entry>
           ))}
-        </div>
-      </ModuleSection>
+        </EntryGrid>
+      </SheetSection>
 
-      {/* Nota de leitura */}
-      <ModuleSection icon="📖" title="Leitura Integrada">
-        <p className="text-xs text-slate-600 leading-relaxed">
-          O abastecimento de Paranapiacaba não foi um sistema isolado: a água movia as máquinas,
-          servia à vila e ordenava o traçado urbano pelas cotas do terreno. Reconstituir essa
-          rede — nascentes, adutoras, reservatórios e drenagem — é essencial para o diagnóstico
-          de conservação e para a narrativa de valor universal excepcional da candidatura UNESCO.
+      <SheetSection no="3" title="Por que isso importa para a candidatura">
+        <p className="font-serif text-[1.05rem] leading-relaxed text-ink-700 max-w-3xl">
+          O abastecimento de Paranapiacaba não era um sistema à parte: nascentes, adutoras, reservatórios e drenagem faziam parte da mesma máquina que movia os trens. Reconstituir essa rede é essencial para o diagnóstico de conservação e para demonstrar o <Term id="vue">Valor Universal Excepcional</Term> do sítio.
         </p>
-      </ModuleSection>
-    </ModulePage>
+      </SheetSection>
+    </SheetPage>
   );
 }

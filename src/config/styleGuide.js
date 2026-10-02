@@ -2,6 +2,8 @@
 // Paleta de cores canônica para camadas, uso do solo, conservação de edificações,
 // limites institucionais sem preenchimento, hidrografia exclusiva e infraestrutura.
 
+import { sectionOf } from './catalog';
+
 export const PALETTE = {
   // --- Uso e Ocupação do Solo (Padrão IBGE - Escala 1:1.000) ---
   uso_residencial:      '#FCE4D6',  // Amarelo / Laranja Claro (Habitação / Residencial)
@@ -106,21 +108,6 @@ export const CONSERVATION_PALETTE = {
   default:            { fill: '#FDE047', stroke: '#7C2D12', label: 'Não Avaliado / Residencial' }
 };
 
-// Ícone + cor de destaque por grupo de camadas
-export const GROUP_META = {
-  'Ferrovia SPR (Jundiaí–Santos)': { icon: '🚂', accent: '#595959' },
-  'Mobilidade':                    { icon: '🚌', accent: '#0891B2' },
-  'Território':                    { icon: '🗺️', accent: '#64748B' },
-  'Patrimônio':                    { icon: '🏛️', accent: '#581845' },
-  'Morfologia da Vila':            { icon: '🏘️', accent: '#FCE4D6' },
-  'Meio Ambiente':                 { icon: '🌳', accent: '#385723' },
-  'Turismo e Trilhas':             { icon: '🥾', accent: '#00B050' },
-  'Legislação e Planejamento':     { icon: '📐', accent: '#7C3AED' },
-  'Socioeconomia':                 { icon: '📊', accent: '#9B5DE5' },
-  'Equipamentos Urbanos':          { icon: '🏥', accent: '#BDD7EE' },
-  'Riscos (Defesa Civil)':         { icon: '⚠️', accent: '#DC2626' },
-};
-
 const _norm = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // Retorna estilo do estado de conservação de edificação
@@ -165,8 +152,17 @@ export function riskColor(grau) {
   return PALETTE.risco_default;
 }
 
+// Ícone, cor e códigos (seção "2.2" / eixo "II") de um grupo do catálogo.
 export function groupMeta(group) {
-  return GROUP_META[group] || { icon: '📁', accent: '#64748B' };
+  const section = sectionOf(group);
+  if (!section) return { icon: '📁', accent: '#78716C', code: null, themeCode: null, themeTitle: null };
+  return {
+    icon: section.icon,
+    accent: section.theme.accent,
+    code: section.code,
+    themeCode: section.theme.code,
+    themeTitle: section.theme.title,
+  };
 }
 
 // Descritor visual de uma camada para o "swatch" do painel

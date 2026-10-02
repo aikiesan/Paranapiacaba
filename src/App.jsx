@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LAYERS, GROUPS } from './config/layers';
 import { PRESETS } from './config/presets';
 import { useIsMobile } from './hooks/useIsMobile';
 import { HeaderNav } from './components/HeaderNav';
-import { LayerPanel } from './components/LayerPanel';
+import { MapSidebar } from './components/LayerPanel';
 import { MapView } from './components/MapView';
 import { BasemapSelector } from './components/BasemapSelector';
 import { Legend } from './components/Legend';
@@ -18,17 +18,49 @@ import { LevantamentoCampoPanel } from './components/LevantamentoCampoPanel';
 import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
 import { LegislacaoPanel } from './components/LegislacaoPanel';
 import { HomePage } from './components/HomePage';
-import { ThematicPresets } from './components/ThematicPresets';
 import { TrailsPanel } from './components/TrailsPanel';
+import { GlossaryPage } from './components/GlossaryPage';
+import { PortalNav } from './components/archive';
+import { BASEMAPS } from './components/BasemapSelector';
+import { parseShareHash } from './utils/shareState';
+import { useRasterManifests } from './hooks/useRasterManifests';
+
+// Estado vindo de um link compartilhado (#zoom/lat/lng?camadas=…&base=…), lido
+// uma vez na carga: um link de mapa abre direto na aba do mapa.
+const SHARED = parseShareHash(window.location.hash, {
+  layerIds: LAYERS.map((layer) => layer.id),
+  basemapIds: BASEMAPS.map((basemap) => basemap.id),
+});
+
+// Título do que está no mapa (mapa pronto e/ou carta sobreposta), à maneira
+// do cartucho de uma prancha. Só informativo: não é mais um botão.
+function MapTitle({ preset, reference }) {
+  if (!preset && !reference) return null;
+  return (
+    <div className="export-hide hidden md:block absolute top-4 left-1/2 -translate-x-1/2 z-[999] pointer-events-none max-w-[calc(100%-9rem)]">
+      <div className="bg-paper/95 backdrop-blur-md border border-paper-line rounded-lg shadow-md px-3 py-1.5 text-center">
+        {preset && (
+          <div className="text-xs font-bold text-stone-900 font-serif truncate">
+            {preset.icon} {preset.label}
+          </div>
+        )}
+        {reference && (
+          <div className="text-[10px] font-semibold text-rust-700 truncate">📜 {reference.label}</div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const isMobile = useIsMobile();
 
   // Aba ativa do portal: 'home', 'map', 'ferrovia', 'trilhas', 'campo', 'hidraulica', 'legislacao'
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState(SHARED.view ? 'map' : 'home');
 
   // Estado das camadas ativas
   const [activeLayers, setActiveLayers] = useState(() => {
+    if (SHARED.layers) return new Set(SHARED.layers);
     return new Set(LAYERS.filter((layer) => layer.visible).map((layer) => layer.id));
   });
 
@@ -36,7 +68,7 @@ export default function App() {
   const [buildingSymbologyMode, setBuildingSymbologyMode] = useState('conservacao');
 
   // Estado do basemap selecionado (default 'osm')
-  const [selectedBasemap, setSelectedBasemap] = useState('osm');
+  const [selectedBasemap, setSelectedBasemap] = useState(SHARED.basemap || 'osm');
 
   // Estado do nível de zoom atual
   const [currentZoom, setCurrentZoom] = useState(13);
@@ -53,6 +85,8 @@ export default function App() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false);
+  // Imagem em que o arquivo deve abrir (figuras e cronologia apontam para ela).
+  const [archivePhotoId, setArchivePhotoId] = useState(null);
 
   // Tabela de atributos e foco
   const [tableLayerId, setTableLayerId] = useState(null);
@@ -63,6 +97,20 @@ export default function App() {
   // correspondente consumido pelo MapView.
   const [activePresetId, setActivePresetId] = useState(null);
   const [focusPreset, setFocusPreset] = useState(null);
+
+  // Sobreposições da aba "Históricos": um mapa de referência por vez e a série
+  // MapBiomas; e pedidos de enquadramento vindos do painel.
+  const manifests = useRasterManifests();
+  const [overlays, setOverlays] = useState({
+    referenceId: '',
+    referenceOpacity: 0.72,
+    coverageOn: false,
+    coverageYear: null,
+    coverageOpacity: 0.75,
+  });
+  const [focusBounds, setFocusBounds] = useState(null);
+  const handleOverlaysChange = (patch) => setOverlays((prev) => ({ ...prev, ...patch }));
+  const handleFitBounds = (bounds) => setFocusBounds({ bounds, ts: Date.now() });
 
   const handleOpenTable = (layerId) => {
     setTableLayerId(layerId);
@@ -133,6 +181,17 @@ export default function App() {
     }
   };
 
+  // Navegação compartilhada pelas folhas (termos, figuras, "próxima folha").
+  const portalNav = useMemo(() => ({
+    navigate: handleNavigate,
+    openArchive: (photoId = null) => {
+      setArchivePhotoId(photoId);
+      setIsPhotoGalleryOpen(true);
+    },
+    openMap: handleNavigateToMapWithPreset,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
+
   const handleToggleAllInGroup = (group, enable) => {
     setActivePresetId(null);
     setActiveLayers(prevActive => {
@@ -153,8 +212,15 @@ export default function App() {
     });
   };
 
+  const handleClearAllLayers = () => {
+    setActivePresetId(null);
+    setActiveLayers(new Set());
+    setActiveFeature(null);
+  };
+
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-50 relative select-none">
+    <PortalNav.Provider value={portalNav}>
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-paper relative select-none">
       
       {/* Barra de Navegação Superior do Portal */}
       <HeaderNav
@@ -178,18 +244,23 @@ export default function App() {
         {activeTab === 'map' && (
           <>
             {/* Painel Lateral Esquerdo (Camadas e Filtros) */}
-            <LayerPanel
+            <MapSidebar
+              initialTab={SHARED.layers ? 'camadas' : 'prontos'}
               activeLayers={activeLayers}
               onToggle={handleToggleLayer}
               currentZoom={currentZoom}
               groupOpacities={groupOpacities}
               onGroupOpacityChange={handleGroupOpacityChange}
               onToggleAllInGroup={handleToggleAllInGroup}
-              onOpenAbout={() => setIsAboutOpen(true)}
+              onClearAll={handleClearAllLayers}
               onOpenTable={handleOpenTable}
               onZoomToLayer={handleZoomToLayer}
-              buildingSymbologyMode={buildingSymbologyMode}
-              onBuildingSymbologyChange={setBuildingSymbologyMode}
+              activePresetId={activePresetId}
+              onApplyPreset={handleApplyPreset}
+              manifests={manifests}
+              overlays={overlays}
+              onOverlaysChange={handleOverlaysChange}
+              onFitBounds={handleFitBounds}
             />
 
             {/* Área Principal (Mapa) */}
@@ -205,6 +276,9 @@ export default function App() {
                 focusFeature={focusFeature}
                 focusLayer={focusLayer}
                 focusPreset={focusPreset}
+                focusBounds={focusBounds}
+                manifests={manifests}
+                overlays={overlays}
                 buildingSymbologyMode={buildingSymbologyMode}
               >
                 <BasemapSelector
@@ -213,22 +287,22 @@ export default function App() {
                 />
 
                 <div
-                  className="absolute bottom-16 left-4 z-[1001] pointer-events-none md:bottom-4"
+                  className="absolute bottom-9 left-4 z-[1001] pointer-events-none"
                   data-testid="map-legend-control"
                 >
                   <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
                 </div>
 
                 <div
-                  className="absolute bottom-[4.75rem] right-4 z-[1001] pointer-events-none"
+                  className="absolute bottom-[5.25rem] right-4 z-[1001] pointer-events-none"
                   data-testid="cartographic-scale-control"
                 >
                   <MapScaleControl />
                 </div>
 
-                <ThematicPresets
-                  activePresetId={activePresetId}
-                  onApplyPreset={handleApplyPreset}
+                <MapTitle
+                  preset={PRESETS.find((preset) => preset.id === activePresetId)}
+                  reference={manifests.references?.maps?.find((item) => item.id === overlays.referenceId)}
                 />
               </MapView>
 
@@ -263,6 +337,8 @@ export default function App() {
         {activeTab === 'legislacao' && (
           <LegislacaoPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
         )}
+
+        {activeTab === 'glossario' && <GlossaryPage />}
       </div>
 
       {/* Tabela de Atributos */}
@@ -289,9 +365,11 @@ export default function App() {
       {/* Modal Acervo Fotográfico de Campo & Iconografia */}
       <PhotoGalleryModal
         isOpen={isPhotoGalleryOpen}
+        initialPhotoId={archivePhotoId}
         onClose={() => setIsPhotoGalleryOpen(false)}
       />
     </div>
+    </PortalNav.Provider>
   );
 }
 

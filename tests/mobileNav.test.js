@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LAYERS, GROUPS } from '../src/config/layers.js';
 import { PRESETS, PRESET_FAMILIES } from '../src/config/presets.js';
+import { SECTIONS, THEMES } from '../src/config/catalog.js';
 
 describe('verificação de navegação e layout responsivo mobile', () => {
   it('garante que todos os 7 módulos principais e secundários possuem IDs válidos', () => {
@@ -12,8 +13,8 @@ describe('verificação de navegação e layout responsivo mobile', () => {
     });
   });
 
-  it('possui 11 grupos de camadas estruturados para renderização no mobile', () => {
-    expect(GROUPS).toHaveLength(11);
+  it('organiza as camadas nas seções do catálogo do dossiê, sem grupos vazios', () => {
+    expect(GROUPS).toEqual(SECTIONS.map((section) => section.title));
     GROUPS.forEach((group) => {
       const groupLayers = LAYERS.filter((l) => l.group === group);
       expect(groupLayers.length).toBeGreaterThan(0);

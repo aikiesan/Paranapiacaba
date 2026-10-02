@@ -1,105 +1,114 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CARTOGRAPHIC_MAPS, TECHNICAL_DOCUMENTS, MAP_CATEGORIES } from '../data/mapsIndex';
+import { webImage } from '../data/photoArchiveIndex';
+import { assetUrl } from '../utils/assetUrl';
+import { Icon } from './archive';
 
+const normalize = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// Miniatura da prancha: a exportação publicada, ou um cartucho desenhado
+// quando a prancha ainda não tem imagem no site.
+function SheetThumb({ map, size = 480 }) {
+  if (map.preview) {
+    return (
+      <img
+        src={assetUrl(webImage(map.preview, size))}
+        alt={`Prancha ${map.code}: ${map.title}`}
+        loading="lazy"
+        className="w-full h-full object-contain bg-white"
+      />
+    );
+  }
+  return (
+    <span className="w-full h-full flex flex-col items-center justify-center bg-paper-deep text-ink-400 border border-dashed border-ink/25">
+      <span className="font-display text-3xl text-ink-300 tabular">{map.id}</span>
+      <span className="caps text-[8px] mt-1">Imagem a publicar</span>
+    </span>
+  );
+}
+
+// Anexo B: o índice das pranchas A0 e os documentos técnicos do projeto.
 export function MapGalleryPanel({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('maps');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
 
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key !== 'Escape') return;
+      if (selectedItem) setSelectedItem(null);
+      else onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose, selectedItem]);
+
   if (!isOpen) return null;
 
-
-  const filteredMaps = CARTOGRAPHIC_MAPS.filter((map) => {
-    const matchesCategory = selectedCategory === 'Todas' || map.category === selectedCategory;
-    const matchesSearch = map.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          map.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          map.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const q = normalize(searchTerm.trim());
+  const filteredMaps = CARTOGRAPHIC_MAPS.filter((map) =>
+    (selectedCategory === 'Todas' || map.category === selectedCategory) &&
+    (!q || normalize(`${map.title} ${map.code} ${map.description}`).includes(q)));
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-[#1C1917]/60 backdrop-blur-xs animate-fade-in font-serif">
-      <div 
-        className="w-full max-w-4xl bg-[#FAF7F2] border border-[#E7E0D3] rounded-xl shadow-xl overflow-hidden flex flex-col h-[85vh] animate-scale-up"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Cabeçalho */}
-        <div className="px-6 py-4 border-b border-[#E7E0D3] bg-[#F4EFE6] text-[#1C1917] flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-md bg-[#78350F]/10 border border-[#78350F]/20 flex items-center justify-center text-[#78350F]">
-              <span className="text-lg">📐</span>
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-[#1C1917] leading-tight font-serif">
-                Acervo de Pranchas Cartográficas & Documentos FAPESP
-              </h2>
-              <p className="text-xs text-[#78350F] font-sans font-semibold">
-                Projeto FAPESP / PUC-Campinas — Sítio UNESCO Paranapiacaba
-              </p>
-            </div>
+    <div className="fixed inset-0 z-[2000] flex items-stretch md:items-center justify-center md:p-6 bg-ink/60 animate-fade-in" role="dialog" aria-modal="true" aria-label="Pranchas A0 e documentos">
+      <div className="w-full max-w-6xl paper-grain md:border md:border-ink/40 shadow-2xl overflow-hidden flex flex-col h-full md:h-[90vh] text-ink">
+        <div className="px-5 md:px-7 pt-5 pb-4 border-b border-ink/20 flex items-start justify-between gap-4">
+          <div>
+            <div className="caps text-[9px] text-signal">Anexo B · Produtos do projeto</div>
+            <h2 className="font-display text-3xl md:text-4xl leading-none mt-1">Pranchas e documentos</h2>
+            <p className="font-serif text-sm text-ink-600 mt-2 max-w-2xl">
+              Os mapas finais em formato A0 e os relatórios do projeto FAPESP / PUC-Campinas. Muitas pranchas também existem como “mapa pronto” no atlas.
+            </p>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-[#78716C] hover:text-[#1C1917] p-1 rounded hover:bg-[#EFE9DF] transition-colors"
-            title="Fechar"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          <button onClick={onClose} className="p-2 -m-1 text-ink-500 hover:text-ink border border-transparent hover:border-ink/30" aria-label="Fechar">
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Abas e Filtros */}
-        <div className="px-6 py-3 border-b border-[#E7E0D3] bg-[#FAF7F2] flex flex-wrap items-center justify-between gap-3 font-sans">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setActiveTab('maps')}
-              className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                activeTab === 'maps'
-                  ? 'bg-[#78350F] text-[#FAF7F2] shadow-xs'
-                  : 'bg-[#F4EFE6] text-[#44403C] border border-[#E7E0D3] hover:bg-[#EFE9DF]'
-              }`}
-            >
-              Pranchas Cartográficas A0 ({CARTOGRAPHIC_MAPS.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('docs')}
-              className={`px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                activeTab === 'docs'
-                  ? 'bg-[#78350F] text-[#FAF7F2] shadow-xs'
-                  : 'bg-[#F4EFE6] text-[#44403C] border border-[#E7E0D3] hover:bg-[#EFE9DF]'
-              }`}
-            >
-              Documentos & Relatórios ({TECHNICAL_DOCUMENTS.length})
-            </button>
+        <div className="px-5 md:px-7 py-2.5 border-b border-ink/20 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex gap-1" role="tablist">
+            {[
+              ['maps', `Pranchas A0`, CARTOGRAPHIC_MAPS.length],
+              ['docs', 'Documentos', TECHNICAL_DOCUMENTS.length],
+            ].map(([id, label, count]) => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={activeTab === id}
+                onClick={() => setActiveTab(id)}
+                className={`px-3 py-1.5 text-xs border transition-colors ${activeTab === id ? 'bg-ink text-paper border-ink' : 'border-transparent text-ink-600 hover:border-ink/30'}`}
+              >
+                {label} <span className={`tabular ${activeTab === id ? 'text-paper/60' : 'text-ink-400'}`}>{count}</span>
+              </button>
+            ))}
           </div>
-
           {activeTab === 'maps' && (
-            <div className="flex items-center gap-2 flex-1 max-w-sm">
+            <label className="flex items-center gap-2 border-b border-ink/40 pb-1 w-full sm:w-64">
+              <Icon name="search" className="w-3.5 h-3.5 text-ink-500" />
               <input
-                type="text"
-                placeholder="Buscar mapa no acervo..."
+                type="search"
+                placeholder="Procurar prancha…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs bg-[#F4EFE6] border border-[#E7E0D3] rounded-md focus:outline-none focus:border-[#78350F]"
+                className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-ink-400"
+                aria-label="Procurar prancha"
               />
-            </div>
+            </label>
           )}
         </div>
 
-        {/* Categorias de Mapas */}
         {activeTab === 'maps' && (
-          <div className="px-6 py-2.5 bg-[#EFE9DF] border-b border-[#E7E0D3] flex items-center gap-1.5 overflow-x-auto custom-scrollbar text-xs font-sans">
-            <span className="text-[11px] font-semibold text-[#78716C] uppercase mr-1">Categoria:</span>
+          <div className="px-5 md:px-7 py-2 border-b border-ink/15 flex items-center gap-1 overflow-x-auto no-scrollbar">
             {MAP_CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === cat
-                    ? 'bg-[#78350F] text-[#FAF7F2] font-semibold'
-                    : 'bg-[#FAF7F2] text-[#44403C] hover:bg-[#F4EFE6] border border-[#E7E0D3]'
+                aria-pressed={selectedCategory === cat}
+                className={`px-2.5 py-1 text-[11px] whitespace-nowrap transition-colors ${
+                  selectedCategory === cat ? 'text-signal font-semibold underline underline-offset-4 decoration-2' : 'text-ink-600 hover:text-ink'
                 }`}
               >
                 {cat}
@@ -108,115 +117,81 @@ export function MapGalleryPanel({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* Conteúdo Principal */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-[#FAF7F2]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-5 md:px-7 py-6">
           {activeTab === 'maps' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 font-sans">
-              {filteredMaps.map((map) => (
-                <div
-                  key={map.id}
-                  onClick={() => setSelectedItem(map)}
-                  className="bg-[#F4EFE6] border border-[#E7E0D3] rounded-xl p-4 shadow-xs hover:shadow-md hover:border-[#8C5E3C] transition-all cursor-pointer flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="px-2 py-0.5 rounded bg-[#FEF3C7] text-[#78350F] text-[10px] font-mono font-bold border border-[#F59E0B]/30">
-                        {map.code}
-                      </span>
-                      <span className="text-[10px] font-medium text-[#78716C]">
-                        {map.scale}
-                      </span>
-                    </div>
-                    <h3 className="text-sm font-serif font-bold text-[#1C1917] leading-snug hover:text-[#78350F] transition-colors">
-                      {map.title}
-                    </h3>
-                    <p className="text-xs text-[#57534E] line-clamp-3 leading-relaxed">
-                      {map.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-[#E7E0D3] flex items-center justify-between text-[11px] text-[#78716C]">
-                    <span className="bg-[#FAF7F2] px-2 py-0.5 rounded text-[#44403C] font-medium border border-[#E7E0D3]">
-                      {map.category}
+            filteredMaps.length === 0 ? (
+              <p className="font-serif text-ink-600 text-center py-10">Nenhuma prancha encontrada.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-7">
+                {filteredMaps.map((map) => (
+                  <button key={map.id} onClick={() => setSelectedItem(map)} className="group text-left">
+                    <span className="block border border-ink/25 p-1 bg-paper group-hover:border-ink/70 transition-colors">
+                      <span className="block aspect-[1189/841] overflow-hidden"><SheetThumb map={map} /></span>
                     </span>
-                    <span className="text-[#78350F] font-bold flex items-center gap-1 hover:underline">
-                      Ver Detalhes &rarr;
+                    <span className="flex items-baseline justify-between gap-2 mt-2">
+                      <span className="caps text-[9px] text-signal">{map.code.replace('Mapa_', 'Prancha ')}</span>
+                      <span className="caps text-[9px] text-ink-400 tabular">{map.scale.replace(' (A0)', '')}</span>
                     </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    <span className="block font-display text-[1.05rem] leading-tight mt-0.5 group-hover:text-signal">{map.title}</span>
+                  </button>
+                ))}
+              </div>
+            )
           ) : (
-            <div className="space-y-4 font-sans">
-              {TECHNICAL_DOCUMENTS.map((doc, idx) => (
-                <div key={idx} className="bg-[#F4EFE6] border border-[#E7E0D3] rounded-xl p-5 shadow-xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded bg-[#FEF3C7] text-[#78350F] text-[10px] font-bold border border-[#F59E0B]/30">
-                      {doc.type}
-                    </span>
-                    <span className="text-xs text-[#78716C] font-mono">{doc.date}</span>
+            <ol className="border-t-2 border-ink max-w-3xl">
+              {TECHNICAL_DOCUMENTS.map((doc) => (
+                <li key={doc.title} className="py-4 border-b border-ink/15">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="caps text-[9px] text-signal">{doc.type}</span>
+                    <span className="caps text-[9px] text-ink-500 tabular">{doc.date}</span>
                   </div>
-                  <h3 className="text-base font-serif font-bold text-[#1C1917]">{doc.title}</h3>
-                  <p className="text-xs text-[#57534E] leading-relaxed">{doc.description}</p>
-                  <p className="text-[11px] text-[#78716C] pt-2 border-t border-[#E7E0D3]">
-                    Autoria: <strong className="text-[#1C1917] font-serif">{doc.author}</strong>
-                  </p>
-                </div>
+                  <h3 className="font-display text-xl leading-tight mt-1">{doc.title}</h3>
+                  <p className="font-serif text-[0.95rem] leading-relaxed text-ink-600 mt-1">{doc.description}</p>
+                  <p className="text-[11px] text-ink-500 mt-1.5">{doc.author}</p>
+                </li>
               ))}
-            </div>
+            </ol>
           )}
-        </div>
-
-        {/* Rodapé */}
-        <div className="px-6 py-3 border-t border-[#E7E0D3] bg-[#F4EFE6] flex justify-between items-center text-xs text-[#57534E] font-sans">
-          <span>Acervo cartográfico consolidado pelo Laboratório SIG FAPESP / PUC-Campinas</span>
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-md bg-[#FAF7F2] hover:bg-[#EFE9DF] text-[#1C1917] font-bold border border-[#E7E0D3] transition-colors"
-          >
-            Fechar Acervo
-          </button>
         </div>
       </div>
 
-      {/* Modal de Detalhe da Prancha Cartográfica */}
       {selectedItem && (
-        <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-[#1C1917]/70 backdrop-blur-xs animate-fade-in font-serif">
-          <div className="bg-[#FAF7F2] border border-[#E7E0D3] rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 animate-scale-up font-sans">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="px-2 py-0.5 rounded bg-[#FEF3C7] text-[#78350F] text-xs font-mono font-bold border border-[#F59E0B]/30">
-                  {selectedItem.code}
-                </span>
-                <h3 className="text-lg font-serif font-bold text-[#1C1917] mt-1">{selectedItem.title}</h3>
+        <div className="fixed inset-0 z-[2100] flex items-stretch md:items-center justify-center md:p-6 bg-ink/80 animate-fade-in" onClick={() => setSelectedItem(null)}>
+          <div className="w-full max-w-5xl bg-paper md:border md:border-ink/40 shadow-2xl overflow-hidden grid md:grid-cols-[1fr_20rem] md:max-h-[88vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white flex items-center justify-center min-h-[40vh] p-2">
+              {selectedItem.preview ? (
+                <img src={assetUrl(webImage(selectedItem.preview, 1600))} alt={selectedItem.title} className="max-h-[80vh] w-auto max-w-full object-contain" />
+              ) : (
+                <div className="w-full aspect-[1189/841]"><SheetThumb map={selectedItem} /></div>
+              )}
+            </div>
+            <div className="p-5 md:p-6 border-t md:border-t-0 md:border-l border-ink/20 overflow-y-auto custom-scrollbar">
+              <div className="flex items-start justify-between gap-2">
+                <span className="caps text-[9px] text-signal">{selectedItem.code.replace('Mapa_', 'Prancha ')} · {selectedItem.category}</span>
+                <button onClick={() => setSelectedItem(null)} className="text-ink-500 hover:text-ink -m-1 p-1" aria-label="Voltar às pranchas">
+                  <Icon name="close" className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="text-[#78716C] hover:text-[#1C1917] p-1 text-xl"
-              >
-                &times;
-              </button>
-            </div>
-
-            <div className="space-y-2 text-xs text-[#44403C]">
-              <div className="flex items-center gap-4 bg-[#F4EFE6] p-2.5 rounded-md border border-[#E7E0D3] font-medium">
-                <div>Escala: <strong className="text-[#1C1917] font-serif">{selectedItem.scale}</strong></div>
-                <div>Categoria: <strong className="text-[#1C1917] font-serif">{selectedItem.category}</strong></div>
-              </div>
-              <p className="leading-relaxed text-[#57534E]">{selectedItem.description}</p>
-            </div>
-
-            <div className="p-3 bg-[#FEF3C7]/60 border border-[#F59E0B]/30 rounded-md text-[#78350F] text-[11px] leading-snug">
-              <strong>Nota do Acervo:</strong> Os arquivos originais em alta definição (PDF/PNG 300 DPI) estão armazenados no repositório de dados GIS do projeto FAPESP (pasta <code>06_MAPAS_FINAIS</code>).
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#E7E0D3]">
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="px-4 py-2 text-xs font-bold text-[#44403C] bg-[#F4EFE6] hover:bg-[#EFE9DF] border border-[#E7E0D3] rounded-md"
-              >
-                Voltar
-              </button>
+              <h3 className="font-display text-2xl leading-tight mt-1">{selectedItem.title}</h3>
+              <p className="font-serif text-[0.95rem] leading-relaxed text-ink-700 mt-3">{selectedItem.description}</p>
+              <dl className="border-t border-ink/20 mt-4 text-[12px]">
+                <div className="grid grid-cols-[5rem_1fr] gap-3 py-1.5 border-b border-ink/10">
+                  <dt className="caps text-[9px] text-ink-500 pt-0.5">Escala</dt>
+                  <dd className="text-ink-700">{selectedItem.scale}</dd>
+                </div>
+                <div className="grid grid-cols-[5rem_1fr] gap-3 py-1.5 border-b border-ink/10">
+                  <dt className="caps text-[9px] text-ink-500 pt-0.5">Arquivo</dt>
+                  <dd className="text-ink-700 break-all">{selectedItem.pdf}</dd>
+                </div>
+              </dl>
+              {selectedItem.preview && (
+                <a href={assetUrl(selectedItem.preview)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-semibold ink-link text-ink-700 mt-4">
+                  Abrir em alta resolução <Icon name="arrowRight" className="w-3 h-3" />
+                </a>
+              )}
+              <p className="font-serif text-xs text-ink-500 mt-4 leading-relaxed">
+                Os originais em PDF e PNG a 300 dpi ficam no repositório de dados do projeto (pasta 06_MAPAS_FINAIS).
+              </p>
             </div>
           </div>
         </div>

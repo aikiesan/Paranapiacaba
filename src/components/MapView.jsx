@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, ImageOverlay, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { LAYERS } from '../config/layers';
@@ -6,8 +6,9 @@ import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '../utils/mapBounds';
 import { PALETTE, SLOPE_CLASSES, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
-import { RasterControl } from './RasterControl';
+import { ReferenceOverlays } from './RasterControl';
 import { assetUrl } from '../utils/assetUrl';
+import { parseShareHash, buildShareHash } from '../utils/shareState';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster';
@@ -15,48 +16,47 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import { BASEMAPS } from './BasemapSelector';
 
-// Componente auxiliar para sincronização da posição do mapa no URL hash (#zoom/lat/lng)
-function MapHashHandler() {
-  const map = useMap();
+// Último enquadramento visto, para reabrir o mapa onde o usuário estava ao
+// voltar de outra aba do portal (o hash é limpo ao sair do mapa).
+let lastView = null;
 
+// Sincroniza no hash da URL o enquadramento, as camadas ligadas e o basemap
+// (formato em utils/shareState.js), para que qualquer vista seja um link.
+function MapHashHandler({ activeLayers, selectedBasemap }) {
+  const map = useMap();
+  // Lido durante o render, antes de qualquer efeito: no modo estrito do React
+  // o efeito de limpeza abaixo roda entre as duas montagens e apagaria o link.
+  const initialView = useRef(parseShareHash(window.location.hash).view || lastView);
+
+  // Posição inicial: a do link (ou da última visita) ou, sem ela, o corredor inteiro.
   useEffect(() => {
-    // Tenta carregar a posição inicial a partir do hash da URL
-    const hash = window.location.hash;
-    let restored = false;
-    if (hash && hash.startsWith('#')) {
-      const parts = hash.substring(1).split('/');
-      if (parts.length === 3) {
-        const zoom = parseFloat(parts[0]);
-        const lat = parseFloat(parts[1]);
-        const lng = parseFloat(parts[2]);
-        if (!isNaN(zoom) && !isNaN(lat) && !isNaN(lng)) {
-          map.setView([lat, lng], zoom);
-          restored = true;
-        }
-      }
-    }
-    // Sem link compartilhado: enquadra o corredor Jundiaí–Santos (visão geral)
-    if (!restored) {
+    const view = initialView.current;
+    if (view) {
+      map.setView([view.lat, view.lng], view.zoom, { animate: false });
+    } else {
       map.fitBounds(CORRIDOR_BOUNDS, { padding: [30, 30] });
     }
   }, [map]);
 
-  // Atualiza a URL quando o mapa para de se mover
   useEffect(() => {
-    const handleMoveEnd = () => {
+    const writeHash = () => {
       const center = map.getCenter();
-      const zoom = map.getZoom();
-      const lat = center.lat.toFixed(5);
-      const lng = center.lng.toFixed(5);
-      const hash = `#${zoom}/${lat}/${lng}`;
-      window.history.replaceState(null, null, hash);
+      lastView = { zoom: map.getZoom(), lat: center.lat, lng: center.lng };
+      const hash = buildShareHash(lastView, { layers: activeLayers, basemap: selectedBasemap });
+      window.history.replaceState(null, '', hash);
     };
 
-    map.on('moveend', handleMoveEnd);
+    writeHash();
+    map.on('moveend', writeHash);
     return () => {
-      map.off('moveend', handleMoveEnd);
+      map.off('moveend', writeHash);
     };
-  }, [map]);
+  }, [map, activeLayers, selectedBasemap]);
+
+  // Ao sair do mapa (outra aba do portal), o hash deixa de descrever a tela.
+  useEffect(() => () => {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }, []);
 
   return null;
 }
@@ -380,6 +380,16 @@ function FlyToLayer({ focusLayer }) {
   return null;
 }
 
+// Enquadra o mapa num retângulo pedido pelo painel (ex.: "Enquadrar no mapa"
+// de uma carta histórica). O `ts` faz cada clique valer como novo pedido.
+function FitToBounds({ focusBounds }) {
+  const map = useMap();
+  useEffect(() => {
+    if (focusBounds?.bounds) map.fitBounds(focusBounds.bounds, { padding: [24, 24] });
+  }, [focusBounds, map]);
+  return null;
+}
+
 // Enquadra o mapa na extensão somada das camadas de uma predefinição temática.
 // Mede a partir dos próprios GeoJSONs (e não das camadas já desenhadas) porque
 // uma camada só é renderizada acima do seu `minZoom` — do contrário, aproximar
@@ -444,6 +454,9 @@ export function MapView({
   focusFeature,
   focusLayer,
   focusPreset,
+  focusBounds,
+  manifests,
+  overlays,
   buildingSymbologyMode,
   children
 }) {
@@ -466,7 +479,7 @@ export function MapView({
         zoomDelta={0.25}
         wheelPxPerZoomLevel={90}
       >
-        <MapHashHandler />
+        <MapHashHandler activeLayers={activeLayers} selectedBasemap={selectedBasemap} />
 
         {currentBasemap.type === 'image' ? (
           <ImageOverlay
@@ -491,7 +504,7 @@ export function MapView({
 
         <MapToolbar />
 
-        <RasterControl />
+        <ReferenceOverlays manifests={manifests} overlays={overlays} />
 
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
 
@@ -500,6 +513,7 @@ export function MapView({
         <FlyToLayer focusLayer={focusLayer} />
 
         <FitToPreset focusPreset={focusPreset} />
+        <FitToBounds focusBounds={focusBounds} />
 
         {LAYERS.map((layer) => {
           const isVisible = activeLayers.has(layer.id) && currentZoom >= layer.minZoom;

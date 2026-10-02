@@ -1,10 +1,12 @@
 /**
  * Catálogo das Pranchas Cartográficas A0 e Documentos Técnicos do Projeto FAPESP / PUC-Campinas
  * Fonte: 1_GIS_UNESCO_PARANAPIACABA/06_MAPAS_FINAIS/08_EXPORTADOS_PDF_TIFF
+ * `preview`: exportação publicada em public/acervo (versões leves em acervo/_web).
  */
 export const CARTOGRAPHIC_MAPS = [
   {
     id: "S1",
+    preview: "acervo/campo/mapa_s1_sintese_geral_unesco.png",
     code: "Mapa_S1",
     title: "Síntese do Sítio UNESCO",
     category: "Síntese & UNESCO",
@@ -19,7 +21,7 @@ export const CARTOGRAPHIC_MAPS = [
     title: "Patrimônio Cultural Regional",
     category: "Patrimônio",
     scale: "1:25.000 (A0)",
-    description: "Distribuição regional dos bens de valor histórico, industrial e arquitetônico tombados pelo IPHAN, CONDEPHAAT e COMPACT.",
+    description: "Distribuição regional dos bens de valor histórico, industrial e arquitetônico tombados pelo IPHAN, CONDEPHAAT e COMDEPHAAPASA.",
     pdf: "Mapa_S2_Patrimonio_Cultural_A0.pdf",
     png: "Mapa_S2_Patrimonio_Cultural_A0.png"
   },
@@ -45,6 +47,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "S5",
+    preview: "acervo/campo/mapa_s5_densidade_demografica_regional.png",
     code: "Mapa_S5",
     title: "Densidade Demográfica e Censo 2022",
     category: "Socioeconômico",
@@ -65,6 +68,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "M1",
+    preview: "acervo/ferrovia/mapa_p6_sistema_ferroviario_funicular.png",
     code: "Mapa_M1",
     title: "Sistema Ferroviário Histórico e Funicular",
     category: "Mobilidade",
@@ -75,6 +79,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "M2",
+    preview: "acervo/campo/mapa_m2_acessibilidade_linha_turquesa.png",
     code: "Mapa_M2",
     title: "Corredor Linha 10-Turquesa e Conexão SPR",
     category: "Mobilidade",
@@ -85,6 +90,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "R2",
+    preview: "acervo/trilhas/mapa_r2_trilhas_caminhos_final.png",
     code: "Mapa_R2",
     title: "Rede Integral de Trilhas e Caminhos",
     category: "Trilhas & Turismo",
@@ -125,6 +131,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "V1",
+    preview: "acervo/vila/Mapa_V1_Bens_Tombados_Vila_A0.png",
     code: "Mapa_V1",
     title: "Bens Tombados da Vila de Paranapiacaba",
     category: "Patrimônio",
@@ -135,6 +142,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "V3",
+    preview: "acervo/campo/Mapa_V3_Territorios_Culturais_A0.png",
     code: "Mapa_V3",
     title: "Territórios Culturais e Memória Operária",
     category: "Patrimônio",
@@ -165,6 +173,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "B3",
+    preview: "acervo/campo/mapa_b3_altimetria_detalhado_final.png",
     code: "Mapa_B3",
     title: "Altimetria e Modelo Digital de Elevação",
     category: "Meio Ambiente",
@@ -185,6 +194,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "P1",
+    preview: "acervo/campo/mapa_p1_setorizacao_mzpa_final.png",
     code: "Mapa_P1",
     title: "Setorização da Macrozona de Proteção Ambiental (MZPA)",
     category: "Zoneamento & Gestão",
@@ -195,6 +205,7 @@ export const CARTOGRAPHIC_MAPS = [
   },
   {
     id: "T1",
+    preview: "acervo/trilhas/mapa_t1_infraestrutura_turismo_corrigido.png",
     code: "Mapa_T1",
     title: "Circuito de Atrações Turísticas e Culturais",
     category: "Trilhas & Turismo",

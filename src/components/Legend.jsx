@@ -13,16 +13,16 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
   const isDeclividadeActive = activeLayers.has('declividade');
 
   return (
-    <div className="pointer-events-auto w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-slate-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
+    <div className="pointer-events-auto w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-stone-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
       {/* Cabeçalho com toggle */}
       <div 
-        className="flex items-center justify-between px-3 py-2 bg-slate-50 cursor-pointer border-b border-slate-200 select-none"
+        className="flex items-center justify-between px-3 py-2 bg-stone-50 cursor-pointer border-b border-stone-200 select-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-[10px] font-bold text-slate-700 tracking-wider uppercase flex items-center gap-1">
+        <span className="text-[10px] font-bold text-stone-700 tracking-wider uppercase flex items-center gap-1">
           <span>🎨</span> Legenda IBGE
         </span>
-        <button type="button" aria-label={isOpen ? 'Recolher legenda' : 'Expandir legenda'} className="text-slate-400 hover:text-slate-750 focus:outline-none transition-transform duration-200">
+        <button type="button" aria-label={isOpen ? 'Recolher legenda' : 'Expandir legenda'} className="text-stone-400 hover:text-stone-700 focus:outline-none transition-transform duration-200">
           <svg
             className={`w-4 h-4 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
@@ -38,7 +38,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
       {isOpen && (
         <div className="p-3 space-y-2.5 max-h-[260px] overflow-y-auto custom-scrollbar">
           {activeList.length === 0 ? (
-            <div className="text-xs italic text-slate-400 py-1 text-center">
+            <div className="text-xs italic text-stone-400 py-1 text-center">
               Nenhuma camada ativa
             </div>
           ) : (
@@ -50,7 +50,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                     {/* Símbolo de acordo com o tipo */}
                     {layer.type === 'point' && (
                       <div 
-                        className="w-3 h-3 rounded-full flex-shrink-0 border border-slate-900/10 shadow-sm"
+                        className="w-3 h-3 rounded-full flex-shrink-0 border border-stone-900/10 shadow-sm"
                         style={{ backgroundColor: layer.color }}
                       />
                     )}
@@ -74,7 +74,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                         }}
                       />
                     )}
-                    <span className="text-xs text-slate-600 font-semibold truncate" title={layer.label}>
+                    <span className="text-xs text-stone-600 font-semibold truncate" title={layer.label}>
                       {layer.label}
                     </span>
                   </div>
@@ -83,15 +83,15 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
 
               {/* Sub-legenda das Classes de Declividade */}
               {isDeclividadeActive && (
-                <div className="mt-3 pt-2 border-t border-slate-200 space-y-1.5">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="mt-3 pt-2 border-t border-stone-200 space-y-1.5">
+                  <div className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
                     Declividade (5 classes)
                   </div>
                   <div className="space-y-1 text-[10px]">
                     {SLOPE_CLASSES.map(({ label, color }) => (
                       <div key={label} className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-sm border border-slate-700/20" style={{ backgroundColor: color }} />
-                        <span className="text-slate-600 truncate">{label}</span>
+                        <span className="w-2.5 h-2.5 rounded-sm border border-stone-700/20" style={{ backgroundColor: color }} />
+                        <span className="text-stone-600 truncate">{label}</span>
                       </div>
                     ))}
                   </div>
@@ -100,8 +100,8 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
 
               {/* Sub-legenda dinâmica de Edificações se a camada estiver ativa */}
               {isEdificacoesActive && (
-                <div className="mt-3 pt-2 border-t border-slate-200 space-y-1.5">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="mt-3 pt-2 border-t border-stone-200 space-y-1.5">
+                  <div className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
                     {buildingSymbologyMode === 'uso' ? 'Uso do Solo (1:1.000 IBGE)' : 'Conservação (Semáforo IBGE)'}
                   </div>
                   {buildingSymbologyMode === 'uso' ? (
@@ -116,8 +116,8 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                         ['Sem dados', PALETTE.uso_sem_dados],
                       ].map(([label, color]) => (
                         <div key={label} className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-sm border border-slate-700/40" style={{ backgroundColor: color }} />
-                          <span className="text-slate-600 truncate">{label}</span>
+                          <span className="w-2.5 h-2.5 rounded-sm border border-stone-700/40" style={{ backgroundColor: color }} />
+                          <span className="text-stone-600 truncate">{label}</span>
                         </div>
                       ))}
                     </div>
@@ -131,7 +131,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                       ].map(([label, style]) => (
                         <div key={label} className="flex items-center gap-1.5">
                           <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: style.fill, border: `1px solid ${style.stroke}` }} />
-                          <span className="text-slate-600 truncate">{label}</span>
+                          <span className="text-stone-600 truncate">{label}</span>
                         </div>
                       ))}
                     </div>

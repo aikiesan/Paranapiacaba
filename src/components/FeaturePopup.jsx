@@ -7,7 +7,7 @@ import React from 'react';
  */
 export function FeaturePopup({ feature }) {
   if (!feature || !feature.properties) {
-    return <div className="text-slate-400 text-xs p-1">Sem atributos disponíveis.</div>;
+    return <div className="text-stone-400 text-xs p-1">Sem atributos disponíveis.</div>;
   }
 
   const props = feature.properties;
@@ -32,22 +32,22 @@ export function FeaturePopup({ feature }) {
   });
 
   return (
-    <div className="min-w-[180px] max-w-[280px] font-sans text-slate-800 p-1">
+    <div className="min-w-[180px] max-w-[280px] font-sans text-stone-800 p-1">
       {titleValue && (
-        <div className="border-b border-slate-200 pb-1.5 mb-2 font-bold text-sm text-slate-900 leading-tight">
+        <div className="border-b border-stone-200 pb-1.5 mb-2 font-bold text-sm text-stone-900 leading-tight">
           {titleValue}
         </div>
       )}
       {filteredProperties.length === 0 ? (
-        <div className="text-slate-500 text-xs italic">Sem informações adicionais.</div>
+        <div className="text-stone-500 text-xs italic">Sem informações adicionais.</div>
       ) : (
         <div className="space-y-1.5 max-h-[200px] overflow-y-auto pr-1">
           {filteredProperties.map(([key, val]) => (
             <div key={key} className="flex flex-col text-xs">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">
+              <span className="text-[10px] uppercase tracking-wider text-stone-400 font-medium">
                 {key.replace(/_/g, ' ')}
               </span>
-              <span className="font-semibold text-slate-700 break-words">
+              <span className="font-semibold text-stone-700 break-words">
                 {String(val)}
               </span>
             </div>

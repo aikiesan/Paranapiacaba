@@ -1,132 +1,134 @@
 import React, { useState } from 'react';
+import { Icon, MapButton, ReaderNote, SheetHeader, SheetPage, SheetSection } from './archive';
+
+const CATEGORIES = [
+  { name: 'Oficiais da Subprefeitura', count: 12, km: 68, color: '#2D4A3E', desc: 'Trilhas manejadas e monitoradas pela Subprefeitura de Paranapiacaba.' },
+  { name: 'Registradas (Wikiloc)', count: 18, km: 412, color: '#A0683A', desc: 'Percursos de montanhismo e travessias gravados por usuários.' },
+  { name: 'Técnicas da ferrovia', count: 8, km: 95, color: '#52463B', desc: 'Servidões de manutenção da via, das linhas de energia e dos aquedutos.' },
+  { name: 'Caminhos históricos', count: 7, km: 218, color: '#A3321F', desc: 'Rotas antigas de tropeiros e ligações entre municípios, como o Caminho do Sal.' },
+];
+
+const TRAILS = [
+  { name: 'Trilha dos Mirantes e Nascentes', km: 4.8, type: 'Circuito monitorado', difficulty: 'Fácil', category: 'Oficiais da Subprefeitura', desc: 'Percurso oficial dentro do Parque Natural Municipal Nascentes de Paranapiacaba, com mirantes.' },
+  { name: 'Trilha da Pontinha e Poço Formoso', km: 6.2, type: 'Circuito monitorado', difficulty: 'Moderada', category: 'Oficiais da Subprefeitura', desc: 'Percurso guiado pela Mata Atlântica até poços naturais.' },
+  { name: 'Caminho do Funicular e Grota Funda', km: 14.2, type: 'Servidão técnica', difficulty: 'Interditada', category: 'Técnicas da ferrovia', desc: 'Traçado dos planos inclinados da São Paulo Railway. Sítio histórico industrial sob interdição.' },
+  { name: 'Servidão dos aquedutos e caixas d’água', km: 8.5, type: 'Manutenção hidráulica', difficulty: 'Difícil', category: 'Técnicas da ferrovia', desc: 'Acesso técnico aos reservatórios e encanamentos de ferro instalados pela companhia.' },
+  { name: 'Caminho do Sal', km: 53.5, type: 'Caminho histórico', difficulty: 'Moderada', category: 'Caminhos históricos', desc: 'Rota antiga de tropeiros entre a Baixada Santista, Paranapiacaba e Ribeirão Pires.' },
+  { name: 'Travessia Mogi–Bertioga (Quatinga)', km: 28.1, type: 'Travessia', difficulty: 'Difícil', category: 'Registradas (Wikiloc)', desc: 'Percurso de crista ao longo do divisor de águas da Serra do Mar.' },
+];
+
+const DIFFICULTY_STYLE = {
+  'Fácil': 'text-forest-700 border-forest-700',
+  'Moderada': 'text-rust-600 border-rust-600',
+  'Difícil': 'text-signal border-signal',
+  'Interditada': 'text-paper bg-ink border-ink',
+};
+
+// Cartão de trilha à maneira de um bilhete de trem (Edmondson): corpo e canhoto.
+function TrailTicket({ trail, color, onMap }) {
+  return (
+    <article className="flex bg-paper border border-ink/30 hover:border-ink/70 transition-colors">
+      <div className="flex-1 p-4 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <span className="caps text-[9px] text-ink-500 truncate">{trail.type}</span>
+          <span className={`caps text-[9px] px-1.5 py-0.5 border ${DIFFICULTY_STYLE[trail.difficulty]}`}>{trail.difficulty}</span>
+        </div>
+        <h3 className="font-display text-xl leading-tight mt-1.5">{trail.name}</h3>
+        <p className="font-serif text-[0.92rem] leading-relaxed text-ink-600 mt-1.5">{trail.desc}</p>
+        <button onClick={onMap} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-forest-700 hover:text-forest-800">
+          <Icon name="map" className="w-3.5 h-3.5" /> Ver no mapa
+        </button>
+      </div>
+      <div className="w-20 flex-shrink-0 border-l-2 border-dashed border-ink/30 flex flex-col items-center justify-center text-center px-2" style={{ backgroundColor: `${color}12` }}>
+        <span className="font-display text-3xl leading-none tabular">{trail.km.toLocaleString('pt-BR')}</span>
+        <span className="caps text-[9px] text-ink-500 mt-1">km</span>
+        <span className="w-6 h-[3px] mt-3" style={{ backgroundColor: color }} />
+      </div>
+    </article>
+  );
+}
 
 export function TrailsPanel({ onNavigateToMapWithPreset }) {
-  const [selectedRegion, setSelectedRegion] = useState('Todas');
-  const [difficultyFilter, setDifficultyFilter] = useState('Todas');
+  const [category, setCategory] = useState('Todas');
+  const [difficulty, setDifficulty] = useState('Todas');
+  const openMap = () => onNavigateToMapWithPreset('trilhas_serra');
 
-  const trailCategories = [
-    { name: 'Oficiais Subprefeitura', count: 12, km: 68, color: 'border-[#15803D] text-[#15803D] bg-[#15803D]/10', desc: 'Trilhas manejadas e monitoradas pela Subprefeitura de Paranapiacaba.' },
-    { name: 'Registradas (Wikiloc)', count: 18, km: 412, color: 'border-[#EAB308] text-[#78350F] bg-[#FEF3C7]', desc: 'Mapeamento colaborativo de montanhismo e travessias registradas por usuários.' },
-    { name: 'Técnicas da Ferrovia', count: 8, km: 95, color: 'border-[#7E22CE] text-[#7E22CE] bg-[#7E22CE]/10', desc: 'Servidão de manutenção da via permanente, linhas de energia e aquedutos ingleses.' },
-    { name: 'Caminhos Históricos', count: 7, km: 218, color: 'border-[#D97706] text-[#D97706] bg-[#D97706]/10', desc: 'Rotas históricas de tropeiros e conexões intermunicipais (ex: Caminho do Sal).' },
-  ];
-
-  const highlightedTrails = [
-    { name: 'Trilha dos Mirantes & Nascentes', km: 4.8, type: 'Circuito Monitorado', difficulty: 'Fácil', category: 'Oficiais Subprefeitura', desc: 'Percurso oficial monitorado dentro do Parque Natural Municipal Nascentes de Paranapiacaba com mirantes históricos.' },
-    { name: 'Trilha da Pontinha & Poço Formoso', km: 6.2, type: 'Circuito Monitorado', difficulty: 'Moderada', category: 'Oficiais Subprefeitura', desc: 'Percurso guiado pela vegetação primária da Mata Atlântica até poços naturais de banho.' },
-    { name: 'Caminho do Funicular & Grota Funda', km: 14.2, type: 'Servidão Técnica', difficulty: 'Interdito', category: 'Técnicas da Ferrovia', desc: 'Traçado dos 5 Planos Inclinados da São Paulo Railway (1867) — Sítio Histórico Industrial sob Interdição.' },
-    { name: 'Servidão de Aquedutos & Caixas d\'Água', km: 8.5, type: 'Manutenção Hidráulica', difficulty: 'Difícil', category: 'Técnicas da Ferrovia', desc: 'Acesso técnico aos reservatórios e encanamentos de ferro fundido instalados pelos ingleses.' },
-    { name: 'Caminho do Sal (Zanzalá ao Pilar)', km: 53.5, type: 'Caminho Histórico', difficulty: 'Moderada', category: 'Caminhos Históricos', desc: 'Rota quinhentista de tropeiros ligando a Baixada Santista e Paranapiacaba a Ribeirão Pires.' },
-    { name: 'Travessia Mogi-Bertioga (Quatinga)', km: 28.1, type: 'Travessia Wikiloc', difficulty: 'Difícil', category: 'Registradas (Wikiloc)', desc: 'Percurso de crista registrado no Wikiloc ao longo do divisor de águas da Serra do Mar.' },
-  ];
-
-  const filteredTrails = highlightedTrails.filter((t) => {
-    const matchReg = selectedRegion === 'Todas' || t.region.includes(selectedRegion);
-    const matchDiff = difficultyFilter === 'Todas' || t.difficulty === difficultyFilter;
-    return matchReg && matchDiff;
-  });
+  const filtered = TRAILS.filter((t) =>
+    (category === 'Todas' || t.category === category) && (difficulty === 'Todas' || t.difficulty === difficulty));
+  const totalTracks = CATEGORIES.reduce((sum, c) => sum + c.count, 0);
+  const totalKm = CATEGORIES.reduce((sum, c) => sum + c.km, 0);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAF7F2] text-[#1C1917] p-6 md:p-8 space-y-8 custom-scrollbar font-serif">
-      {/* Cabeçalho */}
-      <div className="max-w-5xl mx-auto space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#2D4A3E]/10 text-[#2D4A3E] text-xs font-sans font-bold uppercase tracking-widest border border-[#2D4A3E]/20">
-          <span>🥾 Guia & Atlas de Campo FAPESP</span>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-[#1C1917] font-serif">
-          Rede de Trilhas & Patrimônio Natural da Serra do Mar
-        </h1>
-        <p className="text-sm md:text-base font-sans text-[#44403C] leading-relaxed text-justify max-w-3xl">
-          Mapeamento canônico consolidado a partir de <strong className="text-[#1C1917]">45 tracks de GPS (KML/Wikiloc)</strong> e 1.329 Pontos de Interesse (POIs). Totaliza <span className="text-[#2D4A3E] font-semibold">~780 km de percursos</span> catalogados no entorno de Paranapiacaba e nos limites dos Parques da Serra do Mar.
-        </p>
-      </div>
+    <SheetPage sheetId="trilhas">
+      <SheetHeader
+        sheetId="trilhas"
+        kicker="Paisagem e circulação"
+        title="Caminhos da Serra"
+        lede="Antes e depois do trem, a Serra foi atravessada a pé: por tropeiros, por ferroviários em serviço e hoje por visitantes. Estas são as trilhas mapeadas pelo projeto."
+        meta={[
+          { label: 'Percursos', value: totalTracks },
+          { label: 'Extensão', value: `≈ ${totalKm} km` },
+          { label: 'Categorias', value: CATEGORIES.length },
+        ]}
+      >
+        <MapButton onClick={openMap}>Ver as trilhas no mapa</MapButton>
+      </SheetHeader>
 
-      {/* As 4 Categorias Oficiais de Trilhas */}
-      <div className="max-w-5xl mx-auto space-y-4 font-sans">
-        <h2 className="text-xs font-bold text-[#78716C] uppercase tracking-widest font-serif">
-          Categorias de Trilhas & Servidões Técnicas (Diretriz FAPESP 2026)
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {trailCategories.map((cat, i) => (
-            <div
-              key={i}
-              onClick={() => setSelectedRegion(selectedRegion === cat.name ? 'Todas' : cat.name)}
-              className={`p-4 rounded-xl border cursor-pointer transition-all ${cat.color} ${
-                selectedRegion === cat.name ? 'ring-2 ring-[#78350F] shadow-sm' : 'opacity-90 hover:opacity-100'
-              }`}
-            >
-              <div className="text-xs font-bold truncate">{cat.name}</div>
-              <div className="text-2xl font-black font-serif mt-1">{cat.count} <span className="text-xs font-sans font-normal">percursos</span></div>
-              <div className="text-[11px] text-[#57534E] font-mono mt-0.5">{cat.km} km totais</div>
-              <p className="text-[11px] text-[#57534E] mt-2 line-clamp-2 leading-tight">{cat.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Filtros e Lista de Trilhas Principais */}
-      <div className="max-w-5xl mx-auto space-y-6 font-sans">
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-[#F4EFE6] p-4 rounded-xl border border-[#E7E0D3]">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#57534E] uppercase">Filtrar Dificuldade:</span>
-            {['Todas', 'Fácil', 'Moderada', 'Difícil'].map((d) => (
+      <SheetSection no="1" title="Quatro tipos de caminho" intro="Toque em um tipo para filtrar a lista abaixo.">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-ink/20 border border-ink/20">
+          {CATEGORIES.map((cat) => {
+            const isActive = category === cat.name;
+            return (
               <button
-                key={d}
-                onClick={() => setDifficultyFilter(d)}
-                className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
-                  difficultyFilter === d
-                    ? 'bg-[#2D4A3E] text-[#FAF7F2]'
-                    : 'bg-[#FAF7F2] text-[#57534E] hover:bg-[#EFE9DF] border border-[#E7E0D3]'
-                }`}
+                key={cat.name}
+                onClick={() => setCategory(isActive ? 'Todas' : cat.name)}
+                aria-pressed={isActive}
+                className={`text-left p-4 transition-colors ${isActive ? 'bg-ink text-paper' : 'bg-paper hover:bg-paper-dark'}`}
               >
-                {d}
+                <span className="block w-8 h-[3px] mb-3" style={{ backgroundColor: isActive ? '#FAF7F2' : cat.color }} />
+                <span className="font-display text-lg leading-tight block">{cat.name}</span>
+                <span className={`caps text-[9px] block mt-1 tabular ${isActive ? 'text-paper/70' : 'text-ink-500'}`}>{cat.count} percursos · {cat.km} km</span>
+                <span className={`font-serif text-sm leading-snug block mt-2 ${isActive ? 'text-paper/85' : 'text-ink-600'}`}>{cat.desc}</span>
               </button>
+            );
+          })}
+        </div>
+      </SheetSection>
+
+      <SheetSection no="2" title="Percursos em destaque">
+        <div className="flex flex-wrap items-center gap-1.5 mb-5">
+          <span className="caps text-[9px] text-ink-500 mr-2">Dificuldade</span>
+          {['Todas', 'Fácil', 'Moderada', 'Difícil', 'Interditada'].map((d) => (
+            <button
+              key={d}
+              onClick={() => setDifficulty(d)}
+              aria-pressed={difficulty === d}
+              className={`px-3 py-1 text-xs border transition-colors ${difficulty === d ? 'bg-ink text-paper border-ink' : 'border-ink/25 hover:border-ink/60'}`}
+            >
+              {d}
+            </button>
+          ))}
+          {(category !== 'Todas' || difficulty !== 'Todas') && (
+            <button onClick={() => { setCategory('Todas'); setDifficulty('Todas'); }} className="ml-2 text-xs ink-link text-ink-600">
+              Limpar filtros
+            </button>
+          )}
+        </div>
+
+        {filtered.length === 0 ? (
+          <p className="font-serif text-ink-600 border border-dashed border-ink/30 p-6 text-center">Nenhum percurso em destaque com esses filtros. O mapa mostra todos os registrados.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            {filtered.map((t) => (
+              <TrailTicket key={t.name} trail={t} color={CATEGORIES.find((c) => c.name === t.category)?.color} onMap={openMap} />
             ))}
           </div>
+        )}
 
-          <button
-            onClick={() => onNavigateToMapWithPreset('prancha_trilhas_wikiloc')}
-            className="px-4 py-2 rounded-md bg-[#2D4A3E] hover:bg-[#1E3A2F] text-[#FAF7F2] font-bold text-xs shadow-xs transition-all flex items-center gap-1.5"
-          >
-            <span>🗺️ Visualizar no Mapa SIG</span>
-          </button>
-        </div>
-
-        {/* Cards de Trilhas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredTrails.map((t, idx) => (
-            <div key={idx} className="bg-[#F4EFE6] border border-[#E7E0D3] rounded-xl p-5 space-y-3 hover:border-[#2D4A3E] transition-all shadow-xs">
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-[#FAF7F2] text-[#2D4A3E] border border-[#E7E0D3]">
-                    {t.type} · {t.km} km
-                  </span>
-                  <h3 className="text-base font-serif font-bold text-[#1C1917] mt-1.5">{t.name}</h3>
-                </div>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                  t.difficulty === 'Fácil' ? 'bg-[#E6F4EA] text-[#1E3A2F] border border-[#A8DABC]' :
-                  t.difficulty === 'Moderada' ? 'bg-[#FEF3C7] text-[#78350F] border border-[#F59E0B]/30' :
-                  'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'
-                }`}>
-                  {t.difficulty}
-                </span>
-              </div>
-
-              <p className="text-xs text-[#57534E] leading-relaxed">{t.desc}</p>
-
-              <div className="pt-2 border-t border-[#E7E0D3] flex items-center justify-between text-[11px] text-[#78716C] font-medium">
-                <span>Cluster: {t.region}</span>
-                <button
-                  onClick={() => onNavigateToMapWithPreset('prancha_trilhas_wikiloc')}
-                  className="text-[#2D4A3E] font-bold hover:underline"
-                >
-                  Ver no Mapa &rarr;
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+        <ReaderNote title="Antes de sair">
+          Informe-se no centro de visitantes de Paranapiacaba sobre as condições de cada trilha: algumas só podem ser percorridas com monitor credenciado, e o leito do funicular é área interditada. A Serra tem neblina e chuva frequentes.
+        </ReaderNote>
+      </SheetSection>
+    </SheetPage>
   );
 }
