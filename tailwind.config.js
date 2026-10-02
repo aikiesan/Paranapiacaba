@@ -6,7 +6,27 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Archivo', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+        serif: ['"Source Serif 4"', 'Georgia', 'Cambria', 'serif'],
+        display: ['"Old Standard TT"', 'Georgia', 'serif'],
+      },
       colors: {
+        // Tinta das pranchas da São Paulo Railway (nanquim envelhecido) e o
+        // "lápis vermelho" das cotas e anotações dos desenhos do arquivo.
+        ink: {
+          DEFAULT: '#231B15',
+          700: '#3B3028',
+          600: '#52463B',
+          500: '#6B5E52',
+          400: '#8C7F71',
+          300: '#B3A797',
+        },
+        signal: {
+          DEFAULT: '#A3321F',
+          dark: '#7E2416',
+          light: '#F3DDD3',
+        },
         // Identidade "acervo histórico": neutros quentes (stone, do Tailwind) +
         // verde-mata ferroviário como cor de estado/ação, a partir do #2D4A3E
         // usado na página inicial, e o marrom-ferrugem #78350F das abas.
@@ -38,6 +58,8 @@ export default {
           DEFAULT: '#FAF7F2',
           dark: '#F5F0E6',
           line: '#E7E0D3',
+          deep: '#EDE4D3',
+          rule: '#CFC3AE',
         },
       },
     },

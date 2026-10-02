@@ -11,8 +11,8 @@ body,
   width: 100%;
   overflow: hidden;
   background-color: #FAF7F2; /* papel */
-  color: #1C1917; /* stone-900 */
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #231B15; /* tinta */
+  font-family: Archivo, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* Remove o flash cinza ao tocar em botões no mobile */
   -webkit-tap-highlight-color: transparent;
 }
@@ -239,5 +239,108 @@ input[type="range"]::-webkit-slider-thumb {
   /* Atribuição do basemap mais legível em telas pequenas */
   .leaflet-control-attribution {
     font-size: 9px;
+  }
+}
+
+
+/* ==========================================================================
+   Identidade "arquivo da São Paulo Railway"
+   Inspirada nas pranchas originais do acervo: papel vegetal envelhecido,
+   nanquim, versal espaçada nos cartuchos e o lápis vermelho das cotas.
+   ========================================================================== */
+
+/* Papel com fibra sutil (ruído SVG inline, sem requisição extra). */
+.paper-grain {
+  background-color: #FAF7F2;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .22 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.55), transparent 60%);
+}
+
+/* Versal espaçada das legendas e cartuchos ("SÃO PAULO RAILWAY Cº"). */
+.caps {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-stretch: 118%;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* Números de tabela de horário: algarismos alinhados. */
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Linha de cota: traço fino com marcas nas pontas, usada como divisor. */
+.dim-rule {
+  position: relative;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+.dim-rule::before,
+.dim-rule::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 9px;
+  background: currentColor;
+}
+.dim-rule::before { left: 0; }
+.dim-rule::after { right: 0; }
+
+/* Via férrea: dois trilhos e dormentes, como divisor de seção. */
+.track {
+  height: 9px;
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background-image: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 14px);
+  opacity: 0.35;
+}
+
+/* Pontilhado guia das tabelas de horário. */
+.leader {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.45;
+  transform: translateY(-0.3em);
+}
+
+/* Link à maneira de anotação: sublinhado em lápis vermelho. */
+.ink-link {
+  text-decoration: underline;
+  text-decoration-color: #A3321F;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.ink-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Termo do glossário: sublinhado pontilhado, convida ao clique. */
+.term {
+  text-decoration: underline dotted #A3321F;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+/* Moldura de prancha/cartucho: filete duplo. */
+.double-rule {
+  border: 1px solid #3B3028;
+  box-shadow: inset 0 0 0 3px #FAF7F2, inset 0 0 0 4px #3B3028;
+}
+
+/* Gravura: as fotos de desenhos ganham um leve tom de papel. */
+.archival-img {
+  filter: sepia(0.12) contrast(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LAYERS, GROUPS } from './config/layers';
 import { PRESETS } from './config/presets';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -19,6 +19,8 @@ import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
 import { LegislacaoPanel } from './components/LegislacaoPanel';
 import { HomePage } from './components/HomePage';
 import { TrailsPanel } from './components/TrailsPanel';
+import { GlossaryPage } from './components/GlossaryPage';
+import { PortalNav } from './components/archive';
 import { BASEMAPS } from './components/BasemapSelector';
 import { parseShareHash } from './utils/shareState';
 import { useRasterManifests } from './hooks/useRasterManifests';
@@ -83,6 +85,8 @@ export default function App() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false);
+  // Imagem em que o arquivo deve abrir (figuras e cronologia apontam para ela).
+  const [archivePhotoId, setArchivePhotoId] = useState(null);
 
   // Tabela de atributos e foco
   const [tableLayerId, setTableLayerId] = useState(null);
@@ -177,6 +181,17 @@ export default function App() {
     }
   };
 
+  // Navegação compartilhada pelas folhas (termos, figuras, "próxima folha").
+  const portalNav = useMemo(() => ({
+    navigate: handleNavigate,
+    openArchive: (photoId = null) => {
+      setArchivePhotoId(photoId);
+      setIsPhotoGalleryOpen(true);
+    },
+    openMap: handleNavigateToMapWithPreset,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
+
   const handleToggleAllInGroup = (group, enable) => {
     setActivePresetId(null);
     setActiveLayers(prevActive => {
@@ -204,6 +219,7 @@ export default function App() {
   };
 
   return (
+    <PortalNav.Provider value={portalNav}>
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-paper relative select-none">
       
       {/* Barra de Navegação Superior do Portal */}
@@ -321,6 +337,8 @@ export default function App() {
         {activeTab === 'legislacao' && (
           <LegislacaoPanel onNavigateToMapWithPreset={handleNavigateToMapWithPreset} />
         )}
+
+        {activeTab === 'glossario' && <GlossaryPage />}
       </div>
 
       {/* Tabela de Atributos */}
@@ -347,9 +365,11 @@ export default function App() {
       {/* Modal Acervo Fotográfico de Campo & Iconografia */}
       <PhotoGalleryModal
         isOpen={isPhotoGalleryOpen}
+        initialPhotoId={archivePhotoId}
         onClose={() => setIsPhotoGalleryOpen(false)}
       />
     </div>
+    </PortalNav.Provider>
   );
 }
 

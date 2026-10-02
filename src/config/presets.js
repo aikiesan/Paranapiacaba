@@ -14,6 +14,9 @@ const REGIONAL_CENTER = [-23.77, -46.31];
 const SERRA_CENTER = [-23.775, -46.38];
 // Centro do corredor Jundiaí–Santos (extensão de ferrovia_corredor).
 const CORREDOR_CENTER = [-23.575, -46.6];
+// Centro do leito do funicular (Alto da Serra → Cubatão) e da rede de trilhas.
+const FUNICULAR_CENTER = [-23.815, -46.337];
+const TRILHAS_CENTER = [-23.778, -46.296];
 
 export const PRESETS = [
   {
@@ -125,6 +128,32 @@ export const PRESETS = [
       'limite_vila', 'ferrovia_corredor', 'susc_movmas', 'risco_movmas',
       'risco_incendio', 'classif_vegetal', 'altimetria_serra',
     ],
+  },
+  {
+    id: 'ferrovia_serra',
+    family: 'tematico',
+    label: 'A ferrovia na Serra',
+    icon: '🚂',
+    basemap: 'terrain',
+    description: 'O leito do funicular descendo a escarpa, do Alto da Serra a Cubatão, com o relevo, as estações e o patrimônio ferroviário da Vila.',
+    layers: [
+      'ferrovia_corredor', 'estacoes', 'funicular', 'patrimonio_ferroviario', 'limite_vila', 'altimetria_serra',
+    ],
+    targetScale: '1:50.000',
+    center: FUNICULAR_CENTER,
+    zoomLevel: zoomForScale(50000, FUNICULAR_CENTER[0])
+  },
+  {
+    id: 'trilhas_serra',
+    family: 'tematico',
+    label: 'Trilhas e atrativos',
+    icon: '🥾',
+    basemap: 'terrain',
+    description: 'As trilhas registradas no entorno de Paranapiacaba, os atrativos naturais e as unidades de conservação que elas atravessam.',
+    layers: ['trilhas', 'atrativos', 'ucs', 'pnm_nascentes', 'limite_vila'],
+    targetScale: '1:100.000',
+    center: TRILHAS_CENTER,
+    zoomLevel: zoomForScale(100000, TRILHAS_CENTER[0])
   },
   // As 4 escalas de navegação combinadas com a equipe (reunião de 25/09/2026),
   // do lote ao corredor. A escala é a de tela (96 dpi): as duas mais amplas

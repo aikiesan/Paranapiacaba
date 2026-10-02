@@ -1,113 +1,76 @@
 import React from 'react';
 import { useOnEscape } from '../hooks/useOnEscape';
+import { ClockTowerMark, Icon } from './archive';
 
+// Anexo C: sobre o projeto, no formato do carimbo de uma prancha.
 export function AboutPanel({ isOpen, onClose }) {
   useOnEscape(isOpen, onClose);
   if (!isOpen) return null;
 
+  const credits = [
+    ['Coordenação e execução', 'Equipe PUC-Campinas'],
+    ['Fomento', 'FAPESP — Fundação de Amparo à Pesquisa do Estado de São Paulo'],
+    ['Referência geodésica', 'SIRGAS 2000 (EPSG:4674)'],
+    ['Fontes', 'IBGE, IPHAN, CONDEPHAAT, MapBiomas, DataGeo, Prefeitura de Santo André, Wikiloc'],
+  ];
+
   return (
     <div
-      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-stone-950/40 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-ink/60 animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Sobre o Projeto"
+      aria-label="Sobre o projeto"
     >
-      {/* Modal Container */}
       <div
-        className="w-full max-w-md bg-white border border-stone-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-up"
+        className="w-full max-w-lg paper-grain border border-ink/50 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-ink"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabeçalho */}
-        <div className="px-5 py-4 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-bold text-stone-800 leading-tight">
-              Sobre o Projeto
-            </h2>
-            <p className="text-[11px] text-forest-600 font-semibold">
-              Dossiê Temático GIS
-            </p>
+        <div className="px-6 pt-5 pb-4 border-b border-ink/20 flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ClockTowerMark className="w-10 h-10" />
+            <div>
+              <div className="caps text-[9px] text-signal">Anexo C</div>
+              <h2 className="font-display text-3xl leading-none mt-0.5">Sobre o projeto</h2>
+            </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-stone-400 hover:text-stone-700 p-1 rounded-md hover:bg-stone-100 transition-colors"
-            title="Fechar"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          <button onClick={onClose} className="p-1.5 -m-1 text-ink-500 hover:text-ink" aria-label="Fechar">
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Conteúdo */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-5 text-stone-600 text-xs">
-          
-          {/* Sessão: O Projeto */}
-          <div className="space-y-1.5">
-            <h3 className="text-xs font-bold text-stone-800 uppercase tracking-wide border-b border-stone-200 pb-1">
-              O Projeto
-            </h3>
-            <p className="leading-relaxed text-justify text-stone-600">
-              O WebGIS consolida o levantamento cartográfico ao longo do <span className="font-semibold text-stone-700">corredor ferroviário histórico Jundiaí–Santos</span> (São Paulo Railway, 1867), tendo a <span className="font-semibold text-stone-700">Vila de Paranapiacaba</span> (Santo André) como núcleo de detalhe — marco da arquitetura inglesa e da engenharia ferroviária na Serra do Mar, subsídio à salvaguarda e à candidatura do sítio à Chancela de Patrimônio Mundial da UNESCO.
-            </p>
-          </div>
-
-          {/* Sessão: Indicadores / Dados */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-bold text-stone-800 uppercase tracking-wide border-b border-stone-200 pb-1">
-              Dossier de Dados Integrados
-            </h3>
-            <ul className="space-y-1.5 list-disc list-inside text-stone-600">
-              <li>
-                <span className="font-semibold text-stone-700">Corredor Jundiaí–Santos</span> mapeado a partir da malha ferroviária IBGE (BaseFerro) e suas estações.
-              </li>
-              <li>
-                <span className="font-semibold text-stone-700">Patrimônio tombado</span> nas instâncias federal, estadual e municipal, com edificações e lotes da Vila por uso.
-              </li>
-              <li>
-                <span className="font-semibold text-stone-700">Meio ambiente</span>: Unidades de Conservação, hidrografia, nascentes e APPs no divisor Cubatão/Tietê.
-              </li>
-              <li>
-                <span className="font-semibold text-stone-700">Equipamentos urbanos</span> (saúde, educação, segurança) dos municípios do corredor.
-              </li>
-              <li>
-                Dados socioeconômicos do <span className="font-semibold text-stone-700">Censo IBGE</span> recortados por setor no distrito de Paranapiacaba.
-              </li>
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-5 space-y-5">
+          <p className="font-serif text-[1rem] leading-relaxed text-ink-700">
+            Este atlas reúne o levantamento cartográfico do <strong className="font-semibold text-ink">corredor ferroviário Jundiaí–Santos</strong> (São Paulo Railway, 1867), com a <strong className="font-semibold text-ink">Vila de Paranapiacaba</strong>, em Santo André, como núcleo de detalhe. Serve à salvaguarda do sítio e à sua candidatura a Patrimônio Mundial da UNESCO.
+          </p>
+          <div>
+            <h3 className="caps text-[9px] text-ink-500 mb-1.5">O que há no atlas</h3>
+            <ul className="font-serif text-[0.95rem] leading-relaxed text-ink-700 space-y-1 list-none">
+              {[
+                'O corredor e as estações, a partir da malha ferroviária do IBGE.',
+                'O patrimônio tombado nas três esferas, com as edificações e lotes da vila.',
+                'Unidades de conservação, rios, nascentes e o divisor de águas da Serra.',
+                'Equipamentos urbanos e dados do Censo IBGE dos municípios do corredor.',
+                'Cartas históricas e mapas da legislação municipal, georreferenciados.',
+              ].map((item) => (
+                <li key={item} className="pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-signal">{item}</li>
+              ))}
             </ul>
           </div>
-
-          {/* Sessão: Créditos */}
-          <div className="space-y-1">
-            <h3 className="text-xs font-bold text-stone-800 uppercase tracking-wide border-b border-stone-200 pb-1">
-              Parcerias e Financiamento
-            </h3>
-            <div className="bg-stone-50 p-2.5 rounded border border-stone-200 space-y-1 text-stone-500">
-              <div><strong className="text-stone-700">Coordenação e Execução Técnica:</strong> Equipe PUC-Campinas</div>
-              <div><strong className="text-stone-700">Fomento:</strong> FAPESP (Fundação de Amparo à Pesquisa do Estado de São Paulo)</div>
-            </div>
-          </div>
-
-          {/* Sessão: Fontes Abertas */}
-          <div className="space-y-1.5">
-            <h3 className="text-xs font-bold text-stone-800 uppercase tracking-wide border-b border-stone-200 pb-1">
-              Fontes de Informação
-            </h3>
-            <p className="text-[11px] leading-relaxed text-stone-500">
-              MapBiomas (séries temporais), IBGE (Bases Censitárias), Wikiloc (tracks GPS de trilhas), IPHAN (delimitações do patrimônio), Fundação Santo André.
-            </p>
-          </div>
+          <dl className="double-rule bg-paper">
+            {credits.map(([label, value], index) => (
+              <div key={label} className={`grid grid-cols-[8.5rem_1fr] gap-3 px-3 py-2 ${index ? 'border-t border-ink/20' : ''}`}>
+                <dt className="caps text-[9px] text-ink-500 pt-0.5">{label}</dt>
+                <dd className="text-[12px] leading-snug text-ink-700">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        {/* Rodapé do Modal */}
-        <div className="px-5 py-3 border-t border-stone-200 bg-stone-50 flex justify-between items-center text-[10px] text-stone-400 font-medium">
-          <span>v0.2 · Junho 2026</span>
-          <a
-            href="https://github.com/aikiesan/Paranapiacaba"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-forest-600 hover:text-forest-700 font-bold transition-colors"
-          >
-            Repositório GitHub &rarr;
+        <div className="px-6 py-3 border-t border-ink/20 flex justify-between items-center text-[11px] text-ink-500">
+          <span className="tabular">Versão 0.3 · outubro de 2026</span>
+          <a href="https://github.com/aikiesan/Paranapiacaba" target="_blank" rel="noopener noreferrer" className="ink-link text-ink-700">
+            Código no GitHub
           </a>
         </div>
       </div>

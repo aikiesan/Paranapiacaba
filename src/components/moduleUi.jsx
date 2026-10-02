@@ -1,78 +1,27 @@
 import React from 'react';
+import { Icon } from './archive';
 
-// Elementos de UI compartilhados pelos módulos temáticos do portal (Campo,
-// Hidráulica, Legislação e Memória Ferroviária), para uma aparência consistente.
+// Peças compartilhadas pelas folhas temáticas (Água, Campo, Proteção).
+// A estrutura de página vem de ./archive (SheetPage, SheetHeader, SheetSection).
 
-// Cabeçalho padrão de um módulo: faixa escura com selo, título, resumo e uma
-// chamada para ação (abrir a prancha correspondente no Mapa SIG).
-export function ModuleHeader({ badge, badgeIcon = '📘', title, subtitle, cta }) {
-  return (
-    <div className="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white rounded-xl p-6 shadow-lg border border-stone-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div className="space-y-1.5">
-        {badge && (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-forest-500/20 text-forest-300 text-xs font-bold border border-forest-500/30">
-            <span>{badgeIcon}</span> {badge}
-          </div>
-        )}
-        <h1 className="text-xl md:text-2xl font-bold tracking-tight">{title}</h1>
-        {subtitle && (
-          <p className="text-stone-300 text-xs md:text-sm max-w-2xl leading-relaxed">{subtitle}</p>
-        )}
-      </div>
-      {cta && (
-        <button
-          onClick={cta.onClick}
-          className="flex items-center gap-2 bg-forest-600 hover:bg-forest-500 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow-md transition-all whitespace-nowrap"
-        >
-          <span>🗺️</span>
-          <span>{cta.label}</span>
-        </button>
-      )}
-    </div>
-  );
+// Grade de verbetes com filete divisor, sem cartões arredondados.
+export function EntryGrid({ children, cols = 'md:grid-cols-3' }) {
+  return <div className={`grid sm:grid-cols-2 ${cols} gap-px bg-ink/20 border border-ink/20`}>{children}</div>;
 }
 
-// Cartão de seção branco com título e ícone.
-export function ModuleSection({ icon, title, children, className = '' }) {
+// Verbete: faixa de cor (a mesma da simbologia do mapa), título e texto.
+export function Entry({ title, kicker, accent, children, action }) {
   return (
-    <div className={`bg-white rounded-xl p-5 shadow-sm border border-stone-200 space-y-4 ${className}`}>
-      <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wider flex items-center gap-2 border-b border-stone-100 pb-3">
-        {icon && <span>{icon}</span>} {title}
-      </h2>
-      {children}
-    </div>
-  );
-}
-
-// Cartão informativo compacto, opcionalmente com faixa de cor à esquerda e
-// um botão "ver no mapa".
-export function InfoCard({ icon, title, accent, children, action }) {
-  return (
-    <div
-      className="bg-stone-50 p-3.5 rounded-lg border border-stone-200 border-l-4 space-y-1.5 flex flex-col"
-      style={{ borderLeftColor: accent || '#cbd5e1' }}
-    >
-      <div className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-        {icon && <span>{icon}</span>} {title}
-      </div>
-      <p className="text-xs text-stone-600 leading-relaxed flex-1">{children}</p>
+    <div className="bg-paper p-4 md:p-5 flex flex-col">
+      {accent && <span className="block w-8 h-[3px] mb-3" style={{ backgroundColor: accent }} />}
+      {kicker && <span className="caps text-[9px] text-ink-500">{kicker}</span>}
+      <h3 className="font-display text-lg md:text-xl leading-tight">{title}</h3>
+      <p className="font-serif text-[0.93rem] leading-relaxed text-ink-600 mt-1.5 flex-1">{children}</p>
       {action && (
-        <button
-          onClick={action.onClick}
-          className="mt-1 self-start text-[11px] font-bold text-forest-700 hover:text-forest-800 hover:underline transition-colors"
-        >
-          {action.label} &rarr;
+        <button onClick={action.onClick} className="mt-3 self-start inline-flex items-center gap-1 text-xs font-semibold text-forest-700 hover:text-forest-800">
+          <Icon name="map" className="w-3.5 h-3.5" /> {action.label}
         </button>
       )}
-    </div>
-  );
-}
-
-// Contêiner de página de um módulo (scroll + largura máxima centralizada).
-export function ModulePage({ children }) {
-  return (
-    <div className="flex-1 h-full overflow-y-auto bg-stone-100 p-4 md:p-6 custom-scrollbar">
-      <div className="max-w-5xl mx-auto space-y-6">{children}</div>
     </div>
   );
 }

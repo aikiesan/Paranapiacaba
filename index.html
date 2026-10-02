@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#78350F" />
+    <meta name="theme-color" content="#231B15" />
     <title>WebGIS Paranapiacaba — Sítio UNESCO (FAPESP / PUC-Campinas)</title>
     <meta
       name="description"
@@ -17,6 +17,15 @@
       content="Atlas interativo do corredor ferroviário Jundiaí–Santos e da Vila de Paranapiacaba."
     />
     <meta property="og:locale" content="pt_BR" />
+    <!-- Tipografia: Old Standard TT (títulos, à maneira dos impressos técnicos
+         do séc. XIX), Source Serif 4 (texto corrido) e Archivo, cuja largura
+         variável dá as legendas em versal espaçada das pranchas da SPR. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap"
+    />
     <!-- Leaflet CSS -->
     <link
       rel="stylesheet"
@@ -25,7 +34,7 @@
       crossorigin=""
     />
   </head>
-  <body class="h-full w-full m-0 p-0 overflow-hidden bg-paper text-stone-900 antialiased">
+  <body class="h-full w-full m-0 p-0 overflow-hidden bg-paper text-ink antialiased">
     <div id="root" class="h-full w-full"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
