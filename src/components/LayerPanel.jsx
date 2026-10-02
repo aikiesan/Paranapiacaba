@@ -4,6 +4,8 @@ import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { groupMeta, getLayerSymbol } from '../config/styleGuide';
 import { THEMES } from '../config/catalog';
+import { PresetList } from './ThematicPresets';
+import { HistoricMapsPanel } from './HistoricMapsPanel';
 import { downloadGeoJSON } from '../utils/exportData';
 
 // "Swatch" que espelha como a camada é desenhada no mapa (linha / polígono / ponto).
@@ -250,7 +252,7 @@ function ActiveLayersStrip({ activeLayers, onToggle, onClearAll }) {
   if (active.length === 0) {
     return (
       <div className="px-4 py-3 border-b border-paper-line bg-paper-dark/60 text-[11px] text-stone-500 leading-relaxed">
-        Nenhuma camada no mapa. Ligue camadas abaixo ou escolha um <strong className="text-stone-700">Mapa temático</strong> no topo do mapa.
+        Nenhuma camada no mapa. Ligue camadas abaixo ou escolha um mapa na aba <strong className="text-stone-700">Mapas prontos</strong>.
       </div>
     );
   }
@@ -293,7 +295,17 @@ function ActiveLayersStrip({ activeLayers, onToggle, onClearAll }) {
   );
 }
 
-export function LayerPanel({
+const SIDEBAR_TABS = [
+  { id: 'prontos', label: 'Mapas prontos', icon: '🗂️' },
+  { id: 'camadas', label: 'Camadas', icon: '📚' },
+  { id: 'historicos', label: 'Históricos', icon: '📜' },
+];
+
+// Barra lateral do mapa: o único lugar de "o que aparece no mapa", em três
+// abas — Mapas prontos (composições curadas), Camadas (catálogo do dossiê) e
+// Históricos (cartas antigas, legislação e MapBiomas).
+export function MapSidebar({
+  initialTab = 'prontos',
   activeLayers,
   onToggle,
   currentZoom,
@@ -301,14 +313,37 @@ export function LayerPanel({
   onGroupOpacityChange,
   onToggleAllInGroup,
   onClearAll,
-  onOpenAbout,
   onOpenTable,
-  onZoomToLayer
+  onZoomToLayer,
+  activePresetId,
+  onApplyPreset,
+  manifests,
+  overlays,
+  onOverlaysChange,
+  onFitBounds
 }) {
   const isMobile = useIsMobile();
   // Inicia recolhido no mobile (o mapa ocupa a tela toda) e aberto no desktop
   const [isPanelOpen, setIsPanelOpen] = useState(() => !isMobile);
+  const [tab, setTab] = useState(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Escolher um mapa pronto mostra o resultado: no celular fecha a gaveta para
+  // revelar o mapa; no desktop abre a aba Camadas com o que foi ligado.
+  const handleApplyPreset = (preset) => {
+    onApplyPreset(preset);
+    const presetGroups = new Set(LAYERS.filter((l) => preset.layers.includes(l.id)).map((l) => l.group));
+    setExpandedGroups((prev) => {
+      const next = { ...prev };
+      presetGroups.forEach((group) => { next[group] = true; });
+      return next;
+    });
+    if (isMobile) setIsPanelOpen(false);
+    else setTab('camadas');
+  };
+
+  const overlayActive = Boolean(overlays.referenceId) || overlays.coverageOn;
+  const tabBadge = { camadas: activeLayers.size || null, historicos: overlayActive ? '●' : null };
 
   // Estado do accordion, lembrado por navegador. Por padrão só as seções com
   // camadas ligadas abrem, para o catálogo caber na tela.
@@ -445,12 +480,12 @@ export function LayerPanel({
         <button
           onClick={() => setIsPanelOpen(true)}
           className="absolute top-4 left-4 bg-white hover:bg-paper border border-paper-line text-stone-700 pl-2.5 pr-3 py-2 rounded-lg shadow-xl hover:text-stone-900 transition-all z-[1002] flex items-center gap-2 text-xs font-bold"
-          title="Abrir painel de camadas"
+          title="Abrir painel do mapa: mapas prontos, camadas e históricos"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          Camadas
+          Mapas e camadas
           {activeLayers.size > 0 && (
             <span className="px-1.5 py-0.5 rounded-full bg-forest-600 text-white text-[9px]">{activeLayers.size}</span>
           )}
@@ -469,27 +504,41 @@ export function LayerPanel({
       {/* Painel Principal — gaveta sobreposta no mobile, barra lateral fixa no desktop */}
       <div
         className={`bg-paper border-r border-paper-line flex flex-col h-full overflow-hidden transition-all duration-300 shadow-xl z-[1001] fixed inset-y-0 left-0 w-[88vw] max-w-[340px] md:relative md:max-w-none ${
-          isPanelOpen ? 'translate-x-0 md:w-[320px]' : '-translate-x-full md:translate-x-0 md:w-0 md:border-r-0'
+          isPanelOpen ? 'translate-x-0 md:w-[320px]' : '-translate-x-full md:translate-x-0 md:w-0 md:border-r-0 invisible'
         }`}
       >
-        {/* Cabeçalho */}
-        <div className="px-4 pt-3.5 pb-3 border-b border-paper-line flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h1 className="text-base font-bold text-stone-900 font-serif leading-tight">
-              Camadas do mapa
-            </h1>
-            <p className="text-[11px] text-stone-500 leading-snug mt-0.5">
-              Organizadas pelos eixos do Caderno de Mapas do dossiê.{' '}
-              <button onClick={onOpenAbout} className="underline decoration-stone-300 hover:text-stone-800">
-                Sobre o projeto
-              </button>
-            </p>
+        {/* Abas */}
+        <div className="flex items-stretch border-b border-paper-line bg-paper-dark/50">
+          <div role="tablist" aria-label="Painel do mapa" className="flex-1 grid grid-cols-3">
+            {SIDEBAR_TABS.map((item) => {
+              const isActive = tab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setTab(item.id)}
+                  className={`relative flex flex-col items-center justify-center gap-0.5 px-1 pt-2.5 pb-2 text-[11px] font-bold transition-colors ${
+                    isActive ? 'text-stone-900 bg-paper' : 'text-stone-500 hover:text-stone-800 hover:bg-paper/60'
+                  }`}
+                >
+                  <span aria-hidden className="text-base leading-none">{item.icon}</span>
+                  <span className="leading-tight">{item.label}</span>
+                  {tabBadge[item.id] && (
+                    <span className="absolute top-1.5 right-2 min-w-[1rem] px-1 rounded-full bg-forest-600 text-white text-[9px] leading-4 text-center">
+                      {tabBadge[item.id]}
+                    </span>
+                  )}
+                  {isActive && <span className="absolute left-3 right-3 bottom-0 h-[3px] rounded-t bg-rust-700" />}
+                </button>
+              );
+            })}
           </div>
           <button
             onClick={() => setIsPanelOpen(false)}
-            className="text-stone-400 hover:text-stone-800 p-1 rounded hover:bg-paper-dark transition-colors flex-shrink-0"
+            className="px-2.5 text-stone-400 hover:text-stone-800 hover:bg-paper transition-colors flex-shrink-0 border-l border-paper-line"
             title="Recolher painel"
-            aria-label="Recolher painel de camadas"
+            aria-label="Recolher painel do mapa"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -497,6 +546,24 @@ export function LayerPanel({
           </button>
         </div>
 
+        {tab === 'prontos' && (
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <PresetList activePresetId={activePresetId} onApplyPreset={handleApplyPreset} />
+          </div>
+        )}
+
+        {tab === 'historicos' && (
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <HistoricMapsPanel
+              manifests={manifests}
+              overlays={overlays}
+              onChange={onOverlaysChange}
+              onFitBounds={onFitBounds}
+            />
+          </div>
+        )}
+
+        {tab === 'camadas' && (<>
         {/* Barra de Busca */}
         <div className="px-3 py-2.5 border-b border-paper-line flex items-center relative">
           <svg className="absolute left-5 w-3.5 h-3.5 text-stone-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -567,6 +634,8 @@ export function LayerPanel({
             })
           )}
         </div>
+
+        </>)}
 
         {/* Rodapé institucional */}
         <div className="px-3 py-2 border-t border-paper-line text-center">

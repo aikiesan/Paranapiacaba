@@ -87,8 +87,11 @@ function MoreModulesMenu({ activeTab, onTabChange, collectionLinks }) {
               <span>{tab.label}</span>
             </button>
           ))}
-          {/* No celular os acervos saem do cabeçalho e entram aqui */}
-          <div className="sm:hidden border-t border-[#E7E0D3] mt-1.5 pt-1.5">
+          {/* Acervos e informações do projeto */}
+          <div className="border-t border-[#E7E0D3] mt-1.5 pt-1.5">
+            <div className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-[#78716C]">
+              Acervo e projeto
+            </div>
             {collectionLinks.map((link) => (
               <button
                 key={link.label}
@@ -113,7 +116,7 @@ function MoreModulesMenu({ activeTab, onTabChange, collectionLinks }) {
 export function HeaderNav({ activeTab, onTabChange, onOpenAbout, onOpenGallery, onOpenPhotoGallery }) {
   const collectionLinks = [
     { label: 'Acervo Fotográfico', icon: '📸', onClick: onOpenPhotoGallery },
-    { label: 'Pranchas A0', icon: '📐', onClick: onOpenGallery },
+    { label: `${CARTOGRAPHIC_MAPS.length} Pranchas A0`, icon: '📐', onClick: onOpenGallery },
     { label: 'Sobre o projeto', icon: 'ℹ️', onClick: onOpenAbout },
   ];
 
@@ -168,35 +171,6 @@ export function HeaderNav({ activeTab, onTabChange, onOpenAbout, onOpenGallery, 
         <MoreModulesMenu activeTab={activeTab} onTabChange={onTabChange} collectionLinks={collectionLinks} />
       </div>
 
-      {/* Acervos e Sobre */}
-      <div className="hidden sm:flex items-center gap-1.5 md:gap-2 font-sans flex-shrink-0">
-        <button
-          onClick={onOpenPhotoGallery}
-          className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-md text-xs font-bold text-[#1E3A2F] hover:text-[#0F281E] bg-[#E6F4EA] transition-all border border-[#A8DABC] whitespace-nowrap"
-          title="Acervo Fotográfico de Campo & Iconografia"
-        >
-          <span>📸</span>
-          <span className="hidden lg:inline">Fotos</span>
-        </button>
-
-        <button
-          onClick={onOpenGallery}
-          className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-md text-xs font-bold text-[#78350F] hover:text-[#451A03] bg-[#FEF3C7]/60 hover:bg-[#FEF3C7] transition-all border border-[#F59E0B]/30 whitespace-nowrap"
-          title={`${CARTOGRAPHIC_MAPS.length} Pranchas Cartográficas A0 e Relatórios`}
-        >
-          <span>📐</span>
-          <span className="hidden lg:inline">Pranchas A0</span>
-        </button>
-
-        <button
-          onClick={onOpenAbout}
-          className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-bold text-[#44403C] hover:text-[#1C1917] bg-[#EFE9DF] hover:bg-[#E7E0D3] transition-colors border border-[#D6CEBE]"
-          title="Sobre o projeto"
-        >
-          <span>ℹ️</span>
-          <span className="hidden lg:inline">Sobre</span>
-        </button>
-      </div>
     </header>
   );
 }

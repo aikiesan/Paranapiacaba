@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const BASEMAPS = [
   {
@@ -36,26 +36,79 @@ export const BASEMAPS = [
   }
 ];
 
+const BASEMAP_HINTS = {
+  ortofoto2010: 'Foto aérea da Vila (2010)',
+  osm: 'Ruas e lugares',
+  satellite: 'Imagem de satélite atual',
+  terrain: 'Relevo e topografia',
+  dark: 'Fundo escuro, realça as camadas',
+};
+
+// Mapa de fundo: um único botão (em vez de cinco pílulas) que abre a lista.
 export function BasemapSelector({ selectedBasemap, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
+  const current = BASEMAPS.find((basemap) => basemap.id === selectedBasemap) || BASEMAPS[0];
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const close = (event) => ref.current && !ref.current.contains(event.target) && setIsOpen(false);
+    const onKey = (event) => event.key === 'Escape' && setIsOpen(false);
+    document.addEventListener('pointerdown', close);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', close);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="export-hide absolute bottom-4 right-4 z-[1000] flex max-w-[calc(100vw-2rem)] overflow-x-auto bg-white/90 backdrop-blur-md p-1.5 rounded-full border border-stone-200 shadow-md transition-all duration-300 hover:border-stone-300">
-      {BASEMAPS.map((basemap) => {
-        const isActive = selectedBasemap === basemap.id;
-        return (
-          <button
-            key={basemap.id}
-            onClick={() => onChange(basemap.id)}
-            title={basemap.id === 'ortofoto2010' ? 'Ortofoto georreferenciada de Paranapiacaba, levantamento de 2010' : basemap.label}
-            className={`px-2 md:px-3 py-1 text-[11px] md:text-xs font-bold rounded-full transition-all duration-200 ${
-              isActive
-                ? 'bg-forest-600 text-white shadow-sm'
-                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100/80'
-            }`}
-          >
-            {basemap.label}
-          </button>
-        );
-      })}
+    <div ref={ref} className="export-hide absolute bottom-9 right-4 z-[1000]">
+      {isOpen && (
+        <div
+          role="menu"
+          aria-label="Mapa de fundo"
+          className="absolute bottom-full right-0 mb-2 w-56 bg-paper/95 backdrop-blur-md border border-paper-line rounded-lg shadow-xl p-1.5 animate-fade-in"
+        >
+          <div className="px-2 pt-1 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-stone-500">Mapa de fundo</div>
+          {BASEMAPS.map((basemap) => {
+            const isActive = basemap.id === current.id;
+            return (
+              <button
+                key={basemap.id}
+                role="menuitemradio"
+                aria-checked={isActive}
+                onClick={() => {
+                  onChange(basemap.id);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-left transition-colors ${
+                  isActive ? 'bg-forest-50' : 'hover:bg-white'
+                }`}
+              >
+                <span className={`w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 ${isActive ? 'border-forest-600 bg-forest-600 ring-2 ring-inset ring-white' : 'border-stone-300 bg-white'}`} />
+                <span className="min-w-0">
+                  <span className={`block text-xs leading-tight ${isActive ? 'font-bold text-forest-800' : 'font-semibold text-stone-700'}`}>{basemap.label}</span>
+                  <span className="block text-[10px] text-stone-500 leading-tight">{BASEMAP_HINTS[basemap.id]}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <button
+        onClick={() => setIsOpen((open) => !open)}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        title="Trocar o mapa de fundo"
+        className="flex items-center gap-2 bg-paper/95 backdrop-blur-md pl-2.5 pr-3 py-2 rounded-lg border border-paper-line shadow-md text-xs font-bold text-stone-700 hover:border-forest-300 hover:text-forest-800 transition-colors"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3l9 4.5-9 4.5-9-4.5L12 3zm-9 9l9 4.5 9-4.5M3 16.5L12 21l9-4.5" />
+        </svg>
+        <span className="text-stone-500 font-semibold">Fundo:</span>
+        <span>{current.label}</span>
+      </button>
     </div>
   );
 }

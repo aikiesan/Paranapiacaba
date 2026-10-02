@@ -3,7 +3,7 @@ import { LAYERS, GROUPS } from './config/layers';
 import { PRESETS } from './config/presets';
 import { useIsMobile } from './hooks/useIsMobile';
 import { HeaderNav } from './components/HeaderNav';
-import { LayerPanel } from './components/LayerPanel';
+import { MapSidebar } from './components/LayerPanel';
 import { MapView } from './components/MapView';
 import { BasemapSelector } from './components/BasemapSelector';
 import { Legend } from './components/Legend';
@@ -18,10 +18,10 @@ import { LevantamentoCampoPanel } from './components/LevantamentoCampoPanel';
 import { SistemaHidraulicoPanel } from './components/SistemaHidraulicoPanel';
 import { LegislacaoPanel } from './components/LegislacaoPanel';
 import { HomePage } from './components/HomePage';
-import { ThematicPresets } from './components/ThematicPresets';
 import { TrailsPanel } from './components/TrailsPanel';
 import { BASEMAPS } from './components/BasemapSelector';
 import { parseShareHash } from './utils/shareState';
+import { useRasterManifests } from './hooks/useRasterManifests';
 
 // Estado vindo de um link compartilhado (#zoom/lat/lng?camadas=…&base=…), lido
 // uma vez na carga: um link de mapa abre direto na aba do mapa.
@@ -29,6 +29,26 @@ const SHARED = parseShareHash(window.location.hash, {
   layerIds: LAYERS.map((layer) => layer.id),
   basemapIds: BASEMAPS.map((basemap) => basemap.id),
 });
+
+// Título do que está no mapa (mapa pronto e/ou carta sobreposta), à maneira
+// do cartucho de uma prancha. Só informativo: não é mais um botão.
+function MapTitle({ preset, reference }) {
+  if (!preset && !reference) return null;
+  return (
+    <div className="export-hide hidden md:block absolute top-4 left-1/2 -translate-x-1/2 z-[999] pointer-events-none max-w-[calc(100%-9rem)]">
+      <div className="bg-paper/95 backdrop-blur-md border border-paper-line rounded-lg shadow-md px-3 py-1.5 text-center">
+        {preset && (
+          <div className="text-xs font-bold text-stone-900 font-serif truncate">
+            {preset.icon} {preset.label}
+          </div>
+        )}
+        {reference && (
+          <div className="text-[10px] font-semibold text-rust-700 truncate">📜 {reference.label}</div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const isMobile = useIsMobile();
@@ -73,6 +93,20 @@ export default function App() {
   // correspondente consumido pelo MapView.
   const [activePresetId, setActivePresetId] = useState(null);
   const [focusPreset, setFocusPreset] = useState(null);
+
+  // Sobreposições da aba "Históricos": um mapa de referência por vez e a série
+  // MapBiomas; e pedidos de enquadramento vindos do painel.
+  const manifests = useRasterManifests();
+  const [overlays, setOverlays] = useState({
+    referenceId: '',
+    referenceOpacity: 0.72,
+    coverageOn: false,
+    coverageYear: null,
+    coverageOpacity: 0.75,
+  });
+  const [focusBounds, setFocusBounds] = useState(null);
+  const handleOverlaysChange = (patch) => setOverlays((prev) => ({ ...prev, ...patch }));
+  const handleFitBounds = (bounds) => setFocusBounds({ bounds, ts: Date.now() });
 
   const handleOpenTable = (layerId) => {
     setTableLayerId(layerId);
@@ -194,7 +228,8 @@ export default function App() {
         {activeTab === 'map' && (
           <>
             {/* Painel Lateral Esquerdo (Camadas e Filtros) */}
-            <LayerPanel
+            <MapSidebar
+              initialTab={SHARED.layers ? 'camadas' : 'prontos'}
               activeLayers={activeLayers}
               onToggle={handleToggleLayer}
               currentZoom={currentZoom}
@@ -202,9 +237,14 @@ export default function App() {
               onGroupOpacityChange={handleGroupOpacityChange}
               onToggleAllInGroup={handleToggleAllInGroup}
               onClearAll={handleClearAllLayers}
-              onOpenAbout={() => setIsAboutOpen(true)}
               onOpenTable={handleOpenTable}
               onZoomToLayer={handleZoomToLayer}
+              activePresetId={activePresetId}
+              onApplyPreset={handleApplyPreset}
+              manifests={manifests}
+              overlays={overlays}
+              onOverlaysChange={handleOverlaysChange}
+              onFitBounds={handleFitBounds}
             />
 
             {/* Área Principal (Mapa) */}
@@ -220,6 +260,9 @@ export default function App() {
                 focusFeature={focusFeature}
                 focusLayer={focusLayer}
                 focusPreset={focusPreset}
+                focusBounds={focusBounds}
+                manifests={manifests}
+                overlays={overlays}
                 buildingSymbologyMode={buildingSymbologyMode}
               >
                 <BasemapSelector
@@ -228,22 +271,22 @@ export default function App() {
                 />
 
                 <div
-                  className="absolute bottom-16 left-4 z-[1001] pointer-events-none md:bottom-4"
+                  className="absolute bottom-9 left-4 z-[1001] pointer-events-none"
                   data-testid="map-legend-control"
                 >
                   <Legend activeLayers={activeLayers} buildingSymbologyMode={buildingSymbologyMode} />
                 </div>
 
                 <div
-                  className="absolute bottom-[4.75rem] right-4 z-[1001] pointer-events-none"
+                  className="absolute bottom-[5.25rem] right-4 z-[1001] pointer-events-none"
                   data-testid="cartographic-scale-control"
                 >
                   <MapScaleControl />
                 </div>
 
-                <ThematicPresets
-                  activePresetId={activePresetId}
-                  onApplyPreset={handleApplyPreset}
+                <MapTitle
+                  preset={PRESETS.find((preset) => preset.id === activePresetId)}
+                  reference={manifests.references?.maps?.find((item) => item.id === overlays.referenceId)}
                 />
               </MapView>
 

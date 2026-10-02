@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
-// Popover "Compartilhar esta vista": o link (que já carrega enquadramento,
-// camadas e basemap no hash) e um QR code para pranchas impressas e cartazes.
-export function SharePopover({ onClose }) {
+// Popover "Compartilhar ou exportar esta vista": o link (que já carrega
+// enquadramento, camadas e basemap no hash), um QR code para pranchas impressas
+// e cartazes, e a exportação como imagem (PNG) ou PDF.
+export function SharePopover({ onClose, exportTitle, onExportTitleChange, exporting, onExportPng }) {
   const [url] = useState(() => window.location.href);
   const [qrDataUrl, setQrDataUrl] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -36,12 +37,12 @@ export function SharePopover({ onClose }) {
   return (
     <div
       role="dialog"
-      aria-label="Compartilhar esta vista do mapa"
-      className="absolute right-14 top-0 w-72 bg-paper border border-paper-line rounded-lg shadow-xl p-3.5 space-y-3 animate-fade-in"
+      aria-label="Compartilhar ou exportar esta vista do mapa"
+      className="absolute right-14 top-0 w-72 max-h-[calc(100vh-9rem)] overflow-y-auto custom-scrollbar bg-paper border border-paper-line rounded-lg shadow-xl p-3.5 space-y-3 animate-fade-in"
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-sm font-bold text-stone-900 font-serif">Compartilhar esta vista</div>
+          <div className="text-sm font-bold text-stone-900 font-serif">Compartilhar ou exportar</div>
           <p className="text-[11px] text-stone-500 leading-snug mt-0.5">
             O link abre o mapa neste enquadramento, com as mesmas camadas e o mesmo mapa de fundo.
           </p>
@@ -94,6 +95,32 @@ export function SharePopover({ onClose }) {
               Baixar QR (PNG)
             </a>
           )}
+        </div>
+      </div>
+
+      <div className="border-t border-paper-line pt-3 space-y-2">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Baixar como imagem</div>
+        <input
+          type="text"
+          value={exportTitle}
+          onChange={(e) => onExportTitleChange(e.target.value)}
+          placeholder="Título do mapa (opcional)"
+          className="w-full bg-white border border-stone-300 text-stone-800 placeholder-stone-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600"
+        />
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={onExportPng}
+            disabled={exporting}
+            className="bg-forest-600 hover:bg-forest-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+          >
+            {exporting ? 'Gerando…' : 'PNG com legenda'}
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="bg-stone-800 hover:bg-stone-900 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
+          >
+            PDF / imprimir
+          </button>
         </div>
       </div>
     </div>

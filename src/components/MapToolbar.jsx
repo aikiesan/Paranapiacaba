@@ -31,7 +31,6 @@ export function MapToolbar() {
   const [showShare, setShowShare] = useState(false);
 
   // --- Exportação de mapa (PNG) ---
-  const [showExport, setShowExport] = useState(false);
   const [exportTitle, setExportTitle] = useState('');
   const [exporting, setExporting] = useState(false);
 
@@ -39,7 +38,6 @@ export function MapToolbar() {
     setExporting(true);
     try {
       await exportMapImage(map.getContainer(), { title: exportTitle.trim() });
-      setShowExport(false);
     } catch (e) {
       console.warn('Erro ao exportar mapa:', e);
       alert('Não foi possível exportar o mapa: ' + e.message);
@@ -160,11 +158,6 @@ export function MapToolbar() {
     map.fitBounds(CORRIDOR_BOUNDS, { padding: [30, 30] });
   };
 
-  // Aproximar na Vila de Paranapiacaba
-  const handleGoVila = () => {
-    map.setView(VILA_CENTER, 16);
-  };
-
   // Buscar localização do usuário via GPS do dispositivo
   const handleLocateUser = () => {
     map.locate({ setView: true, maxZoom: 16 });
@@ -176,27 +169,13 @@ export function MapToolbar() {
       <button
         onClick={handleGoCorridor}
         className="p-2.5 md:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-md transition-all relative group"
-        title="Corredor Jundiaí–Santos"
+        title="Visão geral: corredor Jundiaí–Santos"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 15.5V6a2 2 0 012-2h12a2 2 0 012 2v9.5M4 15.5A2.5 2.5 0 006.5 18h11a2.5 2.5 0 002.5-2.5M4 15.5h16M9 4v14m6-14v14M7.5 21l1.5-3m6 3l-1.5-3" />
         </svg>
         <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
-          Corredor Jundiaí–Santos
-        </span>
-      </button>
-
-      {/* Botão Paranapiacaba (Vila) */}
-      <button
-        onClick={handleGoVila}
-        className="p-2.5 md:p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-md transition-all relative group"
-        title="Vila de Paranapiacaba"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0H5m0 0H3m6-4h6m-6-4h6m-6-4h6" />
-        </svg>
-        <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
-          Vila de Paranapiacaba
+          Visão geral (corredor)
         </span>
       </button>
 
@@ -252,79 +231,32 @@ export function MapToolbar() {
       <button
         onClick={() => {
           setShowShare((v) => !v);
-          setShowExport(false);
         }}
         aria-expanded={showShare}
         className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
           showShare ? 'bg-forest-600 text-white' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
         }`}
-        title="Compartilhar esta vista (link e QR code)"
+        title="Compartilhar ou exportar esta vista (link, QR code, PNG, PDF)"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 10.742l4.739-2.37M8.684 13.257l4.739 2.37M21 8a3 3 0 11-6 0 3 3 0 016 0zm-6 8a3 3 0 11-6 0 3 3 0 016 0zM9 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
         {!showShare && (
           <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
-            Compartilhar esta vista
+            Compartilhar / exportar
           </span>
         )}
       </button>
-      {showShare && <SharePopover onClose={() => setShowShare(false)} />}
-
-      {/* Botão Exportar Mapa (PNG) */}
-      <button
-        onClick={() => {
-          setShowExport((v) => !v);
-          setShowShare(false);
-        }}
-        className={`p-2.5 md:p-2 rounded-md transition-all relative group ${
-          showExport ? 'bg-forest-600 text-white' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-        }`}
-        title="Exportar mapa (PNG)"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 3v12m0 0l-4-4m4 4l4-4" />
-        </svg>
-        {!showExport && (
-          <span className="absolute right-10 top-1/2 -translate-y-1/2 hidden group-hover:block bg-stone-900 text-stone-100 text-[10px] px-2 py-1 rounded border border-stone-800 shadow-md whitespace-nowrap">
-            Exportar mapa (PNG)
-          </span>
-        )}
-      </button>
-
-      {/* Popover de exportação (PNG / PDF) */}
-      {showExport && (
-        <div className="absolute right-12 bottom-0 w-64 bg-white/97 backdrop-blur border border-stone-200 rounded-lg shadow-xl p-3 space-y-2.5">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1">
-            <span>📷</span> Exportar / Imprimir Mapa
-          </div>
-          <input
-            type="text"
-            value={exportTitle}
-            onChange={(e) => setExportTitle(e.target.value)}
-            placeholder="Título da Prancha / Mapa (opcional)"
-            className="w-full bg-white border border-stone-300 text-stone-800 placeholder-stone-400 text-xs px-2 py-1.5 rounded focus:outline-none focus:border-forest-600 focus:ring-1 focus:ring-forest-600"
-          />
-          <p className="text-[10px] text-stone-500 leading-snug">
-            Gera o mapa com legenda IBGE, escala e fontes formatadas para relatórios e artigos.
-          </p>
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <button
-              onClick={handleExport}
-              disabled={exporting}
-              className="flex items-center justify-center gap-1 bg-forest-600 hover:bg-forest-700 disabled:opacity-60 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
-            >
-              {exporting ? 'Gerando…' : '💾 Baixar PNG'}
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="flex items-center justify-center gap-1 bg-stone-800 hover:bg-stone-900 text-white text-xs font-bold py-1.5 px-2 rounded transition-colors"
-            >
-              🖨️ PDF / Print
-            </button>
-          </div>
-        </div>
+      {showShare && (
+        <SharePopover
+          onClose={() => setShowShare(false)}
+          exportTitle={exportTitle}
+          onExportTitleChange={setExportTitle}
+          exporting={exporting}
+          onExportPng={handleExport}
+        />
       )}
+
     </div>
   );
 }

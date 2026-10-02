@@ -6,7 +6,7 @@ import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '../utils/mapBounds';
 import { PALETTE, SLOPE_CLASSES, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
-import { RasterControl } from './RasterControl';
+import { ReferenceOverlays } from './RasterControl';
 import { assetUrl } from '../utils/assetUrl';
 import { parseShareHash, buildShareHash } from '../utils/shareState';
 
@@ -380,6 +380,16 @@ function FlyToLayer({ focusLayer }) {
   return null;
 }
 
+// Enquadra o mapa num retângulo pedido pelo painel (ex.: "Enquadrar no mapa"
+// de uma carta histórica). O `ts` faz cada clique valer como novo pedido.
+function FitToBounds({ focusBounds }) {
+  const map = useMap();
+  useEffect(() => {
+    if (focusBounds?.bounds) map.fitBounds(focusBounds.bounds, { padding: [24, 24] });
+  }, [focusBounds, map]);
+  return null;
+}
+
 // Enquadra o mapa na extensão somada das camadas de uma predefinição temática.
 // Mede a partir dos próprios GeoJSONs (e não das camadas já desenhadas) porque
 // uma camada só é renderizada acima do seu `minZoom` — do contrário, aproximar
@@ -444,6 +454,9 @@ export function MapView({
   focusFeature,
   focusLayer,
   focusPreset,
+  focusBounds,
+  manifests,
+  overlays,
   buildingSymbologyMode,
   children
 }) {
@@ -491,7 +504,7 @@ export function MapView({
 
         <MapToolbar />
 
-        <RasterControl />
+        <ReferenceOverlays manifests={manifests} overlays={overlays} />
 
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
 
@@ -500,6 +513,7 @@ export function MapView({
         <FlyToLayer focusLayer={focusLayer} />
 
         <FitToPreset focusPreset={focusPreset} />
+        <FitToBounds focusBounds={focusBounds} />
 
         {LAYERS.map((layer) => {
           const isVisible = activeLayers.has(layer.id) && currentZoom >= layer.minZoom;
