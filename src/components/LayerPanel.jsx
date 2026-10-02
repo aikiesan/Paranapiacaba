@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LAYERS, GROUPS } from '../config/layers';
-import { useGeoJSON } from '../hooks/useGeoJSON';
+import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { groupMeta, getLayerSymbol } from '../config/styleGuide';
 import { downloadGeoJSON } from '../utils/exportData';
@@ -39,25 +39,48 @@ function LayerSwatch({ layer }) {
   );
 }
 
+// Botão rotulado do painel de detalhes da camada
+function LayerAction({ onClick, icon, children, title }) {
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      className="flex items-center gap-1 px-2 py-1 rounded border border-slate-200 bg-white text-[10px] font-semibold text-slate-600 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 transition-colors"
+    >
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={icon} />
+      </svg>
+      {children}
+    </button>
+  );
+}
+
+const ICON_ZOOM = 'M15 15l6 6m-11-4a7 7 0 110-14 7 7 0 010 14zm0-10v3m0 0v3m0-3h3m-3 0H7';
+const ICON_TABLE = 'M3 10h18M3 14h18M3 6h18M3 18h18';
+const ICON_DOWNLOAD = 'M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-4-4m4 4l4-4';
+
 // Componente para item de camada individual, lidando com seu próprio hook de dados
 function LayerItem({
   layer,
   isActive,
   onToggle,
   currentZoom,
-  isGroupExpanded,
   onOpenTable,
-  onZoomToLayer,
-  buildingSymbologyMode,
-  onBuildingSymbologyChange
+  onZoomToLayer
 }) {
-  // Carrega o GeoJSON se o grupo estiver expandido (para contar features) ou se a camada estiver ativa no mapa
-  const shouldLoad = isGroupExpanded || isActive;
-  const { data, loading, error, unavailable, featureCount } = useGeoJSON(layer.file, shouldLoad, layer.available);
+  // Só baixa o GeoJSON quando a camada é ligada: abrir um grupo não deve
+  // disparar o download de todas as camadas dele (o catálogo soma ~11 MB).
+  const { loading, error, unavailable, featureCount } = useGeoJSON(layer.file, isActive, layer.available);
 
-  const [showDescription, setShowDescription] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const isZoomRestricted = currentZoom < layer.minZoom;
   const isInteractive = !unavailable && !error;
+
+  const handleDownload = () => {
+    loadGeoJSON(layer.file)
+      .then((json) => json && downloadGeoJSON(layer.id, json))
+      .catch((err) => console.warn(`[LayerPanel] Falha ao baixar "${layer.file}":`, err.message));
+  };
 
   return (
     <div
@@ -65,17 +88,16 @@ function LayerItem({
         isActive ? 'bg-emerald-50/80 ring-1 ring-emerald-200' : 'hover:bg-slate-50'
       } py-1.5 px-2`}
     >
-      <div className={`group/layer flex items-center justify-between transition-opacity ${
-        isZoomRestricted ? 'opacity-50' : 'opacity-100'
+      <div className={`flex items-start gap-2.5 transition-opacity ${
+        isZoomRestricted ? 'opacity-60' : 'opacity-100'
       }`}>
-        <div className="flex items-center space-x-2.5 flex-1 min-w-0">
-          {/* Spinner de Loading ou Checkbox */}
+        {/* Spinner de Loading ou Checkbox */}
+        <div className="w-4 h-4 mt-px flex items-center justify-center flex-shrink-0">
           {loading ? (
-            <div className="w-4 h-4 flex items-center justify-center">
-              <div className="w-2.5 h-2.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <div className="w-2.5 h-2.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
           ) : (
             <input
+              id={`layer-toggle-${layer.id}`}
               type="checkbox"
               checked={isActive && isInteractive}
               disabled={!isInteractive}
@@ -83,130 +105,111 @@ function LayerItem({
               className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 bg-white focus:ring-offset-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
             />
           )}
+        </div>
 
-          {/* Símbolo da camada (espelha o mapa) */}
-          <LayerSwatch layer={layer} />
+        {/* Símbolo da camada (espelha o mapa) */}
+        <span className="mt-px flex-shrink-0"><LayerSwatch layer={layer} /></span>
 
-          <span
-            onClick={() => isInteractive && onToggle(layer.id)}
-            className={`text-xs truncate select-none transition-colors ${
-              isInteractive ? 'cursor-pointer' : 'cursor-default'
-            } ${
-              isActive && isInteractive
-                ? 'font-bold text-slate-900'
-                : 'font-semibold text-slate-600 group-hover/layer:text-slate-900'
-            }`}
-            title={layer.label}
-          >
-            {layer.label}
-          </span>
-
-          {/* Badge de Contagem de Features */}
+        {/* Nome completo, quebrando linha em vez de ser cortado */}
+        <label
+          htmlFor={`layer-toggle-${layer.id}`}
+          className={`flex-1 min-w-0 text-xs leading-snug break-words select-none transition-colors ${
+            isInteractive ? 'cursor-pointer' : 'cursor-default'
+          } ${
+            isActive && isInteractive
+              ? 'font-bold text-slate-900'
+              : 'font-semibold text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          {layer.label}
+          {/* Contagem de feições — conhecida depois que a camada foi carregada */}
           {featureCount !== null && isInteractive && (
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50">
+            <span className="ml-1.5 align-middle text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200/50">
               {featureCount}
             </span>
           )}
-
-          {/* Badge "Em breve" para camadas ainda não publicadas (roteiro de dados) */}
           {unavailable && (
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200/70 uppercase tracking-wide flex-shrink-0">
+            <span className="ml-1.5 align-middle text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200/70 uppercase tracking-wide">
               Em breve
             </span>
           )}
-        </div>
+        </label>
 
-        {/* Controles de Zoom, Tabela, Info */}
-        <div className="flex items-center space-x-1 ml-2">
-          {/* Botão Zoom para a camada */}
-          {layer.available !== false && !error && onZoomToLayer && (
-            <button
-              onClick={() => onZoomToLayer(layer.id)}
-              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
-              title="Aproximar na extensão da camada"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 15l6 6m-11-4a7 7 0 110-14 7 7 0 010 14zm0-10v3m0 0v3m0-3h3m-3 0H7" />
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          {/* Erro de Arquivo */}
+          {error && (
+            <span title="Arquivo não encontrado" className="p-0.5">
+              <svg className="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-            </button>
+            </span>
           )}
 
-          {/* Botão de Tabela de Atributos */}
-          {layer.available !== false && !error && onOpenTable && (
-            <button
-              onClick={() => onOpenTable(layer.id)}
-              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
-              title="Tabela de atributos / exportar"
+          {/* Restrição de Zoom */}
+          {isZoomRestricted && isInteractive && (
+            <span
+              title={`Visível a partir do zoom ${layer.minZoom} (zoom atual: ${currentZoom}) — aproxime o mapa`}
+              className="p-0.5 cursor-help"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M3 14h18M3 6h18M3 18h18" />
+              <svg className="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={ICON_ZOOM} />
               </svg>
-            </button>
+            </span>
           )}
 
-          {/* Botão de Download (GeoJSON) */}
-          {layer.available !== false && !error && data && (
+          {/* Detalhes: descrição + ações rotuladas */}
+          {(isInteractive || layer.description) && (
             <button
-              onClick={() => downloadGeoJSON(layer.id, data)}
-              className="p-1.5 md:p-0.5 rounded text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition-colors"
-              title="Baixar camada (GeoJSON)"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-4-4m4 4l4-4" />
-              </svg>
-            </button>
-          )}
-
-          {/* Botão de Info */}
-          {layer.description && (
-            <button
-              onClick={() => setShowDescription(!showDescription)}
-              className={`p-1.5 md:p-0.5 rounded text-slate-400 hover:text-slate-700 transition-colors ${
-                showDescription ? 'text-slate-800 bg-slate-100' : ''
+              onClick={() => setShowDetails(!showDetails)}
+              aria-expanded={showDetails}
+              className={`p-1.5 md:p-0.5 rounded transition-colors ${
+                showDetails ? 'text-slate-800 bg-slate-100' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
               }`}
-              title="Informações da camada"
+              title="Detalhes e ferramentas da camada"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </button>
           )}
-
-          {/* Erro de Arquivo */}
-          {error && (
-            <div className="relative flex items-center group/err">
-              <svg className="w-4 h-4 text-rose-600 cursor-help animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <div className="absolute right-0 bottom-6 hidden group-hover/err:block bg-slate-900 text-slate-100 text-[10px] font-bold px-2 py-1 rounded-md border border-slate-750 shadow-xl whitespace-nowrap z-[1050]">
-                Arquivo não encontrado
-              </div>
-            </div>
-          )}
-
-          {/* Restrição de Zoom */}
-          {isZoomRestricted && isInteractive && (
-            <div className="relative flex items-center group/tooltip">
-              <svg className="w-3.5 h-3.5 text-amber-600 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <div className="absolute right-0 bottom-6 hidden group-hover/tooltip:block bg-slate-900 text-slate-100 text-[10px] font-semibold px-2 py-1 rounded-md border border-slate-750 shadow-xl whitespace-nowrap z-[1050]">
-                Visível a partir do zoom {layer.minZoom} (Zoom atual: {currentZoom})
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Descrição Inline */}
-      {showDescription && layer.description && (
-        <div className="mt-1.5 p-2 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-500 leading-relaxed animate-fade-in">
-          {layer.description}
+      {showDetails && (
+        <div className="mt-1.5 ml-[3.25rem] p-2 rounded bg-slate-50 border border-slate-200 space-y-2 animate-fade-in">
+          {layer.description && (
+            <p className="text-[10px] text-slate-500 leading-relaxed">{layer.description}</p>
+          )}
+          {isZoomRestricted && isInteractive && (
+            <p className="text-[10px] text-amber-700 font-semibold">
+              Visível a partir do zoom {layer.minZoom} — use “Aproximar”.
+            </p>
+          )}
+          {isInteractive && (
+            <div className="flex flex-wrap gap-1.5">
+              {onZoomToLayer && (
+                <LayerAction onClick={() => onZoomToLayer(layer.id)} icon={ICON_ZOOM} title="Aproximar na extensão da camada">
+                  Aproximar
+                </LayerAction>
+              )}
+              {onOpenTable && (
+                <LayerAction onClick={() => onOpenTable(layer.id)} icon={ICON_TABLE} title="Tabela de atributos / exportar CSV">
+                  Tabela
+                </LayerAction>
+              )}
+              <LayerAction onClick={handleDownload} icon={ICON_DOWNLOAD} title="Baixar camada (GeoJSON)">
+                GeoJSON
+              </LayerAction>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
+// v2: a v1 salvava todos os grupos abertos, o que baixava o catálogo inteiro.
+const EXPANDED_GROUPS_KEY = 'webgis_expanded_groups_v2';
 
 export function LayerPanel({
   activeLayers,
@@ -226,24 +229,29 @@ export function LayerPanel({
   const [isPanelOpen, setIsPanelOpen] = useState(() => !isMobile);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Carrega estado do accordion do localStorage (todos abertos por padrão)
+  // Estado do accordion, lembrado por navegador. Por padrão só os grupos com
+  // camadas ligadas abrem, para o catálogo caber na tela.
   const [expandedGroups, setExpandedGroups] = useState(() => {
-    const saved = localStorage.getItem('webgis_expanded_groups');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.warn('Erro ao restaurar accordions:', e);
-      }
+    try {
+      const saved = localStorage.getItem(EXPANDED_GROUPS_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Erro ao restaurar accordions:', e);
     }
-    return GROUPS.reduce((acc, group) => ({ ...acc, [group]: true }), {});
+    return GROUPS.reduce((acc, group) => ({
+      ...acc,
+      [group]: LAYERS.some((layer) => layer.group === group && activeLayers.has(layer.id))
+    }), {});
   });
 
-  // Salva no localStorage a cada modificação
   const toggleGroup = (groupName) => {
     setExpandedGroups(prev => {
       const next = { ...prev, [groupName]: !prev[groupName] };
-      localStorage.setItem('webgis_expanded_groups', JSON.stringify(next));
+      try {
+        localStorage.setItem(EXPANDED_GROUPS_KEY, JSON.stringify(next));
+      } catch (e) {
+        // Armazenamento bloqueado (janela privada etc.): segue sem lembrar.
+      }
       return next;
     });
   };
@@ -370,7 +378,6 @@ export function LayerPanel({
                     isActive={activeLayers.has(layer.id)}
                     onToggle={onToggle}
                     currentZoom={currentZoom}
-                    isGroupExpanded={true}
                     onOpenTable={onOpenTable}
                     onZoomToLayer={onZoomToLayer}
                   />
@@ -480,11 +487,8 @@ export function LayerPanel({
                           isActive={activeLayers.has(layer.id)}
                           onToggle={onToggle}
                           currentZoom={currentZoom}
-                          isGroupExpanded={isExpanded}
                           onOpenTable={onOpenTable}
                           onZoomToLayer={onZoomToLayer}
-                          buildingSymbologyMode={buildingSymbologyMode}
-                          onBuildingSymbologyChange={onBuildingSymbologyChange}
                         />
                       ))}
                     </div>

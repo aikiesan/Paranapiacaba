@@ -1,5 +1,11 @@
 import React from 'react';
 import { assetUrl } from '../utils/assetUrl';
+import { LAYERS } from '../config/layers';
+import { CARTOGRAPHIC_MAPS } from '../data/mapsIndex';
+
+// Contagens derivadas dos catálogos, para que os indicadores não envelheçam.
+const LAYER_COUNT = LAYERS.filter((layer) => layer.available !== false).length;
+const MAP_COUNT = CARTOGRAPHIC_MAPS.length;
 
 export function HomePage({ onNavigate }) {
   const timelineEvents = [
@@ -53,7 +59,7 @@ export function HomePage({ onNavigate }) {
               onClick={() => onNavigate('gallery')}
               className="px-6 py-3.5 rounded-md bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#78350F] font-bold text-sm border border-[#F59E0B]/30 transition-all flex items-center gap-2"
             >
-              <span>📐 26 Pranchas Cartográficas A0</span>
+              <span>📐 {MAP_COUNT} Pranchas Cartográficas A0</span>
             </button>
           </div>
 
@@ -68,15 +74,15 @@ export function HomePage({ onNavigate }) {
               <div className="text-[11px] text-[#57534E] font-medium uppercase mt-1">Corredor Mapeado</div>
             </div>
             <div className="bg-[#FAF7F2] border border-[#E7E0D3] rounded-lg p-4 text-center shadow-xs">
-              <div className="text-2xl font-extrabold text-[#78350F] font-serif">26 Mapas</div>
+              <div className="text-2xl font-extrabold text-[#78350F] font-serif">{MAP_COUNT} Mapas</div>
               <div className="text-[11px] text-[#57534E] font-medium uppercase mt-1">Pranchas A0</div>
             </div>
             <div className="bg-[#FAF7F2] border border-[#E7E0D3] rounded-lg p-4 text-center shadow-xs">
-              <div className="text-2xl font-extrabold text-[#2D4A3E] font-serif">45 Trilhas</div>
-              <div className="text-[11px] text-[#57534E] font-medium uppercase mt-1">~780 km GPS</div>
+              <div className="text-2xl font-extrabold text-[#2D4A3E] font-serif">46 Trilhas</div>
+              <div className="text-[11px] text-[#57534E] font-medium uppercase mt-1">~793 km GPS</div>
             </div>
             <div className="bg-[#FAF7F2] border border-[#E7E0D3] rounded-lg p-4 text-center shadow-xs col-span-2 sm:col-span-1">
-              <div className="text-2xl font-extrabold text-[#78350F] font-serif">200+</div>
+              <div className="text-2xl font-extrabold text-[#78350F] font-serif">{LAYER_COUNT}</div>
               <div className="text-[11px] text-[#57534E] font-medium uppercase mt-1">Camadas SIG</div>
             </div>
           </div>

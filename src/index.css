@@ -36,6 +36,15 @@ body,
   background: rgba(16, 185, 129, 0.6); /* verde esmeralda no hover */
 }
 
+/* Faixa rolável sem barra visível (abas do cabeçalho) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Ajustes gerais Leaflet */
 .leaflet-container {
   font-family: inherit !important;
