@@ -127,10 +127,19 @@ de dois CSVs revisados pela equipe em
 `EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/05_TRANSCRICOES/` (fora do git):
 `citacoes_lugares.csv` (falas extraídas das transcrições) e
 `lugares_memoria_gazetteer.csv` (coordenadas de cada lugar). Uma fala só é
-publicada quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (não
-`pendente`). Sem nenhuma fala aprovada, o arquivo é uma `FeatureCollection` vazia.
+elegível quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (não
+`pendente`).
+
+- **Anonimização:** todo falante vira `Depoente NN`, e os nomes listados em
+  `nomes_anonimizar.csv` (mesma pasta, fora do git) são substituídos nas falas,
+  nos nomes de lugar e nas fontes. Os nomes reais ficam só nos CSVs locais.
+- **Pausa:** a camada está pausada (`available: false` em `layers.js`). Sem a flag
+  `--publicar`, o script grava uma `FeatureCollection` vazia mesmo que haja falas
+  aprovadas. Ela só vai ao ar no GitHub Pages depois que a equipe definir o método
+  de mapeamento.
 
 ```bash
-python build_lugares_memoria.py
+python build_lugares_memoria.py              # pausado: GeoJSON vazio
+python build_lugares_memoria.py --publicar   # só após decisão da equipe
 python -m unittest test_build_lugares_memoria
 ```

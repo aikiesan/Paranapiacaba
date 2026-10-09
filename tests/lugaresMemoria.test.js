@@ -22,6 +22,21 @@ describe('camada Lugares de Memória (mapa afetivo)', () => {
     expect(Array.isArray(geojson.features)).toBe(true);
   });
 
+  // Decisão da equipe (09/10/2026): os dados afetivos não vão ao GitHub Pages
+  // antes de definido o método de mapeamento. Ao liberar, atualize este teste.
+  it('fica pausada: indisponível na interface e sem nenhum lugar publicado', () => {
+    expect(layer.available).toBe(false);
+    expect(layer.visible).toBe(false);
+    expect(geojson.features).toEqual([]);
+  });
+
+  it('só publica falantes anonimizados (Depoente NN)', () => {
+    const named = geojson.features
+      .flatMap((feature) => feature.properties?.falas || [])
+      .filter((fala) => !/^Depoente (\d{2,}|não identificado)$/.test(fala.falante));
+    expect(named).toEqual([]);
+  });
+
   it('só publica pontos com coordenada definida, nunca lugares pendentes', () => {
     const invalid = geojson.features.filter((feature) => {
       const [lon, lat] = feature.geometry?.coordinates || [];

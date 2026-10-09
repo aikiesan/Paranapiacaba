@@ -4,30 +4,42 @@ Inputs (outside git — EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/05_TRANSCRICOES/):
 
   * citacoes_lugares.csv          id, fonte, falante, timestamp, citacao, lugar, tema, publicavel
   * lugares_memoria_gazetteer.csv lugar, lat, lon, precisao, fonte_coord
+  * nomes_anonimizar.csv          nome, substituto  (optional)
 
-A quote reaches public/data/lugares_memoria.geojson only when the team has set
-publicavel == "sim" AND its place has coordinates (precisao != "pendente").
-`lugar` may list several places separated by ";" — the quote is attached to
-each of them. One Point feature per place, carrying every approved quote.
+A quote is eligible only when the team has set publicavel == "sim" AND its
+place has coordinates (precisao != "pendente"). `lugar` may list several places
+separated by ";" — the quote is attached to each of them. One Point feature per
+place, carrying every eligible quote.
 
-The repository is public: when nothing is approved (or the inputs are missing)
-an empty FeatureCollection is written, so no quote ever leaks by default.
+Everything published is anonymised: each speaker becomes "Depoente NN" (numbered
+by first appearance in the CSV, so codes do not shift as approvals change), and
+every name listed in nomes_anonimizar.csv is replaced in quotes, place names and
+sources. Real names stay only in the CSVs, outside git.
 
-Run:  python build_lugares_memoria.py
+The layer is PAUSED: unless the script runs with --publicar, it writes an empty
+FeatureCollection even if quotes were approved (it only reports how many would
+go out). The repository and the GitHub Pages site are public.
+
+Run:  python build_lugares_memoria.py              # pausado: GeoJSON vazio
+      python build_lugares_memoria.py --publicar   # só após decisão da equipe
 """
 import csv
 import json
 import os
+import re
+import sys
 
 import config as C
 
 TRANSCRICOES = os.path.join(C.EXTERNAL, "05_TRANSCRICOES")
 CITACOES_CSV = os.path.join(TRANSCRICOES, "citacoes_lugares.csv")
 GAZETTEER_CSV = os.path.join(TRANSCRICOES, "lugares_memoria_gazetteer.csv")
+NOMES_CSV = os.path.join(TRANSCRICOES, "nomes_anonimizar.csv")
 OUT = os.path.join(C.OUT_DIR, "lugares_memoria.geojson")
 
 TEMAS = {"ferrovia_trabalho", "mata_ranchos", "lazer_festas",
          "perda_gentrificacao", "misticismo", "outro"}
+EMPTY = {"type": "FeatureCollection", "features": []}
 
 
 def read_csv(path):
@@ -59,8 +71,35 @@ def coords_of(entry):
     return lon, lat
 
 
-def build_features(citacoes, gazetteer):
+def pseudonyms(citacoes):
+    """Speaker -> "Depoente NN", numbered by first appearance in the CSV."""
+    codes = {}
+    for row in citacoes:
+        falante = (row.get("falante") or "").strip()
+        if falante and falante not in codes:
+            codes[falante] = f"Depoente {len(codes) + 1:02d}"
+    return codes
+
+
+def redactor(nomes):
+    """Function replacing each listed name (whole word, any case) by its substitute."""
+    pairs = [((n.get("nome") or "").strip(), (n.get("substituto") or "[nome omitido]").strip())
+             for n in nomes]
+    pairs = sorted((p for p in pairs if p[0]), key=lambda p: len(p[0]), reverse=True)
+    patterns = [(re.compile(rf"(?<!\w){re.escape(nome)}(?!\w)", re.IGNORECASE), sub)
+                for nome, sub in pairs]
+
+    def redact(text):
+        for pattern, sub in patterns:
+            text = pattern.sub(sub, text)
+        return text
+    return redact
+
+
+def build_features(citacoes, gazetteer, nomes=()):
     gaz = {(g.get("lugar") or "").strip(): g for g in gazetteer}
+    codes = pseudonyms(citacoes)
+    redact = redactor(nomes)
     places = {}
     for row in citacoes:
         if not is_publicavel(row):
@@ -68,9 +107,9 @@ def build_features(citacoes, gazetteer):
         tema = (row.get("tema") or "").strip()
         fala = {
             "id": (row.get("id") or "").strip(),
-            "citacao": (row.get("citacao") or "").strip(),
-            "falante": (row.get("falante") or "").strip(),
-            "fonte": (row.get("fonte") or "").strip(),
+            "citacao": redact((row.get("citacao") or "").strip()),
+            "falante": codes.get((row.get("falante") or "").strip(), "Depoente não identificado"),
+            "fonte": redact((row.get("fonte") or "").strip()),
             "timestamp": (row.get("timestamp") or "").strip(),
             "tema": tema if tema in TEMAS else "outro",
         }
@@ -89,11 +128,11 @@ def build_features(citacoes, gazetteer):
         feats.append({
             "type": "Feature",
             "properties": {
-                "nome": lugar,
+                "nome": redact(lugar),
                 "n_falas": len(place["falas"]),
                 "temas": temas,
                 "precisao": place["entry"].get("precisao", "").strip(),
-                "fonte_coord": place["entry"].get("fonte_coord", "").strip(),
+                "fonte_coord": redact(place["entry"].get("fonte_coord", "").strip()),
                 "falas": place["falas"],
             },
             "geometry": {"type": "Point",
@@ -102,22 +141,32 @@ def build_features(citacoes, gazetteer):
     return {"type": "FeatureCollection", "features": feats}
 
 
-def main():
-    print("Building lugares_memoria")
+def apply_pause(fc, publicar):
+    """While the layer is paused, nothing leaves the machine."""
+    return fc if publicar else EMPTY
+
+
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    publicar = "--publicar" in argv
+    print("Building lugares_memoria" + ("" if publicar else " (PAUSADO — use --publicar)"))
     citacoes = read_csv(CITACOES_CSV)
     gazetteer = read_csv(GAZETTEER_CSV)
+    nomes = read_csv(NOMES_CSV)
     if not citacoes:
         print(f"  (sem {os.path.relpath(CITACOES_CSV, C.REPO)} — publicando camada vazia)")
-    fc = build_features(citacoes, gazetteer)
+    fc = build_features(citacoes, gazetteer, nomes)
+    out = apply_pause(fc, publicar)
     os.makedirs(C.OUT_DIR, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as fh:
-        json.dump(fc, fh, ensure_ascii=False, separators=(",", ":"))
+        json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
 
     aprovadas = sum(is_publicavel(r) for r in citacoes)
     pendentes = sum(coords_of(g) is None for g in gazetteer)
     print(f"  {len(citacoes)} falas, {aprovadas} aprovadas (publicavel=sim); "
-          f"{len(gazetteer)} lugares, {pendentes} sem coordenada")
-    print(f"  -> {len(fc['features'])} lugares publicados em {os.path.relpath(OUT, C.REPO)}")
+          f"{len(gazetteer)} lugares, {pendentes} sem coordenada; {len(nomes)} nomes a anonimizar")
+    print(f"  {len(fc['features'])} lugares elegíveis -> {len(out['features'])} publicados em "
+          f"{os.path.relpath(OUT, C.REPO)}")
 
 
 if __name__ == "__main__":

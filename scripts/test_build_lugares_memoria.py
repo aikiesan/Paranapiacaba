@@ -2,9 +2,10 @@
 
 Run:  python -m unittest test_build_lugares_memoria   (from scripts/)
 """
+import json
 import unittest
 
-from build_lugares_memoria import build_features
+from build_lugares_memoria import apply_pause, build_features
 
 GAZ = [
     {"lugar": "Lugar A", "lat": "-23.78", "lon": "-46.30", "precisao": "exata", "fonte_coord": "teste"},
@@ -48,6 +49,34 @@ class BuildLugaresMemoria(unittest.TestCase):
     def test_unknown_theme_falls_back_to_outro(self):
         fc = build_features([row(1, "Lugar A", "sim", "tema_inventado")], GAZ)
         self.assertEqual(fc["features"][0]["properties"]["falas"][0]["tema"], "outro")
+
+    def test_speakers_become_stable_pseudonyms(self):
+        rows = [row(1, "Lugar A", "revisar"), row(2, "Lugar A", "sim"), row(3, "Lugar A", "sim")]
+        rows[0]["falante"], rows[1]["falante"], rows[2]["falante"] = "Fulano", "Beltrana", "Fulano"
+        falas = build_features(rows, GAZ)["features"][0]["properties"]["falas"]
+        # Numbered by first appearance in the CSV, approved or not.
+        self.assertEqual([f["falante"] for f in falas], ["Depoente 02", "Depoente 01"])
+        self.assertNotIn("Fulano", str(falas))
+
+    def test_listed_names_are_redacted_everywhere(self):
+        gaz = GAZ + [{"lugar": "Casa do seu Fulano", "lat": "-23.7", "lon": "-46.3",
+                      "precisao": "exata", "fonte_coord": "perto do bar de Fulano"}]
+        r = row(1, "Casa do seu Fulano", "sim")
+        r["citacao"], r["fonte"] = "ia na casa do seu Fulano, o FULANO sabia", "notas de Sicrano"
+        nomes = [{"nome": "Fulano", "substituto": "[morador]"},
+                 {"nome": "seu Fulano", "substituto": "[um morador]"},
+                 {"nome": "Sicrano", "substituto": "equipe"}]
+        props = build_features([r], gaz, nomes)["features"][0]["properties"]
+        self.assertEqual(props["nome"], "Casa do [um morador]")
+        self.assertEqual(props["falas"][0]["citacao"], "ia na casa do [um morador], o [morador] sabia")
+        self.assertEqual(props["falas"][0]["fonte"], "notas de equipe")
+        self.assertNotIn("Fulano", json.dumps(props, ensure_ascii=False))
+
+    def test_paused_layer_publishes_nothing(self):
+        fc = build_features([row(1, "Lugar A", "sim")], GAZ)
+        self.assertEqual(len(fc["features"]), 1)
+        self.assertEqual(apply_pause(fc, publicar=False), {"type": "FeatureCollection", "features": []})
+        self.assertIs(apply_pause(fc, publicar=True), fc)
 
 
 if __name__ == "__main__":
