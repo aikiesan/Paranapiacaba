@@ -193,9 +193,9 @@ export const PRESETS = [
     label: '1:100.000 · Serra do Mar ao Parque Andreense',
     icon: '⛰️',
     basemap: 'terrain',
-    description: 'Área de estudo ampliada: escarpa da Serra do Mar, relevo e declividade, unidades de conservação, sub-bacias do divisor de águas e o Parque Andreense.',
+    description: 'Área de estudo ampliada: escarpa da Serra do Mar, hipsometria e declividade até o Parque Andreense, unidades de conservação e sub-bacias do divisor de águas.',
     layers: [
-      'altimetria_serra', 'declividade', 'ucs', 'pnm_nascentes', 'parque_andreense',
+      'altimetria_serra', 'hipsometria', 'declividade', 'ucs', 'pnm_nascentes', 'parque_andreense',
       'subbacias', 'hidrografia_regional', 'limite_vila', 'funicular'
     ],
     targetScale: '1:100.000',

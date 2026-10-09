@@ -720,6 +720,21 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "hipsometria",
+    label: "Hipsometria (Faixas de Altitude)",
+    file: "hipsometria.geojson",
+    group: "Relevo e Declividade",
+    type: "polygon",
+    color: "#9A5111",
+    weight: 0,
+    fillOpacity: 0.5,
+    minZoom: 11,
+    visible: false,
+    popupFields: ["faixa"],
+    description: "Altitude em 8 faixas (de < 200 m na Baixada a > 950 m nos topos), da escarpa de Paranapiacaba ao Parque Andreense, derivada do Copernicus DEM GLO-30 (~30 m; modelo de superfície, inclui o dossel). Paleta sequencial sépia: quanto mais escuro, mais alto.",
+    available: true
+  },
+  {
     id: "declividade",
     label: "Classes de Declividade",
     file: "declividade.geojson",
@@ -731,7 +746,7 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: ["faixa"],
-    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn — leitura da escarpa na escala 1:25.000.",
+    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn, da escarpa de Paranapiacaba ao Parque Andreense — leitura nas escalas 1:25.000 a 1:100.000.",
     available: true
   },
 

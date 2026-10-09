@@ -30,7 +30,7 @@ export const THEMES = [
         code: '2.1',
         title: 'Relevo e Declividade',
         icon: '⛰️',
-        layers: ['altimetria_serra', 'declividade', 'curvas_nivel'],
+        layers: ['altimetria_serra', 'hipsometria', 'declividade', 'curvas_nivel'],
       },
       {
         code: '2.2',
