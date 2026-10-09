@@ -106,3 +106,18 @@ duas vertentes do divisor de águas de Paranapiacaba.
 O raster `rasters/ortofoto_paranapiacaba_2010.webp` é derivado do GeoTIFF
 EPSG:4674, preserva os 3.000 × 3.000 pixels originais e é descrito em
 `rasters/manifest.json`.
+
+### Lugares de Memória (mapa afetivo)
+
+`lugares_memoria.geojson` é gerado por `scripts/build_lugares_memoria.py` a partir
+de dois CSVs revisados pela equipe em
+`EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/05_TRANSCRICOES/` (fora do git):
+`citacoes_lugares.csv` (falas extraídas das transcrições) e
+`lugares_memoria_gazetteer.csv` (coordenadas de cada lugar). Uma fala só é
+publicada quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (não
+`pendente`). Sem nenhuma fala aprovada, o arquivo é uma `FeatureCollection` vazia.
+
+```bash
+python build_lugares_memoria.py
+python -m unittest test_build_lugares_memoria
+```

@@ -124,6 +124,12 @@ export const THEMES = [
         icon: '🏘️',
         layers: ['edificacoes_vila', 'edificacoes_cad', 'pac_lotes', 'sistema_viario', 'caminhos_vila'],
       },
+      {
+        code: '5.4',
+        title: 'Memória Afetiva',
+        icon: '💬',
+        layers: ['lugares_memoria'],
+      },
     ],
   },
   {

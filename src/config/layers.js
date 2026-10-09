@@ -395,6 +395,21 @@ export const LAYERS = [
     description: "Caminhos e percursos de pedestres mapeados no núcleo da Vila (base Palazzi).",
     available: true
   },
+
+  // ====================== MEMÓRIA AFETIVA ======================
+  {
+    id: "lugares_memoria",
+    label: "Lugares de Memória",
+    file: "lugares_memoria.geojson",
+    group: "Memória Afetiva",
+    type: "point",
+    color: "#9D174D",
+    minZoom: 11,
+    visible: false,
+    popupFields: ["falas"],
+    description: "Mapa afetivo: lugares citados por moradores e ex-ferroviários nas gravações do projeto Trilhas e Trilhos da Memória (SEMASA/PUC-Campinas) e em vídeos de memória da Vila. Só aparecem as falas que a equipe aprovou para publicação e cujo lugar já foi georreferenciado (scripts/build_lugares_memoria.py).",
+    available: true
+  },
   {
     id: "curvas_nivel",
     label: "Curvas de Nível (Vila)",
