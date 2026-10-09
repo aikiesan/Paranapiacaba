@@ -841,6 +841,22 @@ export const LAYERS = [
     available: true
   },
 
+  // ====================== CAMINHOS HISTÓRICOS ======================
+  {
+    id: "caminho_sal",
+    label: "Caminho do Sal",
+    file: "caminho_sal.geojson",
+    group: "Caminhos Históricos",
+    type: "line",
+    color: "#9A3412",
+    weight: 3,
+    minZoom: 10,
+    visible: false,
+    popupFields: ["nome", "extensao_km", "autoria", "fonte"],
+    description: "Traçado do Caminho do Sal (~54 km) entre Santo André, São Bernardo do Campo e Mogi das Cruzes, atravessando a Vila de Paranapiacaba e o PNM Nascentes. Fonte e autoria: mapa colaborativo de Mariana Lebens no Google My Maps (https://www.google.com/maps/d/viewer?mid=12bBvGeW5hecNAqtQlvLA1lK1dseMIbA), convertido do KMZ por scripts/build_caminho_sal.py.",
+    available: true
+  },
+
   // ====================== LEGISLAÇÃO E PLANEJAMENTO ======================
   {
     id: "macrozonas",

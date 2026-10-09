@@ -110,6 +110,16 @@ O raster `rasters/ortofoto_paranapiacaba_2010.webp` é derivado do GeoTIFF
 EPSG:4674, preserva os 3.000 × 3.000 pixels originais e é descrito em
 `rasters/manifest.json`.
 
+### Caminhos históricos
+
+`caminho_sal.geojson` é a linha do Caminho do Sal convertida por
+`scripts/build_caminho_sal.py` do KMZ em `config.CAMINHO_SAL_KMZ` (cópia em
+`EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/00_DADOS_BRUTOS/01_SHAPEFILES_ORIGINAIS/10_KMZ_KML/CAMINHO_SAL/`).
+Fonte e autoria: mapa de Mariana Lebens no Google My Maps
+(<https://www.google.com/maps/d/viewer?mid=12bBvGeW5hecNAqtQlvLA1lK1dseMIbA>).
+Só o traçado é publicado; os pontos de interesse do KMZ e os outros roteiros da
+pasta (Passos do Padre Capra, Rota da Luz etc.) não entram no WebGIS.
+
 ### Lugares de Memória (mapa afetivo)
 
 `lugares_memoria.geojson` é gerado por `scripts/build_lugares_memoria.py` a partir

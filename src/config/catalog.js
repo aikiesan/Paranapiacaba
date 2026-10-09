@@ -143,6 +143,12 @@ export const THEMES = [
         icon: '🥾',
         layers: ['trilhas', 'atrativos', 'circuitos'],
       },
+      {
+        code: '6.2',
+        title: 'Caminhos Históricos',
+        icon: '🧭',
+        layers: ['caminho_sal'],
+      },
     ],
   },
   {
