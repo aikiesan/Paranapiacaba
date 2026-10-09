@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LAYERS } from '../config/layers';
-import { CONSERVATION_PALETTE, PALETTE, SLOPE_CLASSES } from '../config/styleGuide';
+import { CONSERVATION_PALETTE, PALETTE, SLOPE_CLASSES, HYPSO_CLASSES } from '../config/styleGuide';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) {
@@ -11,6 +11,7 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
   const activeList = LAYERS.filter((layer) => activeLayers.has(layer.id));
   const isEdificacoesActive = activeLayers.has('edificacoes_vila');
   const isDeclividadeActive = activeLayers.has('declividade');
+  const isHipsometriaActive = activeLayers.has('hipsometria');
 
   return (
     <div className="pointer-events-auto w-[180px] md:w-[240px] bg-white/90 backdrop-blur-md border border-stone-200 rounded-lg shadow-md overflow-hidden transition-all duration-300">
@@ -80,6 +81,23 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                   </div>
                 );
               })}
+
+              {/* Sub-legenda da Hipsometria (faixas de altitude) */}
+              {isHipsometriaActive && (
+                <div className="mt-3 pt-2 border-t border-stone-200 space-y-1.5">
+                  <div className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+                    Hipsometria (altitude)
+                  </div>
+                  <div className="space-y-1 text-[10px]">
+                    {[...HYPSO_CLASSES].reverse().map(({ label, color }) => (
+                      <div key={label} className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm border border-stone-700/20" style={{ backgroundColor: color }} />
+                        <span className="text-stone-600 truncate">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Sub-legenda das Classes de Declividade */}
               {isDeclividadeActive && (

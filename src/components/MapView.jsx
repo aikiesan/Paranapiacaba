@@ -4,7 +4,7 @@ import L from 'leaflet';
 import { LAYERS } from '../config/layers';
 import { useGeoJSON, loadGeoJSON } from '../hooks/useGeoJSON';
 import { unionBounds, geoJSONBounds, presetMaxZoom, focusableLayerIds } from '../utils/mapBounds';
-import { PALETTE, SLOPE_CLASSES, vegColor, riskColor, conservationColor } from '../config/styleGuide';
+import { PALETTE, SLOPE_CLASSES, HYPSO_CLASSES, vegColor, riskColor, conservationColor } from '../config/styleGuide';
 import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { ReferenceOverlays } from './RasterControl';
 import { assetUrl } from '../utils/assetUrl';
@@ -173,6 +173,11 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
       // Estilo dinâmico: Classes de Declividade (1..5)
       if (layer.id === 'declividade') {
         strokeColor = fillColor = props.cor || SLOPE_CLASSES[(props.classe || 1) - 1]?.color || layer.color;
+      }
+
+      // Estilo dinâmico: Hipsometria (faixas de altitude 1..8)
+      if (layer.id === 'hipsometria') {
+        strokeColor = fillColor = props.cor || HYPSO_CLASSES[(props.classe || 1) - 1]?.color || layer.color;
       }
 
       // Estilo dinâmico: Riscos (Defesa Civil) por grau

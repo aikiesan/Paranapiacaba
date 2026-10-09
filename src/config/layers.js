@@ -395,6 +395,24 @@ export const LAYERS = [
     description: "Caminhos e percursos de pedestres mapeados no núcleo da Vila (base Palazzi).",
     available: true
   },
+
+  // ====================== MEMÓRIA AFETIVA ======================
+  {
+    id: "lugares_memoria",
+    label: "Lugares de Memória",
+    file: "lugares_memoria.geojson",
+    group: "Memória Afetiva",
+    type: "point",
+    color: "#9D174D",
+    minZoom: 11,
+    visible: false,
+    popupFields: ["falas"],
+    description: "Mapa afetivo: lugares citados por moradores e ex-ferroviários nas gravações do projeto Trilhas e Trilhos da Memória (SEMASA/PUC-Campinas) e em vídeos de memória da Vila. Em preparação: a camada está pausada até a equipe definir o método de mapeamento e aprovar as falas, que serão publicadas anonimizadas (scripts/build_lugares_memoria.py).",
+    // Pausada por decisão da equipe (09/10/2026): não vai ao ar no GitHub Pages
+    // antes de definido o método de mapeamento. Para liberar: available: true
+    // e rodar build_lugares_memoria.py --publicar.
+    available: false
+  },
   {
     id: "curvas_nivel",
     label: "Curvas de Nível (Vila)",
@@ -705,6 +723,21 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "hipsometria",
+    label: "Hipsometria (Faixas de Altitude)",
+    file: "hipsometria.geojson",
+    group: "Relevo e Declividade",
+    type: "polygon",
+    color: "#9A5111",
+    weight: 0,
+    fillOpacity: 0.5,
+    minZoom: 11,
+    visible: false,
+    popupFields: ["faixa"],
+    description: "Altitude em 8 faixas (de < 200 m na Baixada a > 950 m nos topos), da escarpa de Paranapiacaba ao Parque Andreense, derivada do Copernicus DEM GLO-30 (~30 m; modelo de superfície, inclui o dossel). Paleta sequencial sépia: quanto mais escuro, mais alto.",
+    available: true
+  },
+  {
     id: "declividade",
     label: "Classes de Declividade",
     file: "declividade.geojson",
@@ -716,7 +749,7 @@ export const LAYERS = [
     minZoom: 12,
     visible: false,
     popupFields: ["faixa"],
-    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn — leitura da escarpa na escala 1:25.000.",
+    description: "Declividade em 5 classes (0–8%, 8–20%, 20–30%, 30–45%, >45%) derivada do Copernicus DEM GLO-30 (~30 m) pelo método de Horn, da escarpa de Paranapiacaba ao Parque Andreense — leitura nas escalas 1:25.000 a 1:100.000.",
     available: true
   },
 
@@ -808,6 +841,22 @@ export const LAYERS = [
     cluster: true,
     popupFields: [],
     description: "Pontos dos circuitos turísticos de Santo André (city tour histórico, arte e arquitetura, etc.).",
+    available: true
+  },
+
+  // ====================== CAMINHOS HISTÓRICOS ======================
+  {
+    id: "caminho_sal",
+    label: "Caminho do Sal",
+    file: "caminho_sal.geojson",
+    group: "Caminhos Históricos",
+    type: "line",
+    color: "#9A3412",
+    weight: 3,
+    minZoom: 10,
+    visible: false,
+    popupFields: ["nome", "extensao_km", "autoria", "fonte"],
+    description: "Traçado do Caminho do Sal (~54 km) entre Santo André, São Bernardo do Campo e Mogi das Cruzes, atravessando a Vila de Paranapiacaba e o PNM Nascentes. Fonte e autoria: mapa colaborativo de Mariana Lebens no Google My Maps (https://www.google.com/maps/d/viewer?mid=12bBvGeW5hecNAqtQlvLA1lK1dseMIbA), convertido do KMZ por scripts/build_caminho_sal.py.",
     available: true
   },
 
