@@ -3,7 +3,7 @@ import { useOnEscape } from '../hooks/useOnEscape';
 import { ClockTowerMark, Icon } from './archive';
 
 // Anexo C: sobre o projeto, no formato do carimbo de uma prancha.
-export function AboutPanel({ isOpen, onClose }) {
+export function AboutPanel({ isOpen, onClose, onOpenSources }) {
   useOnEscape(isOpen, onClose);
   if (!isOpen) return null;
 
@@ -11,7 +11,16 @@ export function AboutPanel({ isOpen, onClose }) {
     ['Coordenação e execução', 'Equipe PUC-Campinas'],
     ['Fomento', 'FAPESP — Fundação de Amparo à Pesquisa do Estado de São Paulo'],
     ['Referência geodésica', 'SIRGAS 2000 (EPSG:4674)'],
-    ['Fontes', 'IBGE, IPHAN, CONDEPHAAT, MapBiomas, DataGeo, Prefeitura de Santo André, Wikiloc'],
+    ['Fontes', (
+      <>
+        IBGE, Ministério dos Transportes, EPE, SIGA Santo André, CBH-AT, GeoSEADE, CEM/USP, MapBiomas, Copernicus, Arquivo Público do Estado, Wikiloc e levantamentos da equipe.{' '}
+        {onOpenSources && (
+          <button onClick={onOpenSources} className="ink-link text-ink-700 font-semibold">
+            Ver links por camada (Anexo D)
+          </button>
+        )}
+      </>
+    )],
   ];
 
   return (

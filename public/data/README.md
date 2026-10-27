@@ -46,6 +46,15 @@ OSM_FILL=1 python build_data.py ferrovia_corredor.geojson
 ```
 (Por padrão o corredor usa a malha IBGE `BaseFerro`, que já cobre Jundiaí→Santos.)
 
+## Fontes citadas no atlas
+Cada camada, raster e carta de referência cita sua procedência em
+[`src/config/sources.js`](../../src/config/sources.js): o portal de origem (com
+link para a página do conjunto de dados quando existe), o arquivo de origem e
+uma nota. O app mostra essa fonte no painel de camadas (ⓘ), no painel da feição,
+no rodapé de atribuição do mapa, no PNG exportado e no Anexo D ("Fontes dos
+dados"). Ao adicionar uma camada, registre a fonte ali — `tests/sources.test.js`
+falha se alguma camada ficar sem citação.
+
 ## Mapa fonte → camada
 O mapeamento canônico (camada de saída ↔ shapefile de origem, recorte e
 simplificação) está em [`scripts/config.py`](../../scripts/config.py) na lista `JOBS`.
