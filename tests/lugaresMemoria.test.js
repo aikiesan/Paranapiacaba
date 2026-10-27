@@ -22,12 +22,11 @@ describe('camada Lugares de Memória (mapa afetivo)', () => {
     expect(Array.isArray(geojson.features)).toBe(true);
   });
 
-  // Decisão da equipe (09/10/2026): os dados afetivos não vão ao GitHub Pages
-  // antes de definido o método de mapeamento. Ao liberar, atualize este teste.
-  it('fica pausada: indisponível na interface e sem nenhum lugar publicado', () => {
-    expect(layer.available).toBe(false);
+  // Liberada em 27/10/2026 com as falas dos vídeos do YouTube.
+  it('está disponível na interface, desligada por padrão, com lugares publicados', () => {
+    expect(layer.available).not.toBe(false);
     expect(layer.visible).toBe(false);
-    expect(geojson.features).toEqual([]);
+    expect(geojson.features.length).toBeGreaterThan(0);
   });
 
   it('só publica falantes anonimizados (Depoente NN)', () => {
