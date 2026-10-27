@@ -30,7 +30,7 @@ export const THEMES = [
         code: '2.1',
         title: 'Relevo e Declividade',
         icon: '⛰️',
-        layers: ['altimetria_serra', 'declividade', 'curvas_nivel'],
+        layers: ['altimetria_serra', 'hipsometria', 'declividade', 'curvas_nivel'],
       },
       {
         code: '2.2',
@@ -124,6 +124,12 @@ export const THEMES = [
         icon: '🏘️',
         layers: ['edificacoes_vila', 'edificacoes_cad', 'pac_lotes', 'sistema_viario', 'caminhos_vila'],
       },
+      {
+        code: '5.4',
+        title: 'Memória Afetiva',
+        icon: '💬',
+        layers: ['lugares_memoria'],
+      },
     ],
   },
   {
@@ -136,6 +142,12 @@ export const THEMES = [
         title: 'Trilhas e Atrativos',
         icon: '🥾',
         layers: ['trilhas', 'atrativos', 'circuitos'],
+      },
+      {
+        code: '6.2',
+        title: 'Caminhos Históricos',
+        icon: '🧭',
+        layers: ['caminho_sal'],
       },
     ],
   },

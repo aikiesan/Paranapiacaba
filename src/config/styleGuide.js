@@ -131,6 +131,19 @@ export const SLOPE_CLASSES = [
   { color: '#d73027', label: '>45% (Escarpado)' },
 ];
 
+// Hipsometria em 8 faixas de altitude (rampa sequencial sépia, claro = baixo,
+// escuro = alto), iguais às do scripts/build_declividade.py.
+export const HYPSO_CLASSES = [
+  { color: '#e5a67b', label: '< 200 m' },
+  { color: '#d48f60', label: '200–400 m' },
+  { color: '#c37944', label: '400–600 m' },
+  { color: '#b0652a', label: '600–750 m' },
+  { color: '#9a5111', label: '750–800 m' },
+  { color: '#824103', label: '800–850 m' },
+  { color: '#693300', label: '850–950 m' },
+  { color: '#4f2704', label: '> 950 m' },
+];
+
 export function vegColor(classe) {
   const c = _norm(classe);
   if (c.includes('avancado')) return PALETTE.veg_avancado;

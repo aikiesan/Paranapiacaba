@@ -22,14 +22,17 @@ python build_data.py                     # gera todos os public/data/*.geojson
 python build_data.py ferrovia_corredor.geojson   # ou apenas camadas específicas
 python validate_data.py                  # valida (4326, FeatureCollection, bbox)
 python build_rasters.py                  # overlays raster: MapBiomas 2008–2024 + ortofoto 2010
-python build_declividade.py              # declividade (5 classes) — Copernicus GLO-30
+python build_declividade.py              # declividade (5 classes) + hipsometria (8 faixas) — Copernicus GLO-30
 ```
 
 Os overlays raster (PNGs georreferenciados + `rasters/manifest.json`) são
 gerados por `build_rasters.py` (cobertura MapBiomas colorizada por ano e
-ortofoto 2010). A declividade em 5 classes (0–8, 8–20, 20–30, 30–45, >45%) é
-gerada por `build_declividade.py` a partir do Copernicus DEM GLO-30 (~30 m,
-método de Horn), publicada como `declividade.geojson` e como overlay raster.
+ortofoto 2010). A declividade em 5 classes (0–8, 8–20, 20–30, 30–45, >45%) e a
+hipsometria em 8 faixas de altitude (< 200 m a > 950 m) são geradas por
+`build_declividade.py` a partir do Copernicus DEM GLO-30 (~30 m; declividade pelo
+método de Horn), na janela lon -46,50 a -46,26 / lat -23,82 a -23,74 — da escarpa
+de Paranapiacaba ao Parque Andreense —, publicadas como `declividade.geojson` /
+`hipsometria.geojson` e como overlays raster.
 
 Rede de energia: `rede_eletrica.geojson` (linhas de transmissão) e
 `subestacoes.geojson` saem de `build_data.py` a partir dos shapefiles EPE/SIN
@@ -106,3 +109,37 @@ duas vertentes do divisor de águas de Paranapiacaba.
 O raster `rasters/ortofoto_paranapiacaba_2010.webp` é derivado do GeoTIFF
 EPSG:4674, preserva os 3.000 × 3.000 pixels originais e é descrito em
 `rasters/manifest.json`.
+
+### Caminhos históricos
+
+`caminho_sal.geojson` é a linha do Caminho do Sal convertida por
+`scripts/build_caminho_sal.py` do KMZ em `config.CAMINHO_SAL_KMZ` (cópia em
+`EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/00_DADOS_BRUTOS/01_SHAPEFILES_ORIGINAIS/10_KMZ_KML/CAMINHO_SAL/`).
+Fonte e autoria: mapa de Mariana Lebens no Google My Maps
+(<https://www.google.com/maps/d/viewer?mid=12bBvGeW5hecNAqtQlvLA1lK1dseMIbA>).
+Só o traçado é publicado; os pontos de interesse do KMZ e os outros roteiros da
+pasta (Passos do Padre Capra, Rota da Luz etc.) não entram no WebGIS.
+
+### Lugares de Memória (mapa afetivo)
+
+`lugares_memoria.geojson` é gerado por `scripts/build_lugares_memoria.py` a partir
+de dois CSVs revisados pela equipe em
+`EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/05_TRANSCRICOES/` (fora do git):
+`citacoes_lugares.csv` (falas extraídas das transcrições) e
+`lugares_memoria_gazetteer.csv` (coordenadas de cada lugar). Uma fala só é
+elegível quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (não
+`pendente`).
+
+- **Anonimização:** todo falante vira `Depoente NN`, e os nomes listados em
+  `nomes_anonimizar.csv` (mesma pasta, fora do git) são substituídos nas falas,
+  nos nomes de lugar e nas fontes. Os nomes reais ficam só nos CSVs locais.
+- **Pausa:** a camada está pausada (`available: false` em `layers.js`). Sem a flag
+  `--publicar`, o script grava uma `FeatureCollection` vazia mesmo que haja falas
+  aprovadas. Ela só vai ao ar no GitHub Pages depois que a equipe definir o método
+  de mapeamento.
+
+```bash
+python build_lugares_memoria.py              # pausado: GeoJSON vazio
+python build_lugares_memoria.py --publicar   # só após decisão da equipe
+python -m unittest test_build_lugares_memoria
+```

@@ -414,6 +414,56 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
     );
   };
 
+  // Lugares de Memória: um ponto por lugar, com todas as falas aprovadas sobre ele
+  const renderLugarMemoriaContent = () => {
+    const nome = properties.nome || 'Lugar de memória';
+    const falas = Array.isArray(properties.falas) ? properties.falas : [];
+    const temaLabel = {
+      ferrovia_trabalho: 'Ferrovia e trabalho',
+      mata_ranchos: 'Mata e ranchos',
+      lazer_festas: 'Lazer e festas',
+      perda_gentrificacao: 'Perda e gentrificação',
+      misticismo: 'Misticismo',
+      outro: 'Outros'
+    };
+
+    return (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-base font-bold text-stone-800 leading-tight">{nome}</h2>
+          <span className="text-xs text-stone-400">
+            {falas.length} {falas.length === 1 ? 'fala' : 'falas'}
+          </span>
+        </div>
+
+        <ul className="space-y-3">
+          {falas.map((fala, idx) => (
+            <li key={fala.id || idx} className="bg-stone-50 p-3 rounded-lg border border-stone-200 space-y-1.5">
+              <blockquote className="text-xs text-stone-700 leading-relaxed italic">
+                “{fala.citacao}”
+              </blockquote>
+              <div className="text-[11px] font-semibold text-stone-800">— {fala.falante || 'Falante não identificado'}</div>
+              <div className="text-[10px] text-stone-500">
+                {fala.fonte}{fala.timestamp ? ` · ${fala.timestamp}` : ''}
+              </div>
+              {fala.tema && (
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-stone-600 border border-stone-200">
+                  {temaLabel[fala.tema] || fala.tema}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {properties.precisao && (
+          <p className="text-[10px] text-stone-400">
+            Localização {properties.precisao}{properties.fonte_coord ? ` — ${properties.fonte_coord}` : ''}
+          </p>
+        )}
+      </div>
+    );
+  };
+
   const renderDefaultContent = () => {
     // Exclui chaves técnicas e filtra valores válidos
     const technicalKeys = ['FID', 'OBJECTID', 'id', 'layer', 'geometry_len', 'geometry_area', 'Shape_Area', 'Shape_Length'];
@@ -469,6 +519,8 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
         return renderAtrativoContent();
       case 'patrimonio_tombados':
         return renderPatrimonioContent();
+      case 'lugares_memoria':
+        return renderLugarMemoriaContent();
       default:
         return renderDefaultContent();
     }

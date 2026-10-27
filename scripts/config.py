@@ -78,6 +78,13 @@ TRILHAS_KML_DIR = os.path.join(
     "07_TRILHAS_KML"
 )
 
+# Caminhos históricos (KMZ exportados do Google My Maps) — cópia, em EXTERNAL, de
+# 1_GIS_UNESCO_PARANAPIACABA/00_DADOS_BRUTOS/01_SHAPEFILES_ORIGINAIS/10_KMZ_KML/.
+CAMINHO_SAL_KMZ = os.path.join(
+    EXTERNAL, "00_DADOS_BRUTOS", "01_SHAPEFILES_ORIGINAIS", "10_KMZ_KML",
+    "CAMINHO_SAL", "Caminho do Sal.kmz"
+)
+
 # --- Candidate name columns for layers with heterogeneous schemas ------------
 NAME_CANDIDATES = [
     "nome", "NOME", "EQUIPAMENT", "DSC_DENOMI", "NomeEstaca", "NM_MUN",
