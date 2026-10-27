@@ -216,7 +216,7 @@ export const SOURCES = {
 // portal quando existe página direta do conjunto ou do documento consultado.
 const siga = (dataset, extra = {}) => ({ source: 'siga', dataset, ...extra });
 const youtube = (id, dataset) => ({ source: 'youtube_memoria', dataset, url: `https://www.youtube.com/watch?v=${id}` });
-const CBHAT_FILES ='https://comiteat.sp.gov.br/wp-content/uploads/2021/06/';
+const CBHAT_FILES = 'https://comiteat.sp.gov.br/wp-content/uploads/2021/06/';
 // O servidor do CBH-AT grava os nomes acentuados em Unicode decomposto (NFD).
 const cbhat = (file, dataset) => ({
   source: 'cbhat', dataset, url: encodeURI(`${CBHAT_FILES}${file}.rar`.normalize('NFD')),
