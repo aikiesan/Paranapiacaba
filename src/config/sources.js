@@ -158,6 +158,28 @@ export const SOURCES = {
     url: 'https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM',
     note: '© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved. Baixado do Registry of Open Data on AWS.',
   },
+  mymaps_lebens: {
+    short: 'Google My Maps (M. Lebens)',
+    name: 'Caminho do Sal — mapa colaborativo de Mariana Lebens no Google My Maps',
+    org: 'Mariana Lebens (autora do mapa)',
+    url: 'https://www.google.com/maps/d/viewer?mid=12bBvGeW5hecNAqtQlvLA1lK1dseMIbA',
+  },
+
+  // ---- Memória e patrimônio imaterial --------------------------------------
+  trilhas_trilhos: {
+    short: 'Trilhas e Trilhos da Memória',
+    name: 'Projeto Trilhas e Trilhos da Memória — gravações com moradores de Paranapiacaba',
+    org: 'SEMASA / Subprefeitura de Paranapiacaba e Parque Andreense, com apoio da PUC-Campinas',
+    url: 'https://www.dgabc.com.br/Noticia/4315346/projeto-audiovisual-de-santo-andre-resgata-elo-entre-memoria-ferroviaria-e-natureza-de-paranapiacaba',
+    note: 'Os compilados em vídeo e as notas de campo foram transcritos pela equipe; as 17 entrevistas completas ainda não.',
+  },
+  youtube_memoria: {
+    short: 'Vídeos no YouTube',
+    name: 'Vídeos de memória da Vila publicados no YouTube',
+    org: 'Canais de cada vídeo, citados um a um',
+    url: null,
+    note: 'Cada fala leva o link do vídeo de onde foi transcrita; a minutagem ainda não foi conferida.',
+  },
 
   // ---- Acervo da equipe (sem endereço público) -----------------------------
   equipe: {
@@ -193,7 +215,8 @@ export const SOURCES = {
 // Cada camada: lista de { source, dataset, url?, note? }. `url` sobrepõe a do
 // portal quando existe página direta do conjunto ou do documento consultado.
 const siga = (dataset, extra = {}) => ({ source: 'siga', dataset, ...extra });
-const CBHAT_FILES = 'https://comiteat.sp.gov.br/wp-content/uploads/2021/06/';
+const youtube = (id, dataset) => ({ source: 'youtube_memoria', dataset, url: `https://www.youtube.com/watch?v=${id}` });
+const CBHAT_FILES ='https://comiteat.sp.gov.br/wp-content/uploads/2021/06/';
 // O servidor do CBH-AT grava os nomes acentuados em Unicode decomposto (NFD).
 const cbhat = (file, dataset) => ({
   source: 'cbhat', dataset, url: encodeURI(`${CBHAT_FILES}${file}.rar`.normalize('NFD')),
@@ -255,6 +278,23 @@ export const LAYER_SOURCES = {
   curvas_nivel: [{ source: 'cad_vila', dataset: 'paranapiacaba_curvas_nivel_detalhadas_georef — curvas de 1 m' }],
   altimetria_serra: [siga('SIGA_AMB_ALTIMETRIA_SUL_5M — curvas de 5 m (filtradas a cada 50 m)')],
   declividade: [{ source: 'copernicus', dataset: 'Copernicus DEM GLO-30, folha S24 W047 — declividade calculada pela equipe (método de Horn)' }],
+  hipsometria: [{ source: 'copernicus', dataset: 'Copernicus DEM GLO-30, folha S24 W047 — faixas de altitude calculadas pela equipe' }],
+
+  // Memória afetiva e caminhos históricos
+  lugares_memoria: [
+    {
+      source: 'trilhas_trilhos',
+      dataset: 'Compilados em vídeo, evento SEMASA e notas de campo (citacoes_lugares.csv)',
+    },
+    youtube('4GBcu6YzD_0', 'Casa da Memória de Paranapiacaba — canal Casa da Memória Paranapiacaba'),
+    youtube('nrjB5ZXfiQI', 'Paranapiacaba — canal Casa da Memória Paranapiacaba'),
+    youtube('Vhdn9-miubI', 'Documentário: Paranapiacaba Mais Que Uma Lenda — canal Melissa Gargalis'),
+    youtube('-M0QTCgg8aU', 'Memória Viva – Lenda de Paranapiacaba, produção para a TV Câmara de Santo André — canal IPCOM'),
+    youtube('_Bv9PWEjpDw', 'Nos Trilhos da Memória – Em Paranapiacaba — canal Eduardo Luz'),
+    youtube('y4sTZaD84b4', 'Qual sua memória de Paranapiacaba? — canal Prefeitura de Santo André'),
+    { source: 'osm', dataset: 'Coordenadas dos lugares citados (scripts/lugares_memoria_gazetteer_osm.csv)' },
+  ],
+  caminho_sal: [{ source: 'mymaps_lebens', dataset: 'KMZ exportado do mapa, só a linha do Caminho do Sal' }],
 
   // Bacias e hidrografia
   hidrografia_regional: [cbhat('Hidrografia-das-APPs-da-Região-Metropolitana-de-São-Paulo', 'Hidrografia das APPs da RMSP (APPs_Hidrografia)')],

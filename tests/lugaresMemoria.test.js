@@ -69,6 +69,28 @@ describe('camada Lugares de Memória (mapa afetivo)', () => {
     expect(incomplete).toEqual([]);
   });
 
+  it('liga cada fala ao vídeo de origem só por https e usa as categorias do IPHAN', () => {
+    const CATEGORIAS = ['saberes', 'celebracoes', 'formas_expressao', 'lugares'];
+    const invalid = geojson.features
+      .flatMap((feature) => feature.properties?.falas || [])
+      .filter((fala) => (fala.url && !fala.url.startsWith('https://')) ||
+        (fala.categoria && !CATEGORIAS.includes(fala.categoria)))
+      .map((fala) => fala.id);
+    expect(invalid).toEqual([]);
+  });
+
+  it('o gazetteer público só traz lugares com coordenada na Vila e fonte OpenStreetMap', () => {
+    const lines = fs.readFileSync(path.join(ROOT, 'scripts/lugares_memoria_gazetteer_osm.csv'), 'utf8')
+      .trim().split(/\r?\n/).slice(1);
+    const invalid = lines.filter((line) => {
+      const [lat, lon] = (line.match(/,(-23\.\d+),(-46\.\d+),/) || []).slice(1).map(Number);
+      return !(lat > -23.80 && lat < -23.77 && lon > -46.32 && lon < -46.29) ||
+        !line.includes('https://www.openstreetmap.org/');
+    });
+    expect(lines.length).toBeGreaterThan(0);
+    expect(invalid).toEqual([]);
+  });
+
   it('não expõe a coluna interna de revisão (publicavel) no GeoJSON público', () => {
     expect(JSON.stringify(geojson)).not.toMatch(/publicavel/);
   });

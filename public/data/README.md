@@ -132,16 +132,31 @@ pasta (Passos do Padre Capra, Rota da Luz etc.) não entram no WebGIS.
 ### Lugares de Memória (mapa afetivo)
 
 `lugares_memoria.geojson` é gerado por `scripts/build_lugares_memoria.py` a partir
-de dois CSVs revisados pela equipe em
+de CSVs revisados pela equipe em
 `EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED/05_TRANSCRICOES/` (fora do git):
-`citacoes_lugares.csv` (falas extraídas das transcrições) e
-`lugares_memoria_gazetteer.csv` (coordenadas de cada lugar). Uma fala só é
-elegível quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (não
-`pendente`).
+
+- `citacoes_lugares.csv`: falas das gravações do projeto Trilhas e Trilhos da
+  Memória (compilados, evento SEMASA e notas de campo);
+- `citacoes_videos.csv`: falas de vídeos de memória publicados no YouTube, com o
+  link do vídeo (`url`), a categoria do registro do IPHAN (`categoria`: saberes,
+  celebracoes, formas_expressao, lugares) e uma `nota` de revisão. As transcrições
+  e os áudios ficam em `05_TRANSCRICOES/videos/`;
+- `lugares_memoria_gazetteer.csv`: coordenadas definidas pela equipe.
+
+Um segundo gazetteer, `scripts/lugares_memoria_gazetteer_osm.csv`, fica no git: são
+marcos públicos da Vila tirados do OpenStreetMap, com apelidos (por exemplo
+"Lyra" e "Lyra Serrano" levam ao Clube União Lyra Serrano). A busca ignora
+maiúsculas e acentos, e a coordenada da equipe prevalece sobre a do OSM. Uma fala
+só é elegível quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada
+(não `pendente`). Falas sem lugar ficam no CSV como inventário do patrimônio
+imaterial (cantos, receitas, ofícios), mas não vão ao mapa.
 
 - **Anonimização:** todo falante vira `Depoente NN`, e os nomes listados em
-  `nomes_anonimizar.csv` (mesma pasta, fora do git) são substituídos nas falas,
+  `nomes_anonimizar*.csv` (mesma pasta, fora do git) são substituídos nas falas,
   nos nomes de lugar e nas fontes. Os nomes reais ficam só nos CSVs locais.
+- **Prévia:** `--previa` grava `05_TRANSCRICOES/lugares_memoria_previa.geojson`
+  com todas as falas, aprovadas ou não (anonimizadas), para a revisão da equipe e
+  para o QGIS. Esse arquivo nunca vai para `public/data/`.
 - **Pausa:** a camada está pausada (`available: false` em `layers.js`). Sem a flag
   `--publicar`, o script grava uma `FeatureCollection` vazia mesmo que haja falas
   aprovadas. Ela só vai ao ar no GitHub Pages depois que a equipe definir o método
@@ -149,6 +164,7 @@ elegível quando a coluna `publicavel` é `sim` **e** o lugar tem coordenada (n�
 
 ```bash
 python build_lugares_memoria.py              # pausado: GeoJSON vazio
+python build_lugares_memoria.py --previa     # + prévia de revisão, fora do site
 python build_lugares_memoria.py --publicar   # só após decisão da equipe
 python -m unittest test_build_lugares_memoria
 ```
