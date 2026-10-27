@@ -407,7 +407,7 @@ export const LAYERS = [
     minZoom: 11,
     visible: false,
     popupFields: ["falas"],
-    description: "Mapa afetivo: lugares citados por moradores e ex-ferroviários nas gravações do projeto Trilhas e Trilhos da Memória (SEMASA/PUC-Campinas) e em vídeos de memória da Vila. Em preparação: a camada está pausada até a equipe definir o método de mapeamento e aprovar as falas, que serão publicadas anonimizadas (scripts/build_lugares_memoria.py).",
+    description: "Mapa afetivo e do patrimônio imaterial: lugares citados por moradores e ex-ferroviários nas gravações do projeto Trilhas e Trilhos da Memória (SEMASA/PUC-Campinas) e em vídeos de memória da Vila publicados no YouTube, com o link do vídeo de cada fala. As falas trazem tema e categoria do registro do IPHAN (saberes, celebrações, formas de expressão, lugares). Em preparação: a camada está pausada até a equipe definir o método de mapeamento e aprovar as falas, que serão publicadas anonimizadas (scripts/build_lugares_memoria.py).",
     // Pausada por decisão da equipe (09/10/2026): não vai ao ar no GitHub Pages
     // antes de definido o método de mapeamento. Para liberar: available: true
     // e rodar build_lugares_memoria.py --publicar.

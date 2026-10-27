@@ -441,6 +441,13 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
       misticismo: 'Misticismo',
       outro: 'Outros'
     };
+    // Livros de registro do patrimônio imaterial (IPHAN, Decreto 3.551/2000)
+    const categoriaLabel = {
+      saberes: 'Saberes',
+      celebracoes: 'Celebrações',
+      formas_expressao: 'Formas de expressão',
+      lugares: 'Lugares'
+    };
 
     return (
       <div className="space-y-4">
@@ -460,12 +467,27 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
               <div className="text-[11px] font-semibold text-stone-800">— {fala.falante || 'Falante não identificado'}</div>
               <div className="text-[10px] text-stone-500">
                 {fala.fonte}{fala.timestamp ? ` · ${fala.timestamp}` : ''}
+                {isUrl(fala.url) && (
+                  <>
+                    {' · '}
+                    <a href={fala.url} target="_blank" rel="noopener noreferrer" className="text-stone-700 font-semibold underline">
+                      Assistir ao vídeo ↗
+                    </a>
+                  </>
+                )}
               </div>
-              {fala.tema && (
-                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-stone-600 border border-stone-200">
-                  {temaLabel[fala.tema] || fala.tema}
-                </span>
-              )}
+              <div className="flex flex-wrap gap-1">
+                {fala.tema && (
+                  <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-stone-600 border border-stone-200">
+                    {temaLabel[fala.tema] || fala.tema}
+                  </span>
+                )}
+                {categoriaLabel[fala.categoria] && (
+                  <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+                    {categoriaLabel[fala.categoria]}
+                  </span>
+                )}
+              </div>
             </li>
           ))}
         </ul>

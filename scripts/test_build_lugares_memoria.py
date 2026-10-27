@@ -5,7 +5,7 @@ Run:  python -m unittest test_build_lugares_memoria   (from scripts/)
 import json
 import unittest
 
-from build_lugares_memoria import apply_pause, build_features
+from build_lugares_memoria import apply_pause, build_features, unlocated_places
 
 GAZ = [
     {"lugar": "Lugar A", "lat": "-23.78", "lon": "-46.30", "precisao": "exata", "fonte_coord": "teste"},
@@ -71,6 +71,44 @@ class BuildLugaresMemoria(unittest.TestCase):
         self.assertEqual(props["falas"][0]["citacao"], "ia na casa do [um morador], o [morador] sabia")
         self.assertEqual(props["falas"][0]["fonte"], "notas de equipe")
         self.assertNotIn("Fulano", json.dumps(props, ensure_ascii=False))
+
+    def test_places_match_aliases_ignoring_case_and_accents(self):
+        osm = [{"lugar": "Clube Exemplo", "apelidos": "Lyra; Salão Antigo", "lat": "-23.77",
+                "lon": "-46.29", "precisao": "exata", "fonte_coord": "OpenStreetMap"}]
+        fc = build_features([row(1, "lyra", "sim"), row(2, "SALAO antigo; Clube Exemplo", "sim")], osm)
+        self.assertEqual([f["properties"]["nome"] for f in fc["features"]], ["Clube Exemplo"])
+        self.assertEqual([f["id"] for f in fc["features"][0]["properties"]["falas"]], ["T1", "T2"])
+
+    def test_team_coordinate_wins_over_osm_and_osm_fills_pending(self):
+        osm = [{"lugar": "Lugar A", "apelidos": "", "lat": "-23.0", "lon": "-46.0",
+                "precisao": "exata", "fonte_coord": "OpenStreetMap"},
+               {"lugar": "Lugar B", "apelidos": "", "lat": "-23.5", "lon": "-46.5",
+                "precisao": "exata", "fonte_coord": "OpenStreetMap"}]
+        fc = build_features([row(1, "Lugar A; Lugar B", "sim")], GAZ + osm)
+        coords = {f["properties"]["nome"]: f["geometry"]["coordinates"] for f in fc["features"]}
+        self.assertEqual(coords, {"Lugar A": [-46.3, -23.78], "Lugar B": [-46.5, -23.5]})
+
+    def test_video_link_and_iphan_category_are_kept(self):
+        r = row(1, "Lugar A", "sim")
+        r["url"], r["categoria"] = "https://www.youtube.com/watch?v=teste", "saberes"
+        r2 = row(2, "Lugar A", "sim")
+        r2["url"], r2["categoria"] = "http://inseguro.example", "categoria_inventada"
+        props = build_features([r, r2], GAZ)["features"][0]["properties"]
+        self.assertEqual(props["falas"][0]["url"], "https://www.youtube.com/watch?v=teste")
+        self.assertEqual(props["falas"][0]["categoria"], "saberes")
+        self.assertNotIn("url", props["falas"][1])
+        self.assertNotIn("categoria", props["falas"][1])
+        self.assertEqual(props["categorias"], ["saberes"])
+
+    def test_previa_includes_quotes_not_yet_approved(self):
+        rows = [row(1, "Lugar A", "revisar"), row(2, "Lugar A", "não")]
+        self.assertEqual(build_features(rows, GAZ)["features"], [])
+        falas = build_features(rows, GAZ, previa=True)["features"][0]["properties"]["falas"]
+        self.assertEqual([f["id"] for f in falas], ["T1", "T2"])
+
+    def test_unlocated_places_are_reported(self):
+        rows = [row(1, "Lugar A; Lugar B", "revisar"), row(2, "Lugar novo", "sim")]
+        self.assertEqual(unlocated_places(rows, GAZ), ["Lugar B", "Lugar novo"])
 
     def test_paused_layer_publishes_nothing(self):
         fc = build_features([row(1, "Lugar A", "sim")], GAZ)
