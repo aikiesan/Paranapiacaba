@@ -77,11 +77,12 @@ function MoreMenu({ activeTab, onTabChange, annexLinks }) {
   );
 }
 
-export function HeaderNav({ activeTab, onTabChange, onOpenAbout, onOpenGallery, onOpenPhotoGallery }) {
+export function HeaderNav({ activeTab, onTabChange, onOpenAbout, onOpenGallery, onOpenPhotoGallery, onOpenSources }) {
   const annexLinks = [
     { no: 'A', label: 'Arquivo de imagens', hint: 'Desenhos da SPR e processos de tombamento', onClick: onOpenPhotoGallery },
     { no: 'B', label: `${CARTOGRAPHIC_MAPS.length} pranchas A0`, hint: 'Os mapas finais do projeto', onClick: onOpenGallery },
-    { no: 'C', label: 'Sobre o projeto', hint: 'Equipe, fontes e créditos', onClick: onOpenAbout },
+    { no: 'C', label: 'Sobre o projeto', hint: 'Equipe e créditos', onClick: onOpenAbout },
+    { no: 'D', label: 'Fontes dos dados', hint: 'De onde vem cada camada, com links', onClick: onOpenSources },
   ];
 
   return (

@@ -814,7 +814,7 @@ export const LAYERS = [
   // ====================== LEGISLAÇÃO E PLANEJAMENTO ======================
   {
     id: "macrozonas",
-    label: "Macrozonas (LC 1.181/2022)",
+    label: "Macrozonas de Santos (LC 1.181/2022)",
     file: "macrozonas.geojson",
     group: "Zoneamento e Planos",
     type: "polygon",
@@ -824,7 +824,7 @@ export const LAYERS = [
     minZoom: 11,
     visible: false,
     popupFields: [],
-    description: "Macrozonas do Plano Diretor de Santo André (Lei Complementar 1.181/2022).",
+    description: "Macrozonas do Plano Diretor de Santos (Lei Complementar 1.181/2022), município do extremo sul do corredor.",
     available: true
   },
   {

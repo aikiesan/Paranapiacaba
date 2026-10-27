@@ -1,6 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { RASTER_SOURCES, resolveSources, referenceMapSources, attributionHtml } from '../config/sources';
+
+// Atribuição (rodapé do mapa) de um raster: a fonte principal, com link.
+const rasterAttribution = (sources) => (sources[0] ? attributionHtml(sources[0]) : '');
+const COVERAGE_ATTRIBUTION = rasterAttribution(resolveSources(RASTER_SOURCES.coverage));
 
 // Desenha no mapa os rasters escolhidos na aba "Históricos" do painel lateral:
 // um mapa de referência (carta histórica ou anexo de legislação) e a série de
@@ -42,6 +47,7 @@ export function ReferenceOverlays({ manifests, overlays }) {
           pane: 'analysisRasterPane',
           interactive: false,
           crossOrigin: 'anonymous',
+          attribution: COVERAGE_ATTRIBUTION,
         }).addTo(map);
       } else {
         covRef.current.setUrl(url);
@@ -70,6 +76,7 @@ export function ReferenceOverlays({ manifests, overlays }) {
         className: 'reference-map-overlay',
         interactive: false,
         crossOrigin: 'anonymous',
+        attribution: rasterAttribution(referenceMapSources(selectedReference)),
       },
     ).addTo(map);
     const element = overlay.getElement();

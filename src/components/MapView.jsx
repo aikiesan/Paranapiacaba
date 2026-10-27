@@ -9,6 +9,7 @@ import { MapToolbar, CORRIDOR_BOUNDS } from './MapToolbar';
 import { ReferenceOverlays } from './RasterControl';
 import { assetUrl } from '../utils/assetUrl';
 import { parseShareHash, buildShareHash } from '../utils/shareState';
+import { uniqueSources, attributionHtml } from '../config/sources';
 
 // Importa biblioteca e estilos de clusterização do leaflet.markercluster
 import 'leaflet.markercluster';
@@ -339,6 +340,26 @@ function GeoJSONLayerWrapper({ layer, isVisible, groupOpacity, onFeatureClick, b
   return null;
 }
 
+// Cita no rodapé do mapa (controle de atribuição do Leaflet) a fonte de cada
+// camada desenhada agora, com link para o portal de origem. O controle conta
+// referências, então uma fonte comum a várias camadas aparece uma vez só.
+function SourceAttribution({ layerIds }) {
+  const map = useMap();
+  const key = layerIds.join(',');
+
+  useEffect(() => {
+    const control = map.attributionControl;
+    if (!control) return undefined;
+    const items = uniqueSources(layerIds).map(attributionHtml);
+    items.forEach((html) => control.addAttribution(html));
+    return () => items.forEach((html) => control.removeAttribution(html));
+    // `key` resume `layerIds`, que é um array novo a cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, key]);
+
+  return null;
+}
+
 // Centraliza/aproxima o mapa numa feição selecionada (ex.: clique na tabela)
 function FlyToFeature({ focusFeature }) {
   const map = useMap();
@@ -466,6 +487,10 @@ export function MapView({
   // Encontra as configurações do basemap selecionado
   const currentBasemap = BASEMAPS.find(b => b.id === activeBasemap) || BASEMAPS[0];
 
+  const drawnLayerIds = LAYERS
+    .filter((layer) => activeLayers.has(layer.id) && currentZoom >= layer.minZoom)
+    .map((layer) => layer.id);
+
   return (
     <div className="w-full h-full relative">
       <MapContainer
@@ -505,6 +530,8 @@ export function MapView({
         <MapToolbar />
 
         <ReferenceOverlays manifests={manifests} overlays={overlays} />
+
+        <SourceAttribution layerIds={drawnLayerIds} />
 
         <MapEventsZoomWatcher onZoomChange={onZoomChange} onMapClick={onMapClick} />
 

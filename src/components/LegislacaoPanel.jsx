@@ -16,7 +16,7 @@ export function LegislacaoPanel({ onNavigateToMapWithPreset }) {
   ];
 
   const instrumentos = [
-    { title: 'Plano Diretor de Santo André — LC 1.181/2022', accent: '#0D9488', desc: 'Define as macrozonas do município e a Macrozona de Proteção Ambiental, que enquadra Paranapiacaba na área de mananciais.' },
+    { title: 'Plano Diretor de Santo André — Lei 8.696/2004', accent: '#0D9488', desc: 'Revisado pela Lei 9.394/2012 e detalhado pela Lei 9.924/2016 (uso e ocupação do solo). Define as macrozonas do município e a Macrozona de Proteção Ambiental, que enquadra Paranapiacaba na área de mananciais.' },
     { title: 'ZEIP — Zona Especial de Interesse do Patrimônio', accent: '#8B4513', desc: 'Grava a vila como zona especial: obras, usos e parcelamento ficam condicionados à salvaguarda do conjunto.' },
     { title: 'Candidatura a Patrimônio Mundial', accent: '#B8932F', desc: 'Áreas envoltórias e zonas de amortecimento propostas no dossiê, articulando as demais camadas de proteção.' },
     { title: 'Mananciais e unidades de conservação', accent: '#4B5320', desc: 'Legislação de mananciais e as unidades de conservação — parque estadual, reserva biológica, parques municipais — sobrepostas à Serra.' },
@@ -37,7 +37,7 @@ export function LegislacaoPanel({ onNavigateToMapWithPreset }) {
         lede="Paranapiacaba é protegida ao mesmo tempo pelas três esferas de governo, e o seu entorno por planos diretores e leis ambientais. Esta folha explica quem protege o quê."
         meta={[
           { label: 'Esferas', value: '3' },
-          { label: 'Plano Diretor', value: 'LC 1.181/2022' },
+          { label: 'Plano Diretor', value: 'Lei 8.696/2004' },
         ]}
       >
         <MapButton onClick={() => onNavigateToMapWithPreset('prancha_tombamentos')}>Ver os tombamentos no mapa</MapButton>
