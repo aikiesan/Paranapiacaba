@@ -10,6 +10,7 @@ import { Legend } from './components/Legend';
 import { MapScaleControl } from './components/MapScaleControl';
 import { FeatureDetailPanel } from './components/FeatureDetailPanel';
 import { AboutPanel } from './components/AboutPanel';
+import { SourcesPanel } from './components/SourcesPanel';
 import { DataTablePanel } from './components/DataTablePanel';
 import { MemoriaFerroviariaPanel } from './components/MemoriaFerroviariaPanel';
 import { MapGalleryPanel } from './components/MapGalleryPanel';
@@ -85,6 +86,7 @@ export default function App() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPhotoGalleryOpen, setIsPhotoGalleryOpen] = useState(false);
+  const [isSourcesOpen, setIsSourcesOpen] = useState(false);
   // Imagem em que o arquivo deve abrir (figuras e cronologia apontam para ela).
   const [archivePhotoId, setArchivePhotoId] = useState(null);
 
@@ -229,6 +231,7 @@ export default function App() {
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenGallery={() => setIsGalleryOpen(true)}
         onOpenPhotoGallery={() => setIsPhotoGalleryOpen(true)}
+        onOpenSources={() => setIsSourcesOpen(true)}
       />
 
       {/* Conteúdo do Módulo Selecionado */}
@@ -354,6 +357,13 @@ export default function App() {
       <AboutPanel
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
+        onOpenSources={() => { setIsAboutOpen(false); setIsSourcesOpen(true); }}
+      />
+
+      {/* Modal Fontes dos Dados (Anexo D) */}
+      <SourcesPanel
+        isOpen={isSourcesOpen}
+        onClose={() => setIsSourcesOpen(false)}
       />
 
       {/* Modal Acervo de Pranchas Cartográficas A0 */}

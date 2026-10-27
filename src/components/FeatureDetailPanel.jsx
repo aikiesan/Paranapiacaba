@@ -3,6 +3,20 @@ import { LAYERS } from '../config/layers';
 import { PALETTE } from '../config/styleGuide';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useOnEscape } from '../hooks/useOnEscape';
+import { layerSources } from '../config/sources';
+import { SourceList } from './SourceList';
+
+const isUrl = (value) => typeof value === 'string' && /^https?:\/\/\S+$/i.test(value.trim());
+
+// Atributos que são endereços (ex.: lei citada em cada setor da MZPA) viram link.
+function AttributeValue({ value }) {
+  if (!isUrl(value)) return String(value);
+  return (
+    <a href={value.trim()} target="_blank" rel="noopener noreferrer" className="text-forest-700 underline decoration-forest-300 underline-offset-2 hover:text-forest-900">
+      Abrir documento ↗
+    </a>
+  );
+}
 
 // Helper simples para calcular o centroide aproximado de qualquer geometria
 function getCentroid(feature) {
@@ -169,7 +183,8 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
   
   // Encontra a camada de origem
   const layer = LAYERS.find(l => l.id === layerId) || {};
-  
+  const sources = layerSources(layerId);
+
   const centroid = getCentroid(feature);
   const lat = centroid ? centroid[1].toFixed(5) : null;
   const lng = centroid ? centroid[0].toFixed(5) : null;
@@ -489,7 +504,7 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
                       {formatKey(key)}
                     </td>
                     <td className="p-2 font-semibold text-stone-700 border-b border-stone-200/60 break-all">
-                      {String(val)}
+                      <AttributeValue value={val} />
                     </td>
                   </tr>
                 ))}
@@ -567,12 +582,12 @@ export function FeatureDetailPanel({ activeFeature, onClose }) {
         {renderContent()}
       </div>
 
-      {/* Rodapé institucional */}
-      <div className="p-3 border-t border-stone-200 bg-stone-50 text-center">
-        <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider">
-          WebGIS Paranapiacaba
-        </span>
-      </div>
+      {/* Procedência do dado: de onde a camada foi tirada */}
+      {sources.length > 0 && (
+        <div className="p-3 border-t border-stone-200 bg-stone-50 max-h-[30%] overflow-y-auto custom-scrollbar">
+          <SourceList sources={sources} />
+        </div>
+      )}
     </div>
   );
 }

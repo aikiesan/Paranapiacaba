@@ -7,6 +7,8 @@ import { THEMES } from '../config/catalog';
 import { PresetList } from './ThematicPresets';
 import { HistoricMapsPanel } from './HistoricMapsPanel';
 import { downloadGeoJSON } from '../utils/exportData';
+import { layerSources } from '../config/sources';
+import { SourceList } from './SourceList';
 
 // "Swatch" que espelha como a camada é desenhada no mapa (linha / polígono / ponto).
 function LayerSwatch({ layer }) {
@@ -183,6 +185,7 @@ function LayerItem({
           {layer.description && (
             <p className="text-[10px] text-stone-500 leading-relaxed">{layer.description}</p>
           )}
+          <SourceList sources={layerSources(layer.id)} compact />
           {isZoomRestricted && isInteractive && (
             <p className="text-[10px] text-amber-700 font-semibold">
               Visível a partir do zoom {layer.minZoom} — use “Aproximar”.
@@ -221,7 +224,10 @@ const normalize = (text) =>
 function matchesQuery(layer, query) {
   const meta = groupMeta(layer.group);
   const haystack = normalize(
-    [layer.label, layer.description, layer.group, meta.code, meta.themeTitle].join(' ')
+    [
+      layer.label, layer.description, layer.group, meta.code, meta.themeTitle,
+      ...layerSources(layer.id).map((source) => `${source.short} ${source.dataset || ''}`),
+    ].join(' ')
   );
   return normalize(query).split(/\s+/).filter(Boolean).every((term) => haystack.includes(term));
 }

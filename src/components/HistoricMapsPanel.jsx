@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import { RASTER_SOURCES, resolveSources, referenceMapSources } from '../config/sources';
+import { SourceList } from './SourceList';
 
 // Aba "Históricos" do painel lateral: cartas históricas, anexos cartográficos
 // da legislação municipal e a série temporal de cobertura do solo (MapBiomas).
@@ -62,6 +64,7 @@ function ReferenceItem({ item, isSelected, overlays, onChange, onFitBounds }) {
               Remover
             </button>
           </div>
+          <SourceList sources={referenceMapSources(item)} compact />
           {item.sourceNote && <p className="text-[10px] leading-snug text-stone-500">{item.sourceNote}</p>}
         </div>
       )}
@@ -194,6 +197,9 @@ export function HistoricMapsPanel({ manifests, overlays, onChange, onFitBounds }
                     ))}
                   </div>
                 )}
+                <div className="pt-1 border-t border-paper-line">
+                  <SourceList sources={resolveSources(RASTER_SOURCES.coverage)} compact />
+                </div>
               </div>
             )}
           </div>

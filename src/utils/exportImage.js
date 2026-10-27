@@ -34,7 +34,27 @@ function downloadBlob(filename, blob) {
   URL.revokeObjectURL(url);
 }
 
-const CREDITS = 'FAPESP · PUC-Campinas · IBGE / MapBiomas / SIGA-SA';
+const CREDITS = 'FAPESP · PUC-Campinas';
+
+// As fontes das camadas desenhadas já estão no rodapé de atribuição do Leaflet
+// (ver SourceAttribution em MapView); o PNG repete o mesmo texto.
+// O Leaflet escreve "prefixo | atribuição, atribuição, …"; o prefixo é o
+// crédito do próprio Leaflet.
+function mapSources(mapEl) {
+  const text = mapEl.querySelector('.leaflet-control-attribution')?.textContent || '';
+  const parts = text.split('|').map((part) => part.trim()).filter(Boolean);
+  return parts.filter((part) => !part.endsWith('Leaflet'));
+}
+
+// Reduz a fonte até o texto caber na largura disponível.
+function fitFont(ctx, text, maxWidth, size, minSize) {
+  let current = size;
+  ctx.font = `${current}px ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif`;
+  while (current > minSize && ctx.measureText(text).width > maxWidth) {
+    current -= 1;
+    ctx.font = `${current}px ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif`;
+  }
+}
 
 /**
  * Captura o mapa e dispara o download de um PNG.
@@ -85,10 +105,15 @@ export async function exportMapImage(mapEl, { title } = {}) {
     ctx.fillStyle = '#64748b';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
+    const credits = `Fontes: ${[...mapSources(mapEl), CREDITS].join(' · ')}`;
+    const signature = 'Paranapiacaba WebGIS';
     ctx.font = `${10 * S}px ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif`;
-    ctx.fillText(`Fontes: ${CREDITS}`, 12 * S, headerH + base.height + footerH / 2);
+    const signatureWidth = ctx.measureText(signature).width;
+    fitFont(ctx, credits, canvas.width - signatureWidth - 36 * S, 10 * S, 6 * S);
+    ctx.fillText(credits, 12 * S, headerH + base.height + footerH / 2);
+    ctx.font = `${10 * S}px ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'right';
-    ctx.fillText('Paranapiacaba WebGIS', canvas.width - 12 * S, headerH + base.height + footerH / 2);
+    ctx.fillText(signature, canvas.width - 12 * S, headerH + base.height + footerH / 2);
 
     const outBlob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
     downloadBlob(`paranapiacaba-mapa-${todaySlug()}.png`, outBlob || blob);
