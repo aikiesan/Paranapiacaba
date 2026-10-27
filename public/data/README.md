@@ -157,14 +157,13 @@ imaterial (cantos, receitas, ofícios), mas não vão ao mapa.
 - **Prévia:** `--previa` grava `05_TRANSCRICOES/lugares_memoria_previa.geojson`
   com todas as falas, aprovadas ou não (anonimizadas), para a revisão da equipe e
   para o QGIS. Esse arquivo nunca vai para `public/data/`.
-- **Pausa:** a camada está pausada (`available: false` em `layers.js`). Sem a flag
-  `--publicar`, o script grava uma `FeatureCollection` vazia mesmo que haja falas
-  aprovadas. Ela só vai ao ar no GitHub Pages depois que a equipe definir o método
-  de mapeamento.
+- **Publicação:** sem a flag `--publicar`, o script grava uma `FeatureCollection`
+  vazia mesmo que haja falas aprovadas. A camada foi liberada em 27/10/2026 com
+  as falas dos vídeos do YouTube; para regerá-la, rode sempre com `--publicar`.
 
 ```bash
-python build_lugares_memoria.py              # pausado: GeoJSON vazio
+python build_lugares_memoria.py --publicar   # gera a camada publicada
 python build_lugares_memoria.py --previa     # + prévia de revisão, fora do site
-python build_lugares_memoria.py --publicar   # só após decisão da equipe
+python build_lugares_memoria.py              # GeoJSON vazio (tira a camada do ar)
 python -m unittest test_build_lugares_memoria
 ```

@@ -252,51 +252,25 @@ function SectionCheckbox({ activeCount, total, onChange, label }) {
   );
 }
 
-// Faixa "No mapa agora": o que está ligado, com remoção em um toque.
-function ActiveLayersStrip({ activeLayers, onToggle, onClearAll }) {
-  const active = LAYERS.filter((layer) => activeLayers.has(layer.id));
-  if (active.length === 0) {
-    return (
-      <div className="px-4 py-3 border-b border-paper-line bg-paper-dark/60 text-[11px] text-stone-500 leading-relaxed">
-        Nenhuma camada no mapa. Ligue camadas abaixo ou escolha um mapa na aba <strong className="text-stone-700">Mapas prontos</strong>.
-      </div>
-    );
-  }
+// Linha fixa com a contagem de camadas ligadas: altura constante, para que
+// ligar ou desligar uma camada não empurre o catálogo para cima ou para baixo.
+function ActiveLayersBar({ count, onClearAll }) {
   return (
-    <div className="px-3 py-2.5 border-b border-paper-line bg-paper-dark/60">
-      <div className="flex items-center justify-between mb-1.5 px-1">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-          No mapa agora · {active.length}
-        </span>
+    <div className="h-8 flex-shrink-0 flex items-center justify-between gap-2 px-4 border-b border-paper-line bg-paper-dark/60 text-[11px] text-stone-500">
+      <span className="truncate">
+        {count === 0
+          ? 'Nenhuma camada no mapa'
+          : `${count} ${count === 1 ? 'camada' : 'camadas'} no mapa`}
+      </span>
+      {count > 0 && (
         <button
           onClick={onClearAll}
-          className="text-[10px] font-bold text-stone-400 hover:text-rose-700 transition-colors"
+          className="text-[10px] font-bold text-stone-400 hover:text-rose-700 transition-colors flex-shrink-0"
           title="Desligar todas as camadas"
         >
           Limpar tudo
         </button>
-      </div>
-      <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto custom-scrollbar">
-        {active.map((layer) => (
-          <span
-            key={layer.id}
-            className="inline-flex items-center gap-1.5 max-w-full pl-2 pr-1 py-0.5 rounded-full bg-white border border-paper-line text-[10px] font-semibold text-stone-700"
-          >
-            <LayerSwatch layer={layer} />
-            <span className="truncate">{layer.label}</span>
-            <button
-              onClick={() => onToggle(layer.id)}
-              className="w-4 h-4 flex items-center justify-center rounded-full text-stone-400 hover:text-white hover:bg-stone-500 transition-colors flex-shrink-0"
-              title={`Remover “${layer.label}” do mapa`}
-              aria-label={`Remover ${layer.label} do mapa`}
-            >
-              <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </span>
-        ))}
-      </div>
+      )}
     </div>
   );
 }
@@ -597,7 +571,7 @@ export function MapSidebar({
           )}
         </div>
 
-        <ActiveLayersStrip activeLayers={activeLayers} onToggle={onToggle} onClearAll={onClearAll} />
+        <ActiveLayersBar count={activeLayers.size} onClearAll={onClearAll} />
 
         {/* Catálogo: eixos do dossiê → seções → camadas */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
