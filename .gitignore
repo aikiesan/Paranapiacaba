@@ -28,7 +28,11 @@ extracted_geo/
 # ==========================================
 # Ignorar pastas de dados geográficos e SIG
 # ==========================================
-/00_DADOS_BRUTOS/
+/00_DADOS_BRUTOS/*
+# Bruto SIGA (zips + fichas PDF + manifesto) é versionado, exceto arquivos
+# > 50 MB — listados em 00_DADOS_BRUTOS/SIGA/manifesto.csv (versionado_git).
+!/00_DADOS_BRUTOS/SIGA/
+/00_DADOS_BRUTOS/SIGA/ALTIMETRIA/SIGA_AMB_ALTIMETRIA_NORTE_1M.zip
 /01_CAMADAS_BASE/
 /02_PATRIMONIO/
 /03_LEGISLACAO_PLANEJAMENTO/
@@ -36,7 +40,8 @@ extracted_geo/
 /05_TURISMO_CIRCUITOS/
 /06_MAPAS_FINAIS/
 /07_ARCGIS_PRO/
-/08_DOCUMENTACAO/
+/08_DOCUMENTACAO/*
+!/08_DOCUMENTACAO/02_RELATORIOS/
 /09_IBGE/
 /0_GIS_WORKSPACE/
 /4_OUTRAS PAISAGENS TOMBADAS - UNESCO-20260505T140749Z-3-001/

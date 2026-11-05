@@ -92,6 +92,12 @@ NAME_CANDIDATES = [
 ]
 
 # --- Jobs --------------------------------------------------------------------
+# Camadas SIGA ambientais/limites (ucs, pnm_nascentes, parque_andreense, bairros,
+# distritos, billings_747, classif_vegetal, app_sul, subbacias_sa,
+# areas_contaminadas, atrativos_prefeitura) são geradas por
+# scripts/build_siga_ambiental.py a partir de 00_DADOS_BRUTOS/SIGA/ — regra de
+# uma geometria por entidade. `subbacias` (GeoSEADE) e `circuitos` foram
+# retiradas por redundância (ver 08_DOCUMENTACAO/02_RELATORIOS/).
 # aoi: "corridor" | "vila" | None
 # family: when set, `src` is a glob; one output layer is built by stacking every
 #         matching shapefile and tagging it with a category parsed from the file
@@ -170,13 +176,6 @@ JOBS = [
 
     # ---- Meio Ambiente -------------------------------------------------------
     {
-        "out": "ucs.geojson", "aoi": "corridor", "simplify": 2e-4,
-        "src": ["03_UNIDADES_CONSERVACAO/MA_ucestpi1.shp",
-                "03_UNIDADES_CONSERVACAO/MA_ucmunpi1.shp",
-                "03_UNIDADES_CONSERVACAO/SIGA_AMB_UC_EST_ALTO_PARANAPPolygon.shp"],
-        "name_auto": True, "mapshaper": "20%",
-    },
-    {
         "out": "hidrografia.geojson", "aoi": "vila", "simplify": 2e-5,
         "src": ["Corregos.shp"], "root": PALAZZI_ROOT,
         "keep": {"layer": "tipo"}, "nudge": "palazzi_buildings",
@@ -189,13 +188,6 @@ JOBS = [
         "out": "app_buffers.geojson", "aoi": "vila", "simplify": 2e-5,
         "src": ["02_HIDROGRAFIA/APPs_Hidrografia.shp",
                 "02_HIDROGRAFIA/APPs_Nascentes.shp"], "name_auto": True,
-    },
-    {
-        # Sub-bacias ao redor da Vila — divisor de águas Alto Tietê (UGRHI 6) /
-        # Baixada Santista (UGRHI 7).
-        "out": "subbacias.geojson", "aoi": "serra", "simplify": 1e-4,
-        "src": ["02_HIDROGRAFIA/MA_subbacias.shp"],
-        "keep": {"DSUBBC1": "nome", "NUGRHI0": "ugrhi"}, "mapshaper": "20%",
     },
 
     # ---- Patrimônio ----------------------------------------------------------
@@ -250,11 +242,6 @@ JOBS = [
         # Atrativos naturais extraídos dos waypoints dos KML (cachoeiras, poços…).
         "out": "atrativos.geojson", "aoi": None, "simplify": 0,
         "kml_dir": TRILHAS_KML_DIR, "kml_mode": "waypoints",
-    },
-    {
-        "out": "circuitos.geojson", "aoi": "vila", "simplify": 0,
-        "src": ["07_TURISMO_CIRCUITOS/SIGA_TUR_*.shp"],
-        "family": "categoria", "family_prefix": "SIGA_TUR_",
     },
 
     # ---- Socioeconomia -------------------------------------------------------
@@ -330,17 +317,6 @@ JOBS = [
         "out": "grande_abc.geojson", "aoi": None, "simplify": 1e-4,
         "src": ["01_LIMITES_ADMINISTRATIVOS/GRANDE_ABC.shp"],
         "keep": {"cidade": "nome"}, "mapshaper": "15%",
-    },
-    {
-        "out": "bairros.geojson", "aoi": "corridor", "simplify": 5e-5,
-        "src": ["01_LIMITES_ADMINISTRATIVOS/SIGA_LIM_BAIRROS_OFICIALPolygon.shp"],
-        "keep": {"NOME": "nome", "AREA": "area", "NUM_LEI": "lei"},
-        "mapshaper": "20%",
-    },
-    {
-        "out": "parque_andreense.geojson", "aoi": None, "simplify": 5e-5,
-        "src": ["01_LIMITES_ADMINISTRATIVOS/SIGA_LIM_PARQUE_ANDREENSEPolygon.shp"],
-        "keep": {"NOME": "nome", "LEGISLACAO": "legislacao"},
     },
 
     # ---- Meio Ambiente (reservatórios) ---------------------------------------
@@ -460,32 +436,9 @@ JOBS = [
 
     # ---- Meio Ambiente (serra/Paranapiacaba) ---------------------------------
     {
-        # Classificação da vegetação (estágios de sucessão da Mata Atlântica).
-        "out": "classif_vegetal.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 2e-5,
-        "src": ["SIGA_AMB_CLASSIF_VEGETAL/*.shp"],
-        "keep": {"CLASSIFICA": "classe", "AREA_M2": "area_m2"}, "mapshaper": "20%",
-    },
-    {
-        "out": "app_sul.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 2e-5,
-        "src": ["SIGA_AMB_APP_LICENC_SUL/*.shp"],
-        "extra": {"tipo": "APP (licenciamento Sul)"},
-    },
-    {
         "out": "rios_sul.geojson", "root": SIGA_MAPA, "aoi": "serra", "simplify": 1e-5,
         "src": ["SIGA_AMB_RIOS_LICENC_SUL/*.shp"],
         "extra": {"tipo": "Curso d'água (Sul)"}, "dissolve": True,
-    },
-    {
-        "out": "billings_747.geojson", "root": SIGA_MAPA, "aoi": "corridor", "simplify": 5e-5,
-        "src": ["SIGA_LIM_BILLINGS_COTA_747/*.shp"],
-        "extra": {"nome": "Represa Billings (cota 747)"},
-    },
-    {
-        # Parque Natural Municipal Nascentes de Paranapiacaba (UC específica).
-        "out": "pnm_nascentes.geojson", "root": SIGA_MAPA, "aoi": None, "simplify": 1e-5,
-        "src": ["SIGA_AMB_UC_MUN_NASC_PARANAP/*.shp"],
-        "keep": {"NOM_UNIDAD": "nome", "AREA_HA": "area_ha",
-                 "DSC_LEGISL": "legislacao", "TPO_UNIDAD": "tipo"},
     },
     {
         # Altimetria da escarpa — curvas-mestras a cada 50 m (com altitude),
@@ -520,11 +473,6 @@ JOBS = [
     },
 
     # ---- Território (distritos) -----------------------------------------------
-    {
-        "out": "distritos.geojson", "root": SIGA_MAPA, "aoi": None, "simplify": 3e-5,
-        "src": ["SIGA_LIM_DISTRITO_SUBDISTRITO/*.shp"],
-        "keep": {"NOM_DISTRI": "nome", "DSC_SUBDIS": "subdistrito"}, "mapshaper": "15%",
-    },
 
     # ---- Socioeconomia (Censo 2022) ------------------------------------------
     {

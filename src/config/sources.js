@@ -253,9 +253,11 @@ export const LAYER_SOURCES = {
     url: 'https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/15774-malhas.html?edicao=43129',
   }],
   grande_abc: [{ source: 'equipe', dataset: 'GRANDE_ABC', note: 'Procedência a confirmar; contornos compatíveis com a malha municipal do IBGE.' }],
-  bairros: [siga('SIGA_LIM_BAIRROS_OFICIAL — bairros oficiais (Leis 10.136/2018 e 10.312/2020)')],
-  parque_andreense: [siga('SIGA_LIM_PARQUE_ANDREENSE — limite legal (Lei 8.343/2002)')],
-  distritos: [siga('SIGA_LIM_DISTRITO_SUBDISTRITO')],
+  bairros: [siga('SIGA_LIM_BAIRROS_OFICIAL — Limite de Bairros Atual (DDPU, 19/06/2024, 1:10.000; Leis 10.136/2018 e 10.312/2020)')],
+  parque_andreense: [siga('SIGA_LIM_PARQUE_ANDREENSE — Limite Parque Andreense (DDPU, 01/07/2021, 1:40.000; Lei Municipal 8.343/2002)')],
+  distritos: [siga('SIGA_LIM_DISTRITO_SUBDISTRITO — Limite de Distritos e Subdistrito (DDPU, 27/10/2020, 1:40.000; Lei Estadual 8.092/1964)', {
+    note: 'Contorno validado contra o Limite Municipal 2026 (malha IGC-SP 2021): IoU 0,996.',
+  })],
 
   // Patrimônio
   patrimonio_tombados: [siga('SIGA_CUL_BENS_TOMBADOS_CULT — bens tombados (IPHAN, CONDEPHAAT, COMDEPHAAPASA)')],
@@ -300,36 +302,45 @@ export const LAYER_SOURCES = {
   hidrografia_regional: [cbhat('Hidrografia-das-APPs-da-Região-Metropolitana-de-São-Paulo', 'Hidrografia das APPs da RMSP (APPs_Hidrografia)')],
   nascentes_regionais: [cbhat('Nascentes-da-Região-Metropolitana-de-São-Paulo', 'Nascentes da RMSP (APPs_Nascentes)')],
   subbacias_ugrhi6: [cbhat('Sub-bacias-UGRHI-6', 'Sub-bacias UGRHI 6 (45_SubBacias)')],
+  subbacias_sa: [siga('SIGA_AMB_SUB_BACIAS — Bacias Hidrográficas: Sub-bacias (GPPU, 10/10/2024; cartas Emplasa 1:10.000 e PMSA 1:2.000)')],
   reservatorios_rmsp_completos: [cbhat('Reservatórios-da-Região-Metropolitana-de-São-Paulo-1', 'Reservatórios da RMSP (Reservatórios_RMSP)')],
   reservatorios: [cbhat('Reservatórios-da-Região-Metropolitana-de-São-Paulo-1', 'Reservatórios da RMSP (Reservatórios_RMSP)')],
-  subbacias: [{ source: 'geoseade', dataset: 'MA_subbacias — sub-bacias hidrográficas' }],
-  regioes_hidrograficas: [{ source: 'geoseade', dataset: 'MA_reghidro — regiões hidrográficas' }],
+  regioes_hidrograficas: [{
+    source: 'geoseade', dataset: 'MA_reghidro — regiões hidrográficas (UGRHIs, Lei Estadual 9.034/1994)',
+    note: 'Validada contra SIGA_AMB_UGRHIS dentro de Santo André: UGRHI 6 com IoU 0,886; o divisor de águas difere junto à Vila.',
+  }],
   hidrografia: [{ source: 'palazzi', dataset: 'Corregos — córregos da Vila' }],
   nascentes: [cbhat('Nascentes-da-Região-Metropolitana-de-São-Paulo', 'Nascentes da RMSP (APPs_Nascentes), recorte da Vila')],
   rios_sul: [siga('SIGA_AMB_RIOS_LICENC_SUL')],
-  billings_747: [siga('SIGA_LIM_BILLINGS_COTA_747')],
+  billings_747: [siga('SIGA_LIM_BILLINGS_2026 — Billings Cota 747 - 2026 (GPPU, 18/09/2026, 1:1.000; levantamento LIDAR 2024)')],
 
   // Áreas protegidas e vegetação
   ucs: [
-    { source: 'geoseade', dataset: 'MA_ucestpi1 e MA_ucmunpi1 — unidades de conservação estaduais e municipais' },
-    siga('SIGA_AMB_UC_EST_ALTO_PARANAP — Reserva Biológica do Alto da Serra de Paranapiacaba'),
+    { source: 'geoseade', dataset: 'MA_ucestpi1 e MA_ucmunpi1 — unidades de conservação estaduais e municipais (CNUC/MMA)', note: 'PESM em contorno completo; o recorte SIGA do PESM (Decreto 10.251/1977) só valida. O PNM Nascentes GeoSEADE foi retirado: a UC usa a geometria SIGA.' },
+    siga('SIGA_AMB_UC_EST_ALTO_PARANAP — Reserva Biológica do Alto da Serra de Paranapiacaba (SMA-GPLCA, 09/02/2023, 1:40.000; Decreto Estadual 24.714/1986)'),
+    siga('SIGA_AMB_UC_EST_BARONESA e SIGA_AMB_UC_MUN_PEDROSO_LIM — PE Chácara da Baronesa (Lei Estadual 5.745/1987) e PNM do Pedroso (Decreto Municipal 16.878/2016), só contorno regional'),
   ],
-  pnm_nascentes: [siga('SIGA_AMB_UC_MUN_NASC_PARANAP — Parque Natural Municipal Nascentes de Paranapiacaba')],
+  pnm_nascentes: [siga('SIGA_AMB_UC_MUN_NASC_PARANAP — PNM Nascentes de Paranapiacaba (SMA-GPLCA, 09/02/2023, 1:40.000; Decreto Municipal 14.937/2003)')],
   apm_aprm_regionais: [cbhat('APMs_APRMs-da-Região-Metropolitana-de-São-Paulo', 'APMs/APRMs da RMSP (01_APRM)')],
   apps_hidricas_regionais: [cbhat('APPs-da-Região-Metropolitana-de-São-Paulo', 'APPs da RMSP (APPs)')],
   app_buffers: [cbhat('Hidrografia-das-APPs-da-Região-Metropolitana-de-São-Paulo', 'APPs_Hidrografia e APPs_Nascentes, recorte da Vila')],
-  app_sul: [siga('SIGA_AMB_APP_LICENC_SUL')],
-  classif_vegetal: [siga('SIGA_AMB_CLASSIF_VEGETAL — estágios de sucessão da Mata Atlântica')],
+  app_sul: [siga("SIGA_AMB_APP_LICENC_SUL — APP's Licenciáveis Sul (SMA, 04/01/2024, 1:40.000; Lei Federal 12.651/2012 e Lei Estadual 13.579/2009)")],
+  classif_vegetal: [siga('SIGA_AMB_CLASSIF_VEGETAL — Classificação Vegetal (SMA-GPLCA, 12/05/2021, 1:40.000; projeto FEHIDRO 2011–2012, CONAMA 10/1993 e 01/1994)')],
 
   // Riscos
   susc_movmas: [siga('SIGA_DCI_SUSC_MOVMAS_IPT2025 — suscetibilidade a movimentos de massa (IPT, 2025)')],
   risco_movmas: [siga('SIGA_DCI_RISCO_MOVMAS_IPT2014 — setores de risco (IPT, 2014)')],
   risco_incendio: [siga('SIGA_DCI_RISCO_INCENDIO — Defesa Civil de Santo André')],
+  areas_contaminadas: [siga('SIGA_SEM_AREA_CONTAMINADA — Áreas Contaminadas (SEMASA-DGA, 16/08/2022; relação CETESB 10/2024; Decreto Estadual 59.263/2013)', {
+    url: 'https://cetesb.sp.gov.br/areas-contaminadas/relacao-de-areas-contaminadas/',
+  })],
 
   // Trilhas e atrativos
   trilhas: [{ source: 'wikiloc', dataset: '46 trilhas exportadas em KML do Wikiloc' }],
   atrativos: [{ source: 'wikiloc', dataset: 'Waypoints dos KML das trilhas do Wikiloc' }],
-  circuitos: [siga('SIGA_TUR_* — circuitos turísticos de Santo André')],
+  atrativos_prefeitura: [siga('SIGA_TUR_* — circuitos turísticos da Prefeitura de Santo André', {
+    note: 'O SIGA não publica ficha de metadados para os conjuntos SIGA_TUR_*.',
+  })],
 
   // Zoneamento e planos
   macrozonas: [{ source: 'santos_pd', dataset: 'LC_1181_2022_MACROZONAS — macrozonas do Plano Diretor de Santos' }],

@@ -56,13 +56,26 @@ export function Legend({ activeLayers, buildingSymbologyMode = 'conservacao' }) 
                       />
                     )}
                     {layer.type === 'line' && (
-                      <div 
-                        className="w-4.5 h-1.5 rounded-sm flex-shrink-0 shadow-sm"
-                        style={{ 
-                          backgroundColor: layer.color,
-                          borderStyle: layer.id === 'rede_eletrica' ? 'dashed' : 'solid'
-                        }}
-                      />
+                      // SVG em vez de div: permite traço real (stroke-dasharray) nas camadas tracejadas
+                      <svg
+                        width="18"
+                        height="6"
+                        viewBox="0 0 18 6"
+                        className="flex-shrink-0"
+                        aria-hidden="true"
+                        data-testid={`legend-line-${layer.id}`}
+                      >
+                        <line
+                          x1="1"
+                          y1="3"
+                          x2="17"
+                          y2="3"
+                          stroke={layer.color}
+                          strokeWidth="3"
+                          strokeLinecap={layer.id === 'rede_eletrica' ? 'butt' : 'round'}
+                          strokeDasharray={layer.id === 'rede_eletrica' ? '4 2' : undefined}
+                        />
+                      </svg>
                     )}
                     {layer.type === 'polygon' && (
                       <div 

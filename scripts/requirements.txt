@@ -1,7 +1,7 @@
 # Dependencies for the Paranapiacaba WebGIS data pipeline.
 # geopandas already present in the project env (0.14.x); listed for reproducibility.
 geopandas>=0.14
-shapely>=2.0
+shapely>=2.1          # coverage_simplify (GEOS >= 3.12) — build_siga_ambiental.py
 pyogrio>=0.7
 requests>=2.31
 numpy>=1.26
@@ -10,3 +10,4 @@ pyproj>=3.5
 rasterio>=1.3
 Pillow>=10.0
 scipy>=1.11
+pymupdf>=1.23         # leitura das fichas PDF do SIGA
