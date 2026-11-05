@@ -178,10 +178,10 @@ export const PRESETS = [
     label: '1:10.000 · Sítio de Paranapiacaba',
     icon: '🏘️',
     basemap: 'ortofoto2010',
-    description: 'Contexto do sítio: Vila, patrimônio ferroviário, Planos Inclinados do Funicular, áreas envoltórias e rede hídrica detalhada.',
+    description: 'Contexto do sítio: Vila, patrimônio ferroviário, Planos Inclinados do Funicular, áreas envoltórias, rede hídrica detalhada e as sub-bacias SIGA que marcam o divisor de águas.',
     layers: [
       'limite_vila', 'patrimonio_ferroviario', 'funicular',
-      'areas_envoltorias', 'hidrografia_regional', 'nascentes_regionais'
+      'areas_envoltorias', 'hidrografia_regional', 'nascentes_regionais', 'subbacias_sa'
     ],
     targetScale: '1:10.000',
     center: VILA_CENTER,
@@ -193,10 +193,10 @@ export const PRESETS = [
     label: '1:100.000 · Serra do Mar ao Parque Andreense',
     icon: '⛰️',
     basemap: 'terrain',
-    description: 'Área de estudo ampliada: escarpa da Serra do Mar, hipsometria e declividade até o Parque Andreense, unidades de conservação e sub-bacias do divisor de águas.',
+    description: 'Área de estudo ampliada: escarpa da Serra do Mar, hipsometria e declividade até o Parque Andreense, unidades de conservação e as macro-bacias do Alto Tietê (CBH-AT).',
     layers: [
       'altimetria_serra', 'hipsometria', 'declividade', 'ucs', 'pnm_nascentes', 'parque_andreense',
-      'subbacias', 'hidrografia_regional', 'limite_vila', 'funicular'
+      'subbacias_ugrhi6', 'hidrografia_regional', 'limite_vila', 'funicular'
     ],
     targetScale: '1:100.000',
     center: SERRA_CENTER,
@@ -208,9 +208,9 @@ export const PRESETS = [
     label: '1:500.000 · Corredor Jundiaí–Santos',
     icon: '🗺️',
     basemap: 'terrain',
-    description: 'Escala mais ampla: o corredor da São Paulo Railway inteiro sobre as regiões hidrográficas e as sub-bacias do Alto Tietê (UGRHI 6) e da Baixada Santista.',
+    description: 'Escala mais ampla: o corredor da São Paulo Railway inteiro sobre as UGRHIs — Alto Tietê (6) e Baixada Santista (7) se encontram no divisor da Serra do Mar.',
     layers: [
-      'ferrovia_corredor', 'estacoes', 'regioes_hidrograficas', 'subbacias_ugrhi6', 'municipios_corredor'
+      'ferrovia_corredor', 'estacoes', 'regioes_hidrograficas', 'municipios_corredor'
     ],
     targetScale: '1:500.000',
     center: CORREDOR_CENTER,

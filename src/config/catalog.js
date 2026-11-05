@@ -36,8 +36,10 @@ export const THEMES = [
         code: '2.2',
         title: 'Bacias e Hidrografia',
         icon: '💧',
+        // Bacias em três níveis, uma fonte por nível e por escala:
+        // UGRHI (1:500.000) → macro-bacias CBH-AT (1:100.000) → sub-bacias SIGA (1:10.000).
         layers: [
-          'regioes_hidrograficas', 'subbacias_ugrhi6', 'subbacias',
+          'regioes_hidrograficas', 'subbacias_ugrhi6', 'subbacias_sa',
           'hidrografia_regional', 'hidrografia', 'rios_sul',
           'nascentes_regionais', 'nascentes',
           'reservatorios_rmsp_completos', 'reservatorios', 'billings_747',
@@ -45,18 +47,22 @@ export const THEMES = [
       },
       {
         code: '2.3',
-        title: 'Áreas Protegidas e Vegetação',
-        icon: '🌳',
-        layers: [
-          'ucs', 'pnm_nascentes', 'parque_andreense', 'apm_aprm_regionais',
-          'apps_hidricas_regionais', 'app_buffers', 'app_sul', 'classif_vegetal',
-        ],
+        title: 'Áreas Protegidas',
+        icon: '🛡️',
+        // Cada UC aparece uma única vez (ver build_siga_ambiental.py).
+        layers: ['ucs', 'pnm_nascentes', 'parque_andreense', 'apm_aprm_regionais'],
       },
       {
         code: '2.4',
-        title: 'Riscos (Defesa Civil)',
+        title: 'Vegetação e APPs',
+        icon: '🌳',
+        layers: ['classif_vegetal', 'apps_hidricas_regionais', 'app_buffers', 'app_sul'],
+      },
+      {
+        code: '2.5',
+        title: 'Riscos e Passivos Ambientais',
         icon: '⚠️',
-        layers: ['susc_movmas', 'risco_movmas', 'risco_incendio'],
+        layers: ['susc_movmas', 'risco_movmas', 'risco_incendio', 'areas_contaminadas'],
       },
     ],
   },
@@ -141,10 +147,16 @@ export const THEMES = [
         code: '6.1',
         title: 'Trilhas e Atrativos',
         icon: '🥾',
-        layers: ['trilhas', 'atrativos', 'circuitos'],
+        layers: ['trilhas', 'atrativos'],
       },
       {
         code: '6.2',
+        title: 'Atrativos (Prefeitura)',
+        icon: '📌',
+        layers: ['atrativos_prefeitura'],
+      },
+      {
+        code: '6.3',
         title: 'Caminhos Históricos',
         icon: '🧭',
         layers: ['caminho_sal'],
