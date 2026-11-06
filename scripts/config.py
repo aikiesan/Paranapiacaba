@@ -15,6 +15,8 @@ EXTERNAL = os.path.join(REPO, "EXTERNAL_FILES_SHOULD_BE_GIT_IGNORED")
 SOURCE_ROOT = os.path.join(
     EXTERNAL, "01_CAMADAS_BASE-20260619T230527Z-3-001", "01_CAMADAS_BASE"
 )
+# Override (ex.: a pasta 01_CAMADAS_BASE do workspace 1_GIS_UNESCO_PARANAPIACABA).
+SOURCE_ROOT = os.environ.get("CAMADAS_BASE", SOURCE_ROOT)
 
 # Lote extra de shapefiles SIGA (Santo André) — camadas ambientais, de risco e
 # socioeconômicas adicionais (EPSG:31983). Fora do versionamento; jobs apontam
@@ -192,10 +194,13 @@ JOBS = [
 
     # ---- Patrimônio ----------------------------------------------------------
     {
+        # TOMBADOS_FEDERAL/_ESTADUAL/_MUNICIPAL/_GERAL e o SIGA_CUL_BENS_TOMBADOS_CULT
+        # são o MESMO conjunto (113 registros nos cinco). Somar os três triplicava
+        # cada polígono (339 feições). Lê-se um só, e o bem com dois registros
+        # (dois processos/órgãos) vira uma feição com os dois atributos.
         "out": "patrimonio_tombados.geojson", "aoi": "corridor", "simplify": 5e-6,
-        "src": ["05_PATRIMONIO/PATRIMONIO_CULTURAL/TOMBADOS_FEDERAL.shp",
-                "05_PATRIMONIO/PATRIMONIO_CULTURAL/TOMBADOS_ESTADUAL.shp",
-                "05_PATRIMONIO/PATRIMONIO_CULTURAL/TOMBADOS_MUNICIPAL.shp"],
+        "src": ["05_PATRIMONIO/PATRIMONIO_CULTURAL/SIGA_CUL_BENS_TOMBADOS_CULTPolygon.shp"],
+        "merge_same_geometry": True,
         "keep": {"DSC_DENOMI": "nome", "DSC_ENDERE": "endereco",
                  "NOM_BAIRRO": "bairro", "INSTANCIA": "instancia",
                  "NOM_ORGAO": "orgao", "NUM_PROCES": "processo",

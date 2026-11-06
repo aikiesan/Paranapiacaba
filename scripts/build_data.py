@@ -303,6 +303,25 @@ def build_job(job):
         geometry_keys = merged.geometry.normalize().to_wkb()
         merged = merged.loc[~geometry_keys.duplicated()].reset_index(drop=True)
 
+    if job.get("merge_same_geometry"):
+        # Uma geometria por entidade: registros com o mesmo polígono (ex.: bem
+        # tombado por dois órgãos) viram uma feição; os valores diferentes de
+        # cada atributo são juntados com "; ".
+        geom_col = merged.geometry.name
+        keys = merged.geometry.normalize().to_wkb()
+
+        def _join(values):
+            seen = [str(v) for v in dict.fromkeys(values) if v is not None and str(v) not in ("", "nan", "None")]
+            return "; ".join(seen) if seen else None
+
+        cols = [c for c in merged.columns if c != geom_col]
+        rows = []
+        for _, grp in merged.groupby(keys, sort=False):
+            row = {c: _join(grp[c]) for c in cols}
+            row[geom_col] = grp.geometry.iloc[0]
+            rows.append(row)
+        merged = gpd.GeoDataFrame(rows, geometry=geom_col, crs=merged.crs)
+
     feature_stride = job.get("feature_stride")
     if feature_stride:
         if not isinstance(feature_stride, int) or feature_stride < 2:
