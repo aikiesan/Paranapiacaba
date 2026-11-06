@@ -202,7 +202,45 @@ compartilhados usam os ids de camada.
 - As 17 entrevistas brutas da SEMASA seguem pendentes; Lugares de Memória continua com os vídeos
   públicos.
 
-## 9. Como refazer
+## 9. Adendo (06/11/2026): pacote de perímetros da Heloisa
+
+A Heloisa enviou em 30/10/2026 o pacote `meio_tomb` (projeto QGIS + `packaged_data.gpkg`,
+365 MB). O pacote foi copiado sem alteração para `00_DADOS_BRUTOS/EQUIPE/HELO_MEIO_TOMB_20261030/`,
+fora do git. Cada camada do pacote tem uma linha no manifesto (`tema = EQUIPE`). Aplicou-se a
+mesma regra: só entra o que ainda não existe no atlas.
+
+| Camada do pacote | Decisão | Evidência |
+|---|---|---|
+| CINTURAO_VERDE_SP | **publicada**: `cinturao_verde` (nova) | Reserva da Biosfera do Cinturão Verde; contorno inteiro (23.329 km²) |
+| biosfere_reserves (Mata Atlântica) | **publicada**: `rbma` (nova) | Só a RBMA, recortada numa janela 1° maior que o corredor |
+| AREAS_ZEIP | **publicada**: `zeip_areas_uso` (nova) | APR, APC, ASD e AAN da Lei 9.018/2007 (Mapa 5). Falta a ATP. Sobreposição de 109 m² entre as áreas corrigida na limpeza de topologia. |
+| TOMBAMENTO_IPHAN / _CONDEPHAAT / _CONDEPHAAPASA | validação | Já publicados a partir do SIGA em `patrimonio_tombados`: IoU 0,890 / 0,972 / 0,933 |
+| RESERVA_BIOLOGICA | validação | IoU 0,850 com a Rebio SIGA (3,94 contra 3,41 km²) |
+| SIGA_AMB_UC_MUN_NASC_PARANAP, SIGA_PLA_LEGIS_ZEIP, ABPF | validação | IoU 1,000 / 0,999 / 0,986 com as camadas publicadas |
+| VESP25 / VPAR25 (CEM) | pendente | Fora da lista de encargos; finalidade a confirmar com a Helo |
+| LimiteAgenciasCETESB, BR_Municipios_2024, BaseFerro | descartadas | Sem uso, ou já publicadas |
+
+Os perímetros de tombamento e a Rebio do pacote foram digitalizados sobre o mapa *Plano de Ação
+das Cidades Históricas — Vila de Paranapiacaba e Região* (Prefeitura de Santo André, 1:15.000,
+SAD 69). O próprio mapa avisa que é "apenas uma referência". Por isso a versão SIGA prevalece.
+
+**Achado ao validar os tombamentos: `patrimonio_tombados` estava triplicada.** O job de
+`scripts/config.py` somava `TOMBADOS_FEDERAL`, `_ESTADUAL` e `_MUNICIPAL`, mas os três arquivos
+(e também `TOMBADOS_GERAL` e `SIGA_CUL_BENS_TOMBADOS_CULT`) trazem os mesmos 113 registros. Cada
+polígono saía três vezes: 339 feições para 108 geometrias. Agora o job lê um arquivo só, e a nova
+opção `merge_same_geometry` junta os 5 bens com dois registros (tombados por dois órgãos) numa
+feição com os dois órgãos e processos. Resultado: 108 feições, com a mesma área (12,2386 km²) e
+o mesmo bbox. Para rodar com a base do workspace, use `CAMADAS_BASE=…/1_GIS_UNESCO_PARANAPIACABA/01_CAMADAS_BASE`.
+
+**Continuam pendentes do mapa ambiental:**
+- o perímetro UNESCO;
+- o tombamento da Serra do Mar em contorno completo. Hoje só existe o trecho de Santo André
+  (1,3 km²), em `patrimonio_tombados`.
+
+**Outra redundância encontrada (não corrigida):** `limite_vila` e `zeip_subdivisoes` leem o
+mesmo arquivo (`limite_vila.geojson`), ou seja, os 4 setores da ZEIP aparecem como duas camadas.
+
+## 10. Como refazer
 
 ```bash
 python scripts/build_siga_ambiental.py --ingest "C:/Users/Lucas/Documents/PROJETO_FAPESP_PUCCAMP"  # só na 1ª vez
