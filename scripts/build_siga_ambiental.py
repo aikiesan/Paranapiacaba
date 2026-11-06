@@ -1,4 +1,5 @@
-"""SIGA Santo André → camadas ambientais do WebGIS (sem sobreposição de fontes).
+"""SIGA Santo André (+ perímetros compilados pela equipe) → camadas ambientais do
+WebGIS, sem sobreposição de fontes.
 
 Uso (um comando, a partir da raiz do repositório):
 
@@ -396,6 +397,130 @@ def build_layers(aoi, base, regional_tur=False, marco_zero=False):
     return L
 
 
+# --------------------------------------------------------------------------
+# Perímetros compilados pela equipe (pacote da Heloisa Padula, 30/10/2026)
+# --------------------------------------------------------------------------
+EQUIPE_HELO = os.path.join(REPO, "00_DADOS_BRUTOS", "EQUIPE", "HELO_MEIO_TOMB_20261030",
+                           "packaged_data.gpkg")
+FONTE_HELO = "Equipe — compilado por Heloisa Padula (30/10/2026)"
+ZEIP_AREAS = {   # Lei Municipal 9.018/2007, Mapa 5 (Setor da Parte Baixa)
+    "APR": "Área Predominantemente Residencial",
+    "APC": "Área Predominantemente Comercial",
+    "ASD": "Área de Serviços Diferenciados",
+    "AAN": "Área de Atividades Noturnas",
+}
+
+# Camada do pacote → (decisão, camada do WebGIS que já representa a entidade, observação)
+DECISOES_HELO = {
+    "CINTURAO_VERDE_SP": ("publicada", "cinturao_verde",
+                          "Nova. Regional (1:500.000), contorno inteiro."),
+    "biosfere_reserves": ("publicada", "rbma",
+                          "Só a Reserva da Biosfera da Mata Atlântica, recortada numa janela 1° maior que o corredor."),
+    "AREAS_ZEIP": ("publicada", "zeip_areas_uso",
+                   "Nova subdivisão (Lei 9.018/2007, Mapa 5). Falta a ATP (transição do PNM)."),
+    "RESERVA_BIOLOGICA": ("validacao", "ucs",
+                          "Digitalizada do mapa de referência 1:15.000 (Plano de Ação das Cidades "
+                          "Históricas); a Rebio publicada segue o SIGA (regra 2)."),
+    "SIGA_AMB_UC_MUN_NASC_PARANAPPolygon": ("validacao", "pnm_nascentes", "Mesma fonte SIGA."),
+    "TOMBAMENTO_IPHAN": ("validacao", "patrimonio_tombados",
+                         "Perímetro já publicado a partir do SIGA (Vila de Paranapiacaba, IPHAN)."),
+    "TOMBAMENTO_CONDEPHAAT": ("validacao", "patrimonio_tombados",
+                              "Perímetro já publicado a partir do SIGA (Complexo Ferroviário, CONDEPHAAT)."),
+    "TOMBAMENTO_CONDEPHAAPASA": ("validacao", "patrimonio_tombados",
+                                 "Perímetro já publicado a partir do SIGA (Vila e Arredores, COMDEPHAAPASA)."),
+    "SIGA_PLA_LEGIS_ZEIP_PARANAPPolygon": ("validacao", "limite_vila", "Mesma fonte SIGA."),
+    "ABPF": ("validacao", "abpf", "Mesma área já publicada."),
+    "VESP25_RMSP_CEM": ("pendente", "", "Fora da lista de encargos; finalidade a confirmar com a Helo."),
+    "VPAR25_RMSP_CEM": ("pendente", "", "Fora da lista de encargos; finalidade a confirmar com a Helo."),
+    "LimiteAgenciasCETESB2023Polygon": ("descartada", "", "Divisão administrativa da CETESB, sem uso no atlas."),
+    "BR_Municipios_2024": ("descartada", "municipios_corredor", "Já publicada (IBGE 2024)."),
+    "BaseFerro": ("descartada", "ferrovia_corredor", "Já publicada (BaseFerro)."),
+}
+# Camada do pacote → (arquivo publicado, filtro de atributo) para o IoU de validação
+VALIDA_HELO = {
+    "RESERVA_BIOLOGICA": ("ucs.geojson", ("nome", "Reserva Biol")),
+    "SIGA_AMB_UC_MUN_NASC_PARANAPPolygon": ("pnm_nascentes.geojson", None),
+    "TOMBAMENTO_IPHAN": ("patrimonio_tombados.geojson", ("orgao", "IPHAN")),
+    "TOMBAMENTO_CONDEPHAAT": ("patrimonio_tombados.geojson", ("nome", "Complexo Ferrovi")),
+    "TOMBAMENTO_CONDEPHAAPASA": ("patrimonio_tombados.geojson", ("nome", "Vila de Paranapiacaba e Arredores")),
+    "SIGA_PLA_LEGIS_ZEIP_PARANAPPolygon": ("limite_vila.geojson", None),
+    "ABPF": ("abpf.geojson", None),
+}
+
+
+def build_equipe_layers():
+    """Camadas novas do pacote da equipe. Só entra o que não existe no atlas;
+    o resto do pacote vira linha de validação no manifesto."""
+    if not os.path.exists(EQUIPE_HELO):
+        print(f"  ! pacote da equipe ausente ({os.path.relpath(EQUIPE_HELO, REPO)}): camadas puladas")
+        return {}
+    cor = corridor()
+    L = {}
+    # Contorno inteiro (arquivo pequeno): recortar ao corredor desenharia a borda
+    # do recorte como se fosse limite da reserva.
+    g = gpd.read_file(EQUIPE_HELO, layer="CINTURAO_VERDE_SP").to_crs(UTM)
+    g["geometry"] = g.geometry.apply(make_valid).apply(_keep_dim, dim=2)
+    L["cinturao_verde"] = simplify(tidy(g, {}, {
+        "nome": "Reserva da Biosfera do Cinturão Verde da Cidade de São Paulo",
+        "reconhecimento": "UNESCO (Programa MaB), 1994", "fonte": FONTE_HELO}), 50)
+
+    # A RBMA cobre o litoral do país: recorte numa janela 1° maior que o corredor,
+    # para a borda do recorte ficar fora da tela em todas as escalas.
+    wide = tuple(v + d for v, d in zip(CORRIDOR_BBOX, (-1, -1, 1, 1)))
+    win = gpd.GeoSeries([box(*wide)], crs=WGS84).to_crs(UTM).iloc[0]
+    g = gpd.read_file(EQUIPE_HELO, layer="biosfere_reserves", bbox=wide)
+    g = g[g["name"] == "Mata Atlântica"].to_crs(UTM)
+    g["geometry"] = g.geometry.apply(make_valid).intersection(win).apply(_keep_dim, dim=2)
+    L["rbma"] = simplify(tidy(g, {}, {
+        "nome": "Reserva da Biosfera da Mata Atlântica",
+        "reconhecimento": "UNESCO (Programa MaB), 1991", "fonte": "MMA (via " + FONTE_HELO + ")"}), 50)
+
+    g = gpd.read_file(EQUIPE_HELO, layer="AREAS_ZEIP").to_crs(UTM)
+    g["geometry"] = g.geometry.apply(make_valid).apply(_keep_dim, dim=2)
+    z = tidy(g, {"AREA_ZEIP": "sigla"}, {"legislacao": "Lei Municipal 9.018/2007 (Mapa 5)",
+                                         "fonte": FONTE_HELO})
+    z["nome"] = z["sigla"].map(ZEIP_AREAS)
+    L["zeip_areas_uso"] = simplify(z, 1, coverage=True)
+    return L
+
+
+def validate_equipe():
+    """IoU de cada camada repetida do pacote contra a camada publicada."""
+    if not os.path.exists(EQUIPE_HELO):
+        return {}
+    out = {}
+    for layer, (f, flt) in VALIDA_HELO.items():
+        h = union(gpd.read_file(EQUIPE_HELO, layer=layer).to_crs(UTM))
+        p = gpd.read_file(os.path.join(OUT_DIR, f)).to_crs(UTM)
+        if flt:
+            p = p[p[flt[0]].astype(str).str.contains(flt[1], regex=False)]
+        pu = union(p)
+        out[layer] = (f"{f.removesuffix('.geojson')}: IoU {iou(h, pu):.3f} "
+                      f"(A∩B/A {h.intersection(pu).area / h.area:.3f})")
+    return out
+
+
+def equipe_rows():
+    import pyogrio
+    if not os.path.exists(EQUIPE_HELO):
+        return []
+    val = validate_equipe()
+    rows = []
+    for name, gtype in pyogrio.list_layers(EQUIPE_HELO):
+        if name not in DECISOES_HELO:
+            continue
+        info = pyogrio.read_info(EQUIPE_HELO, layer=name)
+        dec, camada, obs = DECISOES_HELO[name]
+        rows.append(dict(codigo_siga=f"(equipe) meio_tomb:{name}", tema="EQUIPE",
+                         titulo=name, data="30/10/2026", responsavel="Heloisa Padula (equipe)",
+                         epsg=str(info["crs"]).split(":")[-1], geometria=gtype,
+                         n_feicoes=info["features"], decisao=dec, camada_webgis=camada,
+                         iou=val.get(name, ""), observacao=obs,
+                         arquivo=os.path.relpath(EQUIPE_HELO, REPO).replace("\\", "/"),
+                         versionado_git="não (> 50 MB)", ficha_pdf="não"))
+    return rows
+
+
 def build_ucs(base, siga_inside):
     """UCs do corredor: GeoSEADE (contorno completo, regional) + SIGA para as
     UCs de Santo André. Uma UC GeoSEADE é descartada quando já existe em SIGA
@@ -777,10 +902,12 @@ def main():
     print(f"área de estudo: {aoi.area / 1e6:.1f} km² (extensão de hipsometria.geojson); "
           f"Santo André ∩ área: {aoi.intersection(sa).area / 1e6:.1f} km²")
     layers = build_layers(aoi, base, regional_tur=a.regional_tur, marco_zero=a.marco_zero)
+    layers.update(build_equipe_layers())
     write_layers(layers, a.write_existing, a.dry_run)
     repair_regioes_hidrograficas(a.dry_run or not a.write_existing)
     print("\ncomparando com a linha de base", BASELINE, "…")
     rows = inventory(aoi, sa, comparisons(aoi, sa))
+    rows += equipe_rows()
     if not a.dry_run:
         with open(MANIFEST, "w", encoding="utf-8-sig", newline="") as f:
             w = csv.DictWriter(f, fieldnames=COLS, extrasaction="ignore")

@@ -71,6 +71,27 @@ describe('camadas ambientais SIGA — sem sobreposição de fontes', () => {
     });
   });
 
+  it('não empilha o mesmo bem tombado várias vezes', () => {
+    const f = read('patrimonio_tombados.geojson').features;
+    const keys = f.map((x) => JSON.stringify(x.geometry));
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it('publica os perímetros de tombamento uma vez só (SIGA, em patrimonio_tombados)', () => {
+    const extra = LAYERS.filter((l) => /tombamento/i.test(l.id) && l.id !== 'patrimonio_tombados');
+    expect(extra.map((l) => l.id)).toEqual([]);
+    const orgaos = read('patrimonio_tombados.geojson').features.map((x) => x.properties.orgao || '');
+    ['IPHAN', 'CONDEPHAAT', 'COMDEPHAAPASA'].forEach((o) => {
+      expect(orgaos.some((v) => v.includes(o))).toBe(true);
+    });
+  });
+
+  it('nomeia as áreas de uso da ZEIP pela Lei 9.018/2007', () => {
+    const f = read('zeip_areas_uso.geojson').features.map((x) => x.properties);
+    expect(f.map((p) => p.sigla).sort()).toEqual(['AAN', 'APC', 'APR', 'ASD']);
+    f.forEach((p) => expect(p.nome).toMatch(/^Área /));
+  });
+
   it('corrigiu os nomes das UGRHIs (sem texto UTF-8 lido como Latin-1)', () => {
     const names = read('regioes_hidrograficas.geojson').features.map((f) => f.properties.nome);
     expect(names).toContain('ALTO TIETÊ');
