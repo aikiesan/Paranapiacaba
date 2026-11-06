@@ -182,6 +182,13 @@ export const SOURCES = {
   },
 
   // ---- Acervo da equipe (sem endereço público) -----------------------------
+  mma_rb: {
+    short: 'MMA',
+    name: 'Ministério do Meio Ambiente — Reservas da Biosfera (shapefile)',
+    org: 'Ministério do Meio Ambiente',
+    url: 'https://www.gov.br/insa/pt-br/centrais-de-conteudo/mapas/mapas-em-shapefile/reservas-da-biosfera-mma.zip',
+    note: 'Arquivo recebido da equipe (H. Padula, 30/10/2026); o link é o indicado por ela para o download.',
+  },
   equipe: {
     short: 'Equipe FAPESP/PUC-Campinas',
     name: 'Equipe de pesquisa FAPESP / PUC-Campinas',
@@ -247,6 +254,10 @@ export const LAYER_SOURCES = {
   // Limites
   limite_vila: [siga('SIGA_PLA_LEGIS_ZEIP_PARANAP — Zona Especial de Interesse do Patrimônio de Paranapiacaba')],
   zeip_subdivisoes: [siga('SIGA_PLA_LEGIS_ZEIP_PARANAP — Zona Especial de Interesse do Patrimônio de Paranapiacaba')],
+  zeip_areas_uso: [{
+    source: 'equipe', dataset: 'AREAS_ZEIP — digitalizado por Heloisa Padula (30/10/2026) sobre o Mapa 5 da Lei Municipal 9.018/2007',
+    note: 'A Área de Transição do PNM Nascentes (ATP) ainda não foi digitalizada.',
+  }],
   municipios_corredor: [{
     source: 'ibge_malhas',
     dataset: 'BR_Municipios_2024 — Malha Municipal 2024',
@@ -320,6 +331,12 @@ export const LAYER_SOURCES = {
     siga('SIGA_AMB_UC_EST_ALTO_PARANAP — Reserva Biológica do Alto da Serra de Paranapiacaba (SMA-GPLCA, 09/02/2023, 1:40.000; Decreto Estadual 24.714/1986)'),
     siga('SIGA_AMB_UC_EST_BARONESA e SIGA_AMB_UC_MUN_PEDROSO_LIM — PE Chácara da Baronesa (Lei Estadual 5.745/1987) e PNM do Pedroso (Decreto Municipal 16.878/2016), só contorno regional'),
   ],
+  rbma: [{ source: 'mma_rb', dataset: 'Reservas da Biosfera (MMA) — feição Mata Atlântica, recortada numa janela 1° maior que o corredor' }],
+  cinturao_verde: [{
+    source: 'equipe', dataset: 'CINTURAO_VERDE_SP — compilado por Heloisa Padula (30/10/2026), contorno inteiro',
+    url: 'https://www.infraestruturameioambiente.sp.gov.br/institutoflorestal/o-instituto/rbcv/',
+    note: 'Origem do arquivo a confirmar (Instituto Florestal ou CEM/USP).',
+  }],
   pnm_nascentes: [siga('SIGA_AMB_UC_MUN_NASC_PARANAP — PNM Nascentes de Paranapiacaba (SMA-GPLCA, 09/02/2023, 1:40.000; Decreto Municipal 14.937/2003)')],
   apm_aprm_regionais: [cbhat('APMs_APRMs-da-Região-Metropolitana-de-São-Paulo', 'APMs/APRMs da RMSP (01_APRM)')],
   apps_hidricas_regionais: [cbhat('APPs-da-Região-Metropolitana-de-São-Paulo', 'APPs da RMSP (APPs)')],
