@@ -50,7 +50,9 @@ export const THEMES = [
         title: 'Áreas Protegidas',
         icon: '🛡️',
         // Cada UC aparece uma única vez (ver build_siga_ambiental.py).
-        layers: ['ucs', 'pnm_nascentes', 'parque_andreense', 'apm_aprm_regionais'],
+        layers: [
+          'rbma', 'cinturao_verde', 'ucs', 'pnm_nascentes', 'parque_andreense', 'apm_aprm_regionais',
+        ],
       },
       {
         code: '2.4',
@@ -103,7 +105,7 @@ export const THEMES = [
         code: '4.1',
         title: 'Zoneamento e Planos',
         icon: '📐',
-        layers: ['macrozonas', 'zoneamento_mzpa', 'zeip_subdivisoes'],
+        layers: ['macrozonas', 'zoneamento_mzpa', 'zeip_subdivisoes', 'zeip_areas_uso'],
       },
     ],
   },

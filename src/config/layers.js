@@ -172,6 +172,21 @@ export const LAYERS = [
     available: true
   },
   {
+    id: "zeip_areas_uso",
+    label: "ZEIP — Áreas de Uso (Parte Baixa)",
+    file: "zeip_areas_uso.geojson",
+    group: "Zoneamento e Planos",
+    type: "polygon",
+    color: "#7C3AED",
+    weight: 1,
+    fillOpacity: 0.18,
+    minZoom: 15,
+    visible: false,
+    popupFields: ["sigla", "nome", "legislacao"],
+    description: "Divisão das áreas de uso do solo no Setor da Parte Baixa da ZEIPP (Lei Municipal 9.018/2007, Mapa 5): predominantemente residencial (APR), predominantemente comercial (APC), serviços diferenciados (ASD) e atividades noturnas (AAN). Digitalizada pela equipe; falta a Área de Transição do PNM (ATP).",
+    available: true
+  },
+  {
     id: "municipios_corredor",
     label: "Municípios do Corredor",
     file: "municipios_corredor.geojson",
@@ -542,6 +557,36 @@ export const LAYERS = [
     visible: false,
     popupFields: ["nome", "categoria", "esfera", "ato_criacao", "fonte"],
     description: "Unidades de Conservação do corredor, cada uma uma única vez: contorno completo GeoSEADE/CNUC para as que se estendem além de Santo André (ex.: PESM) e SIGA para as de Santo André (Rebio Alto da Serra; Pedroso e Chácara da Baronesa só como contorno regional). O PNM Nascentes de Paranapiacaba tem camada própria.",
+    available: true
+  },
+  {
+    id: "rbma",
+    label: "Reserva da Biosfera da Mata Atlântica",
+    file: "rbma.geojson",
+    group: "Áreas Protegidas",
+    type: "polygon",
+    color: "#2D6A4F",
+    weight: 1.5,
+    fillOpacity: 0,
+    minZoom: 8,
+    visible: false,
+    popupFields: ["nome", "reconhecimento", "fonte"],
+    description: "Reserva da Biosfera da Mata Atlântica (UNESCO, Programa MaB), só contorno — cobre quase todo o corredor, inclusive a Vila. Escala regional (1:500.000).",
+    available: true
+  },
+  {
+    id: "cinturao_verde",
+    label: "Reserva da Biosfera do Cinturão Verde",
+    file: "cinturao_verde.geojson",
+    group: "Áreas Protegidas",
+    type: "polygon",
+    color: "#65A30D",
+    weight: 1.5,
+    fillOpacity: 0,
+    minZoom: 8,
+    visible: false,
+    popupFields: ["nome", "reconhecimento", "fonte"],
+    description: "Reserva da Biosfera do Cinturão Verde da Cidade de São Paulo (UNESCO, Programa MaB), só contorno — inclui Paranapiacaba. Escala regional (1:500.000).",
     available: true
   },
   {
